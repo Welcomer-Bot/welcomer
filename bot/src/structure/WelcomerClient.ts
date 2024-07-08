@@ -58,9 +58,12 @@ export default class WelcomerClient {
         this.client
             .login(process.env.TOKEN)
             .then(() => {
+                console.log("Client is starting")
                 connectMongo()
-                console.log("client is starting")
             })
+            .catch((err) => {
+          console.error("An error occured while starting the bot", err)  
+        })
 
     }
 }

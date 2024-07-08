@@ -7,10 +7,11 @@ const managerConfig: ClusterManagerOptions = {
     shardsPerClusters,
     mode: "process",
     token: process.env.TOKEN,
+    execArgv: [ ...process.execArgv ],
      restarts: {
     max: 5,
     interval: 60 * 60000,
-    },
+  },
 }
 
 const hearthbeatConfig: keepAliveOptions = {
