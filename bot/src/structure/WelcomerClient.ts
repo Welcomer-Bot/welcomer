@@ -1,19 +1,21 @@
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
-import { Client, GatewayIntentBits, Options, Partials, Collection } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Options, Partials } from "discord.js";
 import { connectMongo } from "../utils/database";
+import loadEvents from "./loadEvents";
+import CommandType from "../types/CommandType";
+import EventType from "../types/EventType";
 
-export default class WelcomerClient {
-    private client: Client;
-    public commands: Collection<string, any>;
+export default class WelcomerClient extends Client {
+    public commands: Collection<string, CommandType>;
     public modals: Collection<string, any>;
     public buttons: Collection<string, any>;
-    public events: Collection<string, any>;
+    public events: Collection<string, EventType>;
     public selectMenus: Collection<string, any>;
     public commandsData: Collection<string, any>;
-    public cluster: ClusterClient<Client>;
+    public cluster: ClusterClient<this>;
 
     constructor() {
-        this.client = new Client({
+        super({
             shards: getInfo().SHARD_LIST,
             shardCount: getInfo().TOTAL_SHARDS,
             intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
@@ -42,7 +44,7 @@ export default class WelcomerClient {
                     filter: () => (user) => user.bot && user.id !== user.client.user.id, // Remove all bots.
                 },
             },
-        });
+        })
         this.commands = new Collection();
         this.modals = new Collection();
         this.buttons = new Collection();
@@ -50,20 +52,21 @@ export default class WelcomerClient {
         this.selectMenus = new Collection();
         this.commandsData = new Collection();
 
-        this.cluster = new ClusterClient(this.client);
+        this.cluster = new ClusterClient(this);
 
     }
 
     startClient() {
-        this.client
+        this
             .login(process.env.TOKEN)
             .then(() => {
                 console.log("Client is starting")
                 connectMongo()
+                loadEvents(this)
             })
             .catch((err) => {
-          console.error("An error occured while starting the bot", err)  
-        })
+                console.error("An error occured while starting the bot", err)
+            })
 
     }
 }
