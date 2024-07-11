@@ -12,7 +12,7 @@ export async function loadFiles(dirName: string) {
     let files = await glob(
         path.join(process.cwd(), dirName, "**/*.js").replace(/\\/g, "/"),
     );
-    let jsFiles = files.filter((file) => path.extname(file) === ".js");
+    let jsFiles = files.filter((file) => path.extname(file) === '.js');
     await Promise.all(jsFiles.map(deleteCachedFile));
     return jsFiles;
 }

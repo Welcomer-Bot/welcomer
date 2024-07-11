@@ -19,7 +19,8 @@ const hearthbeatConfig: keepAliveOptions = {
     maxMissedHeartbeats: 5,
 }
 
-const manager = new ClusterManager(`${__dirname}/client.ts`, managerConfig);
+const clientPath = `${__dirname}/client.js`
+const manager = new ClusterManager(clientPath, managerConfig);
 manager.extend(new HeartbeatManager(hearthbeatConfig))
 manager.extend(new ReClusterManager());
 

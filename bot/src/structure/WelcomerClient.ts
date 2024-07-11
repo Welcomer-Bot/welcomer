@@ -1,9 +1,8 @@
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
 import { Client, Collection, GatewayIntentBits, Options, Partials } from "discord.js";
+import { CommandType, EventType } from "../types/types";
 import { connectMongo } from "../utils/database";
-import loadEvents from "./loadEvents";
-import CommandType from "../types/CommandType";
-import EventType from "../types/EventType";
+import { loadEvents } from "./handlers";
 
 export default class WelcomerClient extends Client {
     public commands: Collection<string, CommandType>;
@@ -57,16 +56,15 @@ export default class WelcomerClient extends Client {
     }
 
     startClient() {
+        loadEvents(this);
         this
             .login(process.env.TOKEN)
             .then(() => {
                 console.log("Client is starting")
                 connectMongo()
-                loadEvents(this)
             })
             .catch((err) => {
                 console.error("An error occured while starting the bot", err)
             })
-
     }
 }

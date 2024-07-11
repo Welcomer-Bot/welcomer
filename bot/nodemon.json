@@ -1,6 +1,6 @@
 {
   "watch": ["src"],
   "ext": ".ts,.js",
-  "ignore": [],
-  "exec": "npx tsx ./src/index.ts"
+  "ignore": ["dist"],
+  "exec": "yarn build && node dist/index.js"
 }
