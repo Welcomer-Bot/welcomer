@@ -1,7 +1,13 @@
 import { InteractionReplyOptions, ChatInputCommandInteraction } from "discord.js";
 
+const baseMessage: InteractionReplyOptions = {
+    content: "",
+    embeds: [],
+    components: [],
+    files: [],
+} 
 
-export const sendInteractionMessage = async (interaction: ChatInputCommandInteraction, message: InteractionReplyOptions, follow: Boolean = false) => {
+export const sendInteractionMessage = async (interaction: ChatInputCommandInteraction, message: InteractionReplyOptions = baseMessage, follow: Boolean = false) => {
     if (!interaction || !message) return console.log("Missing parameters for sendInteractionMessage")
     try {
         if (follow) {
