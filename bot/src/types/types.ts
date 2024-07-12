@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, ModalMessageModalSubmitInteraction, SlashCommandBuilder } from "discord.js";
+import { ChatInputCommandInteraction, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, Message, InteractionResponse } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 export interface modalType {
@@ -12,9 +12,9 @@ export interface CommandType {
     admin?: boolean;
     noDefer?: boolean;
     ephemeral?: boolean;
-    data: SlashCommandBuilder;
+    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
 
-    execute(interaction: ChatInputCommandInteraction, client: WelcomerClient): Promise<void>
+    execute(interaction: ChatInputCommandInteraction, client: WelcomerClient, ...options: any): Promise<void | Message<boolean> | InteractionResponse<boolean>>
 }
 
 

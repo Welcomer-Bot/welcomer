@@ -1,7 +1,7 @@
 import { Collection, REST, Routes, APIApplicationCommand, RESTPostAPIChatInputApplicationCommandsJSONBody, ModalComponentData } from "discord.js";
-import { loadFiles } from "./Loader";
+import { loadFiles } from "./loader"
 import WelcomerClient from "./WelcomerClient";
-import { EventType, CommandType } from "../types/types";
+import { EventType, CommandType, modalType } from "../types/types";
 
 
 export const loadEvents = async function (client: WelcomerClient) {
@@ -105,7 +105,7 @@ export const loadModals = async function (client: WelcomerClient) {
     try {
         files.forEach((file) => {
             const modalFile = require(file).default
-            const modal:ModalComponentData = new modalFile()
+            const modal:modalType = new modalFile()
             if (modal.customId.startsWith("editConfigModal")) {
                 // store customId with W and L attached to the end
                 client.modals.set(modal.customId + "W", modal);
