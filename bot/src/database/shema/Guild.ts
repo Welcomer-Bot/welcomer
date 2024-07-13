@@ -1,6 +1,5 @@
 import { Schema, SchemaTypes, model } from "mongoose";
 import { GuildFormated } from "../../types/types";
-import { Guild } from "discord.js";
 
 
 

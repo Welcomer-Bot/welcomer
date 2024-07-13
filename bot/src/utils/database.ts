@@ -40,4 +40,14 @@ export const createGuild = async (guild: Guild) => {
     } catch (error) {
         return console.log(error);
     }
+};
+
+
+export const deleteGuild = async (guildId: string) => {
+    try {
+        return await GuildSchema.findOneAndDelete({id: guildId})
+    } catch (error) {
+        return; 
+    }
+    
 }
