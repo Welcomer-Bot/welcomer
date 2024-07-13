@@ -23,5 +23,95 @@ export interface EventType {
     cluster?: boolean
     name: string,
     once?: boolean,
-    execute(...args: any): Promise<void>,
+    execute(...args: any): Promise<void | InteractionResponse<boolean> | Message < boolean>>,
 }
+
+export type PartialGuild = {
+    id: string;
+    name: string;
+    icon: string;
+    owner: boolean;
+    permissions: string;
+    features: string[];
+};
+
+export type GuildType = {
+    id: string;
+    name: string;
+    icon: string;
+    owner: boolean;
+    permissions: string;
+    features: string[];
+    channels: Channel[];
+    roles: Role[];
+    members: Member[];
+}
+
+export interface GuildFormated {
+    id: string;
+    name: string;
+    icon: string;
+    welcomer: Module;
+    leaver: Module;
+    mutual?: boolean;
+}
+
+export type Channel = {
+    id: string;
+    name: string;
+    type: number;
+    permissions: string;
+};
+
+export type Role = {
+    id: string;
+    name: string;
+    permissions: string;
+};
+
+export type Member = {
+    id: string;
+    username: string;
+    discriminator: string;
+    avatar: string;
+    roles: string[];
+    permissions: string;
+};
+
+export interface Module {
+    enabled: boolean;
+    dmEnabled: boolean;
+    channel: string|null;
+    message: string;
+    dmMessage: string;
+    image: ModuleImage[];
+    embed: ModuleEmbed[];
+    webhook: ModuleWebhook[];
+};
+
+export type ModuleImage = {
+    enabled: boolean;
+    backgroundId: string;
+    theme: string;
+};
+
+export type ModuleEmbed = {
+    enabled: boolean;
+    title: string;
+    description: string;
+    color: string;
+    footer: ModuleEmbedFooter[];
+};
+
+export type ModuleEmbedFooter = {
+    enabled: boolean;
+    text: string;
+    icon: string;
+};
+
+export type ModuleWebhook = {
+    enabled: boolean;
+    id: string;
+    name: string;
+    avatar: string;
+};

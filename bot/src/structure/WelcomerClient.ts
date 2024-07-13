@@ -1,5 +1,5 @@
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
-import { Client, Collection, GatewayIntentBits, Options, Partials } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Options, Partials, APIApplicationCommand } from "discord.js";
 import { CommandType, EventType, modalType } from "../types/types";
 import { connectMongo } from "../utils/database";
 import { loadEvents } from "./handlers";
@@ -10,7 +10,7 @@ export default class WelcomerClient extends Client {
     public buttons: Collection<string, any>;
     public events: Collection<string, EventType>;
     public selectMenus: Collection<string, any>;
-    public commandsData: Collection<string, any>;
+    public commandsData: Collection<string, APIApplicationCommand>;
     public cluster: ClusterClient<this>;
 
     constructor() {

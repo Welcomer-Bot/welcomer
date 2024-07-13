@@ -1,6 +1,10 @@
-import { connect } from "mongoose"
+import { connect, connection } from "mongoose"
+import GuildSchema from "../database/shema/Guild"
+import { ChannelType, Guild } from "discord.js"
+import { GuildFormated } from "../types/types"
+import { channel } from 'diagnostics_channel';
 
-const connectMongo = async () => {
+export const connectMongo = async () => {
     await connect(process.env.MONGO_URI!)
         .then(() => {
         console.log("Connected to MongoDB !")
@@ -10,5 +14,31 @@ const connectMongo = async () => {
     })
 }
 
+export const connectionStatus = connection.readyState;
 
-export {connectMongo}
+export const createGuild = async (guild: Guild) => {
+    try {
+        const welcomeKeywords = ['welcome', 'greetings', 'hello'];
+        const leaverkeywords = ['goodbye', 'adios', 'welcome']
+        let guildDb = await GuildSchema.findOne({ id: guild.id });
+        if (guildDb) {
+             return GuildSchema.updateOne({ id: guild.id }, guild, { new: true });
+        } else {
+            const matchingWelcomeChannel = guild.channels.cache.find(channel =>
+                channel.type === ChannelType.GuildText && welcomeKeywords.some(keyword => channel.name.toLowerCase().includes(keyword))
+            );
+            const matchingGoodbyeChannel = guild.channels.cache.find(channel =>
+                channel.type === ChannelType.GuildText && leaverkeywords.some(keyword => channel.name.toLowerCase().includes(keyword))
+            );
+            const guildData = {
+                ...guild,
+                welcomer: { channel: matchingWelcomeChannel ? matchingWelcomeChannel.id : null, enabled: matchingWelcomeChannel ? true : false },
+                leaver: { channel: matchingGoodbyeChannel ? matchingGoodbyeChannel.id : null, enabled: matchingGoodbyeChannel ? true : false }
+            };
+            guildDb = new GuildSchema(guildData);
+            return guildDb.save();
+        }
+    } catch (error) {
+        return console.log(error);
+    }
+}

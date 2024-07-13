@@ -1,17 +1,23 @@
-import { BaseMessageOptions, Guild } from "discord.js";
-import { EventType } from "../../types/types";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild, MessageCreateOptions } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
+import { EventType } from "../../types/types";
+import { dashButton, guildAddOwnerMessage, helpButtons } from "../../utils/constants";
 import { sendDmMessage } from "../../utils/messages";
-import { guildAddOwnerMessageEmbed } from "../../utils/embeds";
 
 
 export default class GuildCreate implements EventType {
     name = "guildCreate"
     async execute(guild: Guild, client: WelcomerClient): Promise<void> {
+
+        
+        
         const guildOwner = await guild.fetchOwner()
-        const message: BaseMessageOptions = {
-            embeds: [guildAddOwnerMessageEmbed]
+        const message: MessageCreateOptions = {
+            content: guildAddOwnerMessage(guildOwner, guild, client),
+            components: [new ActionRowBuilder<ButtonBuilder>().addComponents(helpButtons, dashButton)]
         }
-        sendDmMessage(client, guildOwner, message )
+        sendDmMessage(client, guildOwner, message)
+
+
     }
 }

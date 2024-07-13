@@ -2,7 +2,8 @@ import { ChatInputCommandInteraction, EmbedBuilder, InteractionResponse, Message
 import WelcomerClient from "../../structure/WelcomerClient";
 import { CommandType } from "../../types/types";
 import { sendInteractionMessage } from "../../utils/messages";
-import {connection} from "mongoose";
+import { connectionStatus } from "../../utils/database";
+
 
 
 function formatState(state: Number) {
@@ -88,7 +89,7 @@ export default class StatusCommand implements CommandType {
                 },
                 {
                     name: ":desktop: Database Connection",
-                    value: `${formatDbState(connection.readyState)}`,
+                    value: `${formatDbState(connectionStatus)}`,
                     inline: true,
                 },
         )

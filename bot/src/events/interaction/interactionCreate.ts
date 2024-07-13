@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from "discord.js";
+import { ChatInputCommandInteraction, InteractionResponse, Message } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { sendInteractionMessage } from "../../utils/messages";
 import {EventType} from './../../types/types';
@@ -9,7 +9,7 @@ export default class InteractionCreateEvent implements EventType {
   async execute(
     interaction: ChatInputCommandInteraction,
     client: WelcomerClient
-  ) {
+  ): Promise<void | InteractionResponse<boolean> | Message<boolean>>{
     if (!interaction.inGuild()) return;
 
     switch (true) {

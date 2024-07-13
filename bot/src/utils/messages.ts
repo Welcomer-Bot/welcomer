@@ -1,4 +1,4 @@
-import { BaseMessageOptions, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, User } from "discord.js";
+import { BaseMessageOptions, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, MessageCreateOptions, User } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 const baseMessage: BaseMessageOptions = {
@@ -25,11 +25,9 @@ export const sendInteractionMessage = async (interaction: ChatInputCommandIntera
 
 }
 
-
-export const sendDmMessage = async (client: WelcomerClient, user: GuildMember, message: BaseMessageOptions = baseMessage) => {
+export const sendDmMessage = async (client: WelcomerClient, user: GuildMember, message: MessageCreateOptions = baseMessage) => {
     try {
         let fetchedUser = await client.users.fetch(user)
-
         return await fetchedUser.send(message);
     } catch (error) {
         return error; 

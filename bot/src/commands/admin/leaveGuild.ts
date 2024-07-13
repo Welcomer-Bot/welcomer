@@ -5,11 +5,11 @@ import { sendInteractionMessage } from "../../utils/messages";
 
 
 export default class LeaveGuild implements CommandType {
-    name = "leaveGuild";
+    name = "leavegGuild";
     description = "Leave the given guid id in the parameter.";
     admin = true;
     data = new SlashCommandBuilder()
-        .setName("leaveGuild")
+        .setName("leaveguild")
         .setDescription(this.description)
         .addStringOption((option) => 
             option.setName("guild_id")
