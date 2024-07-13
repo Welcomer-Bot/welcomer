@@ -3,12 +3,13 @@ import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types/types";
 import { dashButton, guildAddOwnerMessage, helpButtons } from "../../utils/constants";
 import { sendDmMessage } from "../../utils/messages";
+import { createGuild } from "../../utils/database";
 
 
 export default class GuildCreate implements EventType {
     name = "guildCreate"
     async execute(guild: Guild, client: WelcomerClient): Promise<void> {
-
+        await createGuild(guild)
         
         
         const guildOwner = await guild.fetchOwner()
