@@ -1,10 +1,11 @@
 import WelcomerClient from "../structure/WelcomerClient"
 import { GuildMember, Guild, ButtonBuilder, ButtonStyle, ActionRowBuilder, ButtonComponent, ButtonComponentData } from "discord.js"
+import { GuildFormated } from "../types/types";
 
 
 
 
-export const guildAddOwnerMessage = function (user: GuildMember, guild: Guild, client: WelcomerClient) {
+export const guildAddOwnerMessage = function (user: GuildMember, guild: Guild, guildDb: GuildFormated|undefined, client: WelcomerClient) {
     const autoConfigCommand = client.commandsData.get("autoConfig");
     const editConfigCommand = client.commandsData.get("editConfig");
     const testCommand = client.commandsData.get("test");
@@ -24,7 +25,20 @@ export const guildAddOwnerMessage = function (user: GuildMember, guild: Guild, c
 
     ### Dashboard 
 
-    > If you want a more visual way of editing messages, you can use the web dashboard available [here](https://welcomer.app/dashboard) or with the Dashboard button bellow
+    > If you want a more visual way of editing messages, you can use the web dashboard available [here](https://welcomer.app/dashboard) or with the Dashboard button bellow,
+
+    ___
+
+    ${guildDb?.welcomer.enabled ? `I was automatically configured because I found a candidate channel where to send welcome messages to <#${guildDb.welcomer.channel}>` : ``}
+    ${guildDb?.leaver.enabled ? `I was automatically configured because I found a candidate channel where to send leave messages to <#${guildDb.leaver.channel}>` : ``}
+    
+    ${guildDb?.welcomer.enabled || guildDb?.leaver.enabled ? `You can edit or disable the automatic configuration by using the command ${editConfigCommand ? "</editconfig" + editConfigCommand.id + ">" : "/editconfig"} and edit/disable the module you want to edit/disable.` : ``}
+
+    ${guildDb?.welcomer.enabled || guildDb?.leaver.enabled ? `You can also test the configuration with the command ${testCommand ? "</test:" + testCommand.id + ">" : "/test"}` : ``}
+
+    ${guildDb?.welcomer.enabled || guildDb?.leaver.enabled ? `___` : ``}
+
+    Welcomer Bot - Made with ❤️ by [Welcomer Team](https://welcomer.app)
     `
 }
 export const helpButtons = new ButtonBuilder()
@@ -37,4 +51,5 @@ export const dashButton = new ButtonBuilder()
     .setURL("https://welcomer.app/dahsboard");
 
 
-
+export const welcomeKeywords = ['welcome', 'greetings', 'hello'];
+export const leaverkeywords = ['goodbye', 'adios', 'welcome']

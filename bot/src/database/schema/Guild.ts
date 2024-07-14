@@ -1,10 +1,7 @@
+import { ChannelType } from "discord.js";
 import { Schema, SchemaTypes, model } from "mongoose";
 import { GuildFormated } from "../../types/types";
-
-
-
-
-
+import { leaverkeywords, welcomeKeywords } from "../../utils/constants";
 
 
 const GuildSchema = new Schema<GuildFormated>({
@@ -12,14 +9,6 @@ const GuildSchema = new Schema<GuildFormated>({
         type: SchemaTypes.String,
         required: true,
         unique: true,
-    },
-    name: {
-        type: SchemaTypes.String,
-        required: true,
-    },
-    icon: {
-        type: SchemaTypes.String,
-        required: true,
     },
     welcomer: {
         embed: {
@@ -209,6 +198,30 @@ const GuildSchema = new Schema<GuildFormated>({
             },
         ],
     },
+    _tempData: {
+        type: Schema.Types.Mixed,
+        select: false
+    },
 });
+
+GuildSchema.pre("save", function (next) {
+    if (this._tempData) {
+
+        let guild = this._tempData;
+        const matchingWelcomeChannel = guild.systemChannel ?? guild.channels.cache.find(channel =>
+            channel.type === ChannelType.GuildText && welcomeKeywords.some(keyword => channel.name.toLowerCase().includes(keyword))
+        );
+        const matchingGoodbyeChannel = guild.systemChannel ?? guild.channels.cache.find(channel =>
+            channel.type === ChannelType.GuildText && leaverkeywords.some(keyword => channel.name.toLowerCase().includes(keyword))
+        );
+    
+        this.welcomer.channel = matchingWelcomeChannel ? matchingWelcomeChannel.id : null
+        this.welcomer.enabled = matchingWelcomeChannel ? true : false 
+        this.leaver.channel = matchingGoodbyeChannel ? matchingGoodbyeChannel.id : null
+        this.leaver.enabled = matchingGoodbyeChannel ? true : false
+    }
+    next();
+    });
+
 
 export default model("guilds", GuildSchema);

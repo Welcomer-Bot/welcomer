@@ -1,0 +1,49 @@
+import { EmbedBuilder, BaseMessageOptions, ChatInputCommandInteraction, InteractionResponse, Message, SlashCommandBuilder, StringSelectMenuBuilder, ActionRowBuilder } from "discord.js";
+import { CommandType } from "../../types/types";
+import WelcomerClient from "../../structure/WelcomerClient";
+import { sendInteractionMessage } from "../../utils/messages";
+
+export default class Emit implements CommandType { 
+    name = "emit"
+    description = "Emit an event"
+    admin = true
+    noDefer = true
+    ephemeral = true
+    data = new SlashCommandBuilder()
+        .setName(this.name)
+        .setDescription(this.description)
+    async execute(interaction: ChatInputCommandInteraction, client: WelcomerClient, ...options: any): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
+        let emitMenu = new StringSelectMenuBuilder()
+            .setCustomId("emitMenu")
+            .setPlaceholder("Select an event to emit")
+            .addOptions([
+                {
+                    label: "guildCreate",
+                    value: "guildCreate",
+                },
+                {
+                    label: "guildDelete",
+                    value: "guildDelete",
+                },
+                {
+                    label: "guildMemberAdd",
+                    value: "guildMemberAdd",
+                },
+                {
+                    label: "guildMemberRemove",
+                    value: "guildMemberRemove",
+                },
+            ])
+        
+        let message: BaseMessageOptions = {
+            content: "",
+            embeds: [
+                new EmbedBuilder()
+                    .setTitle("Select an event to emit")
+                    .setColor("#161f2f"),
+            ],
+            components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(emitMenu)]
+        }
+        await sendInteractionMessage(interaction, message)
+    }
+}

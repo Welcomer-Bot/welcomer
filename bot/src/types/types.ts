@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, Message, InteractionResponse } from "discord.js";
+import { ChatInputCommandInteraction, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, Message, InteractionResponse, Guild } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 export interface modalType {
@@ -35,25 +35,13 @@ export type PartialGuild = {
     features: string[];
 };
 
-export type GuildType = {
-    id: string;
-    name: string;
-    icon: string;
-    owner: boolean;
-    permissions: string;
-    features: string[];
-    channels: Channel[];
-    roles: Role[];
-    members: Member[];
-}
-
 export interface GuildFormated {
     id: string;
-    name: string;
-    icon: string;
     welcomer: Module;
     leaver: Module;
     mutual?: boolean;
+    _tempData?: Guild
+    _id?: string;
 }
 
 export type Channel = {

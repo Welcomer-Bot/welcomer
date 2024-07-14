@@ -24,10 +24,6 @@ let editConfigSchema = new Schema<editConfigType>(
             type: String,
             required: true,
         },
-        guildToEdit: {
-            type: String,
-            required: false,
-        },
         module: {
             type: String,
             required: true,
