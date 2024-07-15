@@ -1,17 +1,19 @@
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
 import { Client, Collection, GatewayIntentBits, Options, Partials, APIApplicationCommand } from "discord.js";
-import { CommandType, EventType, modalType } from "../types/types";
+import { CommandType, EventType, modalType, SelectMenuType } from "../types/types";
 import { connectMongo } from "../utils/database";
 import { loadEvents } from "./handlers";
+import WelcomerClientType from "../types/WelcomerClientType";
 
-export default class WelcomerClient extends Client {
+export default class WelcomerClient  extends Client implements WelcomerClientType {
     public commands: Collection<string, CommandType>;
     public modals: Collection<string, modalType>;
     public buttons: Collection<string, any>;
     public events: Collection<string, EventType>;
-    public selectMenus: Collection<string, any>;
+    public selectMenus: Collection<string, SelectMenuType>;
     public commandsData: Collection<string, APIApplicationCommand>;
-    public cluster: ClusterClient<this>;
+    public cluster: ClusterClient<WelcomerClientType>;
+    public admins: string[];
 
     constructor() {
         super({
@@ -52,6 +54,7 @@ export default class WelcomerClient extends Client {
         this.commandsData = new Collection();
 
         this.cluster = new ClusterClient(this);
+        this.admins = process.env.ADMINS?.split(",") || [];
 
     }
 
@@ -61,6 +64,7 @@ export default class WelcomerClient extends Client {
             .login(process.env.TOKEN)
             .then(() => {
                 console.log("Client is starting")
+                console.log(`Bot administators: ${this.admins}`)
                 connectMongo()
             })
             .catch((err) => {

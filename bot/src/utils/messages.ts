@@ -1,4 +1,4 @@
-import { BaseMessageOptions, ChatInputCommandInteraction, GuildMember, InteractionReplyOptions, MessageCreateOptions, User } from "discord.js";
+import { AutocompleteInteraction, BaseMessageOptions, ChatInputCommandInteraction, CommandInteraction, GuildMember, Interaction, InteractionReplyOptions, MessageCreateOptions, User } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 const baseMessage: BaseMessageOptions = {
@@ -8,7 +8,7 @@ const baseMessage: BaseMessageOptions = {
     files: [],
 }
 
-export const sendInteractionMessage = async (interaction: ChatInputCommandInteraction, message: InteractionReplyOptions = baseMessage, follow: Boolean = false) => {
+export const sendInteractionMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, message: InteractionReplyOptions = baseMessage, follow: Boolean = false) => {
     if (!interaction || !message) return console.log("Missing parameters for sendInteractionMessage")
     try {
         if (follow) {

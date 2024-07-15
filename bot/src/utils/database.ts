@@ -18,13 +18,15 @@ export const createGuild = async (guild: Guild) => {
     try {
         let guildDb = await GuildSchema.findOne({ id: guild.id });
         if (guildDb) {
-            return GuildSchema.updateOne({ id: guild.id }, guild, { new: true });
+            await GuildSchema.updateOne({ id: guild.id }, guild, { new: true });
         } else {
             guildDb = new GuildSchema(guild);
             guildDb._tempData = guild
-            return guildDb.save();
+            await guildDb.save();
 
         }
+        return guildDb;
+
     } catch (error) {
         return;
     }

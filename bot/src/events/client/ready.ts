@@ -1,7 +1,7 @@
 import { ActivityType } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types/types";
-import { loadCommands, loadModals } from "../../structure/handlers";
+import { loadCommands, loadModals, loadSelectMenus } from "../../structure/handlers";
 
 
 export default class ReadyEvent implements EventType {
@@ -26,7 +26,7 @@ export default class ReadyEvent implements EventType {
         await setStatus();
         await loadModals(client);
         // await loadButtons(client);
-        // await loadSelectMenus(client);
+        await loadSelectMenus(client);
         await loadCommands(client);
 
         setInterval(async () => {

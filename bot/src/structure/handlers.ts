@@ -1,7 +1,7 @@
-import { Collection, REST, Routes, APIApplicationCommand, RESTPostAPIChatInputApplicationCommandsJSONBody, ModalComponentData } from "discord.js";
-import { loadFiles } from "./loader"
+import { APIApplicationCommand, Collection, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
+import { CommandType, EventType, modalType, SelectMenuType } from "../types/types";
+import { loadFiles } from "./loader";
 import WelcomerClient from "./WelcomerClient";
-import { EventType, CommandType, modalType } from "../types/types";
 
 
 export const loadEvents = async function (client: WelcomerClient) {
@@ -29,7 +29,7 @@ export const loadEvents = async function (client: WelcomerClient) {
     console.table(events)
 }
 
-export const loadCommands = async function(client: WelcomerClient) {
+export const loadCommands = async function (client: WelcomerClient) {
     client.commands.clear();
     client.commandsData.clear();
     if (!client.application) {
@@ -41,11 +41,11 @@ export const loadCommands = async function(client: WelcomerClient) {
     let command_admin: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     let files = await loadFiles(`dist/commands`);
     // console.log(Files)
-    
+
     try {
-        for (let file of files){
+        for (let file of files) {
             let commandFile = require(file).default
-            let command:CommandType = new commandFile()
+            let command: CommandType = new commandFile()
             if (command.admin) {
                 command_admin.push(command.data.toJSON());
             } else {
@@ -62,8 +62,8 @@ export const loadCommands = async function(client: WelcomerClient) {
             `Started loading ${commands_array.length + command_admin.length} commands`,
         );
         try {
-            
-            
+
+
             let data = await rest.put(
                 Routes.applicationCommands(client.application?.id),
                 { body: commands_array },
@@ -76,7 +76,7 @@ export const loadCommands = async function(client: WelcomerClient) {
                 ),
                 { body: command_admin },
             ) as APIApplicationCommand[];
-        
+
 
             if (!data || !data_admin) return console.error("An error occured on loadCommands!");
             data.forEach((command) => {
@@ -105,7 +105,7 @@ export const loadModals = async function (client: WelcomerClient) {
     try {
         files.forEach((file) => {
             const modalFile = require(file).default
-            const modal:modalType = new modalFile()
+            const modal: modalType = new modalFile()
             if (modal.customId.startsWith("editConfigModal")) {
                 // store customId with W and L attached to the end
                 client.modals.set(modal.customId + "W", modal);
@@ -118,3 +118,25 @@ export const loadModals = async function (client: WelcomerClient) {
         console.error("An error occured on loadModals!" + e);
     }
 }
+
+export const loadSelectMenus = async function (client: WelcomerClient) {
+    client.selectMenus.clear();
+
+    let files = await loadFiles(`dist/selectMenus`);
+    for (let file of files) {
+        try {
+            let selectMenuFile = require(file).default;
+            let selectMenu: SelectMenuType = new selectMenuFile();
+            if (selectMenu.customId.startsWith("editConfigSelectMenu")) {
+                // store customId with W and L attached to the end
+                client.selectMenus.set(selectMenu.customId + "W", selectMenu);
+                client.selectMenus.set(selectMenu.customId + "L", selectMenu);
+            } else {
+                client.selectMenus.set(selectMenu.customId, selectMenu);
+            }
+        } catch (e) {
+            console.error("An error occured on loadSelectMenus!" + e);
+        }
+    }
+}
+

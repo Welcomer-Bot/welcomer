@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, Message, InteractionResponse, Guild } from "discord.js";
+import { ChatInputCommandInteraction, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, Message, InteractionResponse, Guild, StringSelectMenuInteraction, AnySelectMenuInteraction } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 export interface modalType {
@@ -24,6 +24,13 @@ export interface EventType {
     name: string,
     once?: boolean,
     execute(...args: any): Promise<void | InteractionResponse<boolean> | Message < boolean>>,
+}
+
+export interface SelectMenuType {
+    customId: string;
+    ephemeral?: boolean;
+    execute(interaction: AnySelectMenuInteraction, client: WelcomerClient, ...options: any): Promise<void | InteractionResponse<boolean> | Message<boolean>>
+
 }
 
 export type PartialGuild = {

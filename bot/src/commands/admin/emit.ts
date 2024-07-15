@@ -7,8 +7,7 @@ export default class Emit implements CommandType {
     name = "emit"
     description = "Emit an event"
     admin = true
-    noDefer = true
-    ephemeral = true
+    noDefer?: boolean | undefined = true
     data = new SlashCommandBuilder()
         .setName(this.name)
         .setDescription(this.description)

@@ -220,6 +220,7 @@ GuildSchema.pre("save", function (next) {
         this.leaver.channel = matchingGoodbyeChannel ? matchingGoodbyeChannel.id : null
         this.leaver.enabled = matchingGoodbyeChannel ? true : false
     }
+    delete this._tempData;
     next();
     });
 
