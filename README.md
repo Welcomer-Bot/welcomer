@@ -11,8 +11,8 @@ ___
 
 ### TODO List
 
-> - [ ] Create message to send to users when they add the bot the server
-> - [ ] Handle guildRemove
+> - [x] Create message to send to users when they add the bot the server
+> - [x] Handle guildRemove
 > - [ ] Add editConfig command
 > - [ ] Add preview of message in editConfig command
 
