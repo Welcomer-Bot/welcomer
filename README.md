@@ -2,6 +2,10 @@
 
 - Welcomer is a discord bot that enhance the way of welcoming new users to your server
 
+## How to use
+
+Comign soon...
+
 ## Features
 
 - Custom Welcome/Goodbye message ( custom background, different themes, embeding, webhooks )
