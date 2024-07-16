@@ -1,24 +1,36 @@
-import { ActionRowBuilder, ButtonBuilder, Guild, MessageCreateOptions } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, Guild, MessageCreateOptions, TextChannel } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType, GuildFormated } from "../../types/types";
-import { dashButton, guildAddOwnerMessage, helpButtons } from "../../utils/constants";
+import { guildAddOwnerMessage } from "../../utils/constants";
 import { createGuild } from "../../utils/database";
-import { sendDmMessage } from "../../utils/messages";
+import { embedHelperOnGuildCreate } from "../../utils/embeds";
+
+import { sendChannelMessage, sendDmMessage } from "../../utils/messages";
+import { autoConfigButton, dashButton, helpButton } from "../../utils/buttons";
 
 
 export default class GuildCreate implements EventType {
     name = "guildCreate"
     async execute(guild: Guild, client: WelcomerClient): Promise<void> {
         let guildDb = await createGuild(guild)
+        let systemChannel = guild.systemChannelId ? await guild.channels.fetch(guild.systemChannelId) as TextChannel : null
 
 
         const guildOwner = await guild.fetchOwner()
-        const message: MessageCreateOptions = {
+
+        const DmMessage: MessageCreateOptions = {
             content: guildAddOwnerMessage(guildOwner, guild, guildDb as GuildFormated, client),
-            components: [new ActionRowBuilder<ButtonBuilder>().addComponents(helpButtons, dashButton)]
+            components: [new ActionRowBuilder<ButtonBuilder>().addComponents(helpButton, dashButton)]
         }
-        sendDmMessage(client, guildOwner, message)
+        sendDmMessage(client, guildOwner, DmMessage)
+        if (systemChannel) {
+            sendChannelMessage(client, systemChannel, {
+                embeds: [embedHelperOnGuildCreate],
+                files: [client.images.get("banner")?.attachment as any],
+                components : [new ActionRowBuilder<ButtonBuilder>().addComponents(autoConfigButton, helpButton, dashButton)]
+            })
 
 
+        }
     }
 }

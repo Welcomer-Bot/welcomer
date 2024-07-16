@@ -1,5 +1,5 @@
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
-import { Client, Collection, GatewayIntentBits, Options, Partials, APIApplicationCommand } from "discord.js";
+import { Client, Collection, GatewayIntentBits, Options, Partials, APIApplicationCommand, AttachmentBuilder, AttachmentPayload } from "discord.js";
 import { CommandType, EventType, modalType, SelectMenuType } from "../types/types";
 import { connectMongo } from "../utils/database";
 import { loadEvents } from "./handlers";
@@ -12,8 +12,9 @@ export default class WelcomerClient  extends Client implements WelcomerClientTyp
     public events: Collection<string, EventType>;
     public selectMenus: Collection<string, SelectMenuType>;
     public commandsData: Collection<string, APIApplicationCommand>;
-    public cluster: ClusterClient<WelcomerClientType>;
+    public cluster: ClusterClient<this>;
     public admins: string[];
+    public images: Collection<string, AttachmentBuilder>;
 
     constructor() {
         super({
@@ -22,7 +23,7 @@ export default class WelcomerClient  extends Client implements WelcomerClientTyp
             intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
             partials: [Partials.GuildMember],
             allowedMentions: {
-                parse: ["roles", "users", "everyone"],
+                parse: ["roles", "users"],
                 repliedUser: true,
             },
             makeCache: Options.cacheWithLimits({
@@ -52,9 +53,12 @@ export default class WelcomerClient  extends Client implements WelcomerClientTyp
         this.events = new Collection();
         this.selectMenus = new Collection();
         this.commandsData = new Collection();
+        this.images = new Collection();
 
         this.cluster = new ClusterClient(this);
         this.admins = process.env.ADMINS?.split(",") || [];
+
+        this.images.set("banner", new AttachmentBuilder("banner.png").setFile("assets/banner.png"))
 
     }
 

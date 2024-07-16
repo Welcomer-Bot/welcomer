@@ -1,4 +1,4 @@
-import { AutocompleteInteraction, BaseMessageOptions, ChatInputCommandInteraction, CommandInteraction, GuildMember, Interaction, InteractionReplyOptions, MessageCreateOptions, User } from "discord.js";
+import { AutocompleteInteraction, BaseMessageOptions, Channel, ChatInputCommandInteraction, CommandInteraction, GuildBasedChannel, GuildMember, Interaction, InteractionReplyOptions, MessageCreateOptions, TextBasedChannel, User } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 const baseMessage: BaseMessageOptions = {
@@ -31,5 +31,14 @@ export const sendDmMessage = async (client: WelcomerClient, user: GuildMember, m
         return await fetchedUser.send(message);
     } catch (error) {
         return error; 
+    }
+}
+
+export const sendChannelMessage = async (client: WelcomerClient, channel: TextBasedChannel, message: MessageCreateOptions = baseMessage) => { 
+    try {
+        return await channel.send(message);
+    } catch (error) {
+        console.log("An error occured in sendChannelMessage function !", error) 
+        return error;
     }
 }
