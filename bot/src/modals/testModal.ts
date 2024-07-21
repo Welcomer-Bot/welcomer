@@ -1,6 +1,6 @@
 import { ModalMessageModalSubmitInteraction } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
-import { modalType } from "../types/types";
+import { modalType } from "../types";
 
 export default class TestModal implements modalType {
     customId = "testModal";

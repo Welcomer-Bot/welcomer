@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
-import { Module } from "../../types/types";
+import { Module } from "../../types";
 
-export interface editConfigType{
+export interface editConfigType {
     interactionId: string;
     requesterId: string;
     guildId: string;

@@ -1,6 +1,6 @@
 import { Guild, GuildMember, InteractionResponse, Message, StringSelectMenuInteraction } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
-import { SelectMenuType } from "../types/types";
+import { SelectMenuType } from "../types";
 import { sendInteractionMessage } from "../utils/messages";
 
 

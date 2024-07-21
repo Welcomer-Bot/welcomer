@@ -1,5 +1,5 @@
 import { APIApplicationCommand, Collection, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from "discord.js";
-import { CommandType, EventType, modalType, SelectMenuType } from "../types/types";
+import { CommandType, EventType, modalType, SelectMenuType } from "../types";
 import { loadFiles } from "./loader";
 import WelcomerClient from "./WelcomerClient";
 
@@ -140,3 +140,17 @@ export const loadSelectMenus = async function (client: WelcomerClient) {
     }
 }
 
+export const loadButtons = async function (client: WelcomerClient) {
+    client.buttons.clear();
+
+    let files = await loadFiles(`dist/buttons`);
+    for (let file of files) {
+        try {
+            let buttonFile = require(file).default;
+            let button: SelectMenuType = new buttonFile();
+            client.buttons.set(button.customId, button);
+        } catch (e) {
+            console.error("An error occured on loadButtons!" + e);
+        }
+    }
+}

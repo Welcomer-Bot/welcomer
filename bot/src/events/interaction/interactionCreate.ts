@@ -1,7 +1,7 @@
-import { AnySelectMenuInteraction, Interaction, InteractionResponse, Message } from "discord.js";
+import { Interaction, InteractionResponse, Message } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
+import { EventType } from '../../types';
 import { sendInteractionMessage } from "../../utils/messages";
-import { EventType } from './../../types/types';
 
 export default class InteractionCreateEvent implements EventType {
   name = "interactionCreate";
@@ -57,8 +57,26 @@ export default class InteractionCreateEvent implements EventType {
 
           break;
         }
+        case interaction.isButton(): {
+          let button = client.buttons.get(interaction.customId);
+          if (!button) return;
+          try {
+            await interaction.deferUpdate();
+            await button.execute(interaction, client);
+          } catch (error) {
+            console.error("There was an error on interactionCreate: ", error);
+            await sendInteractionMessage(interaction, {
+              content:
+                ":warning: There was an error while executing this command! \n Please try again.",
+              ephemeral: true,
+              embeds: [],
+              components: [],
+            });
+          }
+          break;
+        }
 
-        
+
         default: {
           sendInteractionMessage(interaction, {
             content: "This interaction type is not supported or there was an error while handling your command !",

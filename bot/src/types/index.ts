@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, Message, InteractionResponse, Guild, StringSelectMenuInteraction, AnySelectMenuInteraction } from "discord.js";
+import { AnySelectMenuInteraction, ButtonInteraction, ChatInputCommandInteraction, Guild, InteractionResponse, Message, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 export interface modalType {
@@ -14,16 +14,20 @@ export interface CommandType {
     ephemeral?: boolean;
     data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
 
-    execute(interaction: ChatInputCommandInteraction, client: WelcomerClient, ...options: any): Promise<void | Message<boolean> | InteractionResponse<boolean>>
+    execute(interaction: ChatInputCommandInteraction|ButtonInteraction, client: WelcomerClient, ...options: any): Promise<void | Message<boolean> | InteractionResponse<boolean>>
 }
-
 
 export interface EventType {
     prodEvent?: boolean
     cluster?: boolean
     name: string,
     once?: boolean,
-    execute(...args: any): Promise<void | InteractionResponse<boolean> | Message < boolean>>,
+    execute(...args: any): Promise<void | InteractionResponse<boolean> | Message<boolean>>,
+}
+
+export interface ButtonType {
+    customId: string;
+    execute(interaction: ButtonInteraction, client: WelcomerClient, ...options: any): Promise<void | InteractionResponse<boolean> | Message<boolean>>
 }
 
 export interface SelectMenuType {
@@ -76,7 +80,7 @@ export type Member = {
 export interface Module {
     enabled: boolean;
     dmEnabled: boolean;
-    channel: string|null;
+    channel: string | null;
     message: string;
     dmMessage: string;
     image: ModuleImage[];

@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, EmbedBuilder, SlashCommandBuilder } from "discord.js";
-import { CommandType } from "../../types/types";
-import { sendInteractionMessage } from "../../utils/messages";
+import { CommandType } from "../../types";
 import { createGuild } from "../../utils/database";
+import { sendInteractionMessage } from "../../utils/messages";
 
 
 export default class implements CommandType {
@@ -22,10 +22,10 @@ export default class implements CommandType {
             .setTimestamp()
         await createGuild(interaction.guild!)
         await sendInteractionMessage(interaction, { embeds: [embed] })
-        
-        
+
+
     }
-    
+
 
 
 }

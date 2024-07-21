@@ -1,9 +1,9 @@
-import { EmbedBuilder, BaseMessageOptions, ChatInputCommandInteraction, InteractionResponse, Message, SlashCommandBuilder, StringSelectMenuBuilder, ActionRowBuilder } from "discord.js";
-import { CommandType } from "../../types/types";
+import { ActionRowBuilder, BaseMessageOptions, ChatInputCommandInteraction, EmbedBuilder, InteractionResponse, Message, SlashCommandBuilder, StringSelectMenuBuilder } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
+import { CommandType } from "../../types";
 import { sendInteractionMessage } from "../../utils/messages";
 
-export default class Emit implements CommandType { 
+export default class Emit implements CommandType {
     name = "emit"
     description = "Emit an event"
     admin = true
@@ -33,7 +33,7 @@ export default class Emit implements CommandType {
                     value: "guildMemberRemove",
                 },
             ])
-        
+
         let message: BaseMessageOptions = {
             content: "",
             embeds: [

@@ -40,4 +40,12 @@ export const deleteGuild = async (guildId: string) => {
         return;
     }
 
+};
+
+export const getGuild = async (guildId: string) => {
+    try {
+        return await GuildSchema.findOne({ id: guildId });
+    } catch (error) {
+        return null; 
+    }
 }

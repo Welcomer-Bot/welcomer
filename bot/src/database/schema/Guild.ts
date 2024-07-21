@@ -1,6 +1,6 @@
 import { ChannelType } from "discord.js";
 import { Schema, SchemaTypes, model } from "mongoose";
-import { GuildFormated } from "../../types/types";
+import { GuildFormated } from "../../types";
 import { leaverkeywords, welcomeKeywords } from "../../utils/constants";
 
 
@@ -214,15 +214,16 @@ GuildSchema.pre("save", function (next) {
         const matchingGoodbyeChannel = guild.systemChannel ?? guild.channels.cache.find(channel =>
             channel.type === ChannelType.GuildText && leaverkeywords.some(keyword => channel.name.toLowerCase().includes(keyword))
         );
-    
+
         this.welcomer.channel = matchingWelcomeChannel ? matchingWelcomeChannel.id : null
-        this.welcomer.enabled = matchingWelcomeChannel ? true : false 
+        this.welcomer.enabled = matchingWelcomeChannel ? true : false
         this.leaver.channel = matchingGoodbyeChannel ? matchingGoodbyeChannel.id : null
         this.leaver.enabled = matchingGoodbyeChannel ? true : false
     }
+    this._tempData = undefined;
     delete this._tempData;
     next();
-    });
+});
 
 
 export default model("guilds", GuildSchema);

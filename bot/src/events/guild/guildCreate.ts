@@ -1,22 +1,21 @@
 import { ActionRowBuilder, ButtonBuilder, Guild, MessageCreateOptions, TextChannel } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
-import { EventType, GuildFormated } from "../../types/types";
+import { EventType, GuildFormated } from "../../types";
 import { guildAddOwnerMessage } from "../../utils/constants";
 import { createGuild } from "../../utils/database";
 import { embedHelperOnGuildCreate } from "../../utils/embeds";
 
-import { sendChannelMessage, sendDmMessage } from "../../utils/messages";
 import { autoConfigButton, dashButton, helpButton } from "../../utils/buttons";
+import { sendChannelMessage, sendDmMessage } from "../../utils/messages";
 
 
 export default class GuildCreate implements EventType {
     name = "guildCreate"
     async execute(guild: Guild, client: WelcomerClient): Promise<void> {
-        let guildDb = await createGuild(guild)
-        let systemChannel = guild.systemChannelId ? await guild.channels.fetch(guild.systemChannelId) as TextChannel : null
+        let guildDb = await createGuild(guild);
+        let systemChannel = guild.systemChannelId ? await guild.channels.fetch(guild.systemChannelId) as TextChannel : null;
 
-
-        const guildOwner = await guild.fetchOwner()
+        const guildOwner = await guild.fetchOwner();
 
         const DmMessage: MessageCreateOptions = {
             content: guildAddOwnerMessage(guildOwner, guild, guildDb as GuildFormated, client),
@@ -27,10 +26,8 @@ export default class GuildCreate implements EventType {
             sendChannelMessage(client, systemChannel, {
                 embeds: [embedHelperOnGuildCreate],
                 files: [client.images.get("banner")?.attachment as any],
-                components : [new ActionRowBuilder<ButtonBuilder>().addComponents(autoConfigButton, helpButton, dashButton)]
+                components: [new ActionRowBuilder<ButtonBuilder>().addComponents(autoConfigButton, helpButton, dashButton)]
             })
-
-
         }
     }
 }

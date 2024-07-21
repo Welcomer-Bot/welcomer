@@ -1,6 +1,5 @@
 import { Guild, InteractionResponse, Message } from "discord.js";
-import { EventType } from "../../types/types";
-import WelcomerClient from "../../structure/WelcomerClient";
+import { EventType } from "../../types";
 import { deleteGuild } from "../../utils/database";
 
 

@@ -1,6 +1,6 @@
 import { ClusterClient } from 'discord-hybrid-sharding';
 import { Client, Collection } from 'discord.js';
-import { CommandType } from './types';
+import { CommandType } from '.';
 
 export default interface WelcomerClientType extends Client {
     commands?: Collection<string, CommandType>,

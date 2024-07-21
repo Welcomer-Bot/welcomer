@@ -1,8 +1,8 @@
 import { ChatInputCommandInteraction, EmbedBuilder, InteractionResponse, Message, SlashCommandBuilder } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
-import { CommandType } from "../../types/types";
-import { sendInteractionMessage } from "../../utils/messages";
+import { CommandType } from "../../types";
 import { connectionStatus } from "../../utils/database";
+import { sendInteractionMessage } from "../../utils/messages";
 
 
 
@@ -56,7 +56,7 @@ export default class StatusCommand implements CommandType {
     async execute(interaction: ChatInputCommandInteraction, client: WelcomerClient, ...options: any): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
 
         if (!client.isReady()) {
-            return sendInteractionMessage(interaction, {content: "The client is not ready yet"})
+            return sendInteractionMessage(interaction, { content: "The client is not ready yet" })
         }
 
         let statusEmbed = new EmbedBuilder()
@@ -92,10 +92,10 @@ export default class StatusCommand implements CommandType {
                     value: `${formatDbState(connectionStatus)}`,
                     inline: true,
                 },
-        )
+            )
             .setColor("#0099ff")
             .setTimestamp();
-        await sendInteractionMessage(interaction, {embeds: [statusEmbed]})
+        await sendInteractionMessage(interaction, { embeds: [statusEmbed] })
     }
 
 }

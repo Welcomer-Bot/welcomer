@@ -4,7 +4,7 @@ import { ButtonBuilder, ButtonStyle } from "discord.js";
 export const autoConfigButton = new ButtonBuilder()
     .setLabel("Setup Welcomer")
     .setStyle(ButtonStyle.Primary)
-    .setCustomId("autoconfig")
+    .setCustomId("autoConfigButton")
     .setEmoji("<:welcomer_new:1262837579062186054>")
 
 export const helpButton = new ButtonBuilder()
