@@ -6,8 +6,8 @@ import { GuildFormated } from "../types";
 
 
 export const guildAddOwnerMessage = function (user: GuildMember, guild: Guild, guildDb: GuildFormated, client: WelcomerClient) {
-    const autoConfigCommand = client.commandsData.get("autoConfig");
-    const editConfigCommand = client.commandsData.get("editConfig");
+    const autoConfigCommand = client.commandsData.get("autoconfig");
+    const editConfigCommand = client.commandsData.get("editconfig");
     const testCommand = client.commandsData.get("test");
     let message = `
 # Hi ${user.user.username ?? "there"}, thanks for adding me to ${guild.name} (${guild.id})

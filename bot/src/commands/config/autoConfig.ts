@@ -13,12 +13,10 @@ export default class AutoConfigCommand implements CommandType {
         .setDescription(this.description);
 
     async execute(interaction: ChatInputCommandInteraction | ButtonInteraction, client: WelcomerClient, ...options: any): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
-        if(!interaction.guild) return await sendInteractionMessage(interaction, {content: "This command can only be used in a server."})
-        
-        console.log("autoConfig")
+        if (!interaction.guild) return await sendInteractionMessage(interaction, { content: "This command can only be used in a server." })
         
         let guildDb = await getGuild(interaction.guild.id)
-        if(!guildDb) return await sendInteractionMessage(interaction, {content: "An error occured while trying to fetch the guild data."}) 
-        await sendInteractionMessage(interaction, { embeds: [autoConfigEmbed(guildDb, client)] })
+        if(!guildDb) return await sendInteractionMessage(interaction, {content: "An error occured while trying to fetch the guild data. Try again or if the issue persisits, join the support server to get some help", ephemeral: true}) 
+        await sendInteractionMessage(interaction, { embeds: [autoConfigEmbed(guildDb, client)] }, true)
     }
 }

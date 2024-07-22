@@ -55,9 +55,6 @@ export const loadCommands = async function (client: WelcomerClient) {
         }
         client.application?.commands.set(commands_array);
 
-        for (let command of commands_array) {
-            command.dm_permission = false;
-        }
         console.log(
             `Started loading ${commands_array.length + command_admin.length} commands`,
         );

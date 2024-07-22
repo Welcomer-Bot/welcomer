@@ -46,13 +46,13 @@ export default class InteractionCreateEvent implements EventType {
             await selectMenu.execute(interaction, client);
           } catch (error) {
             console.error("There was an error on interactionCreate: ", error);
-            await sendInteractionMessage(interaction, {
-              content:
-                ":warning: There was an error while executing this command! \n Please try again.",
-              ephemeral: true,
-              embeds: [],
-              components: [],
-            });
+            // await sendInteractionMessage(interaction, {
+            //   content:
+            //     ":warning: There was an error while executing this command! \n Please try again.",
+            //   ephemeral: true,
+            //   embeds: [],
+            //   components: [],
+            // });
           }
 
           break;
@@ -78,7 +78,7 @@ export default class InteractionCreateEvent implements EventType {
 
 
         default: {
-          sendInteractionMessage(interaction, {
+          sendInteractionMessage(interaction as any, {
             content: "This interaction type is not supported or there was an error while handling your command !",
             ephemeral: true,
             embeds: [],
@@ -89,7 +89,7 @@ export default class InteractionCreateEvent implements EventType {
     } catch (error) {
       console.error("There was an error on interactionCreate: ", error);
       if (!interaction.isAutocomplete()) {
-        await sendInteractionMessage(interaction, {
+        await sendInteractionMessage(interaction as any, {
           content:
             ":warning: There was an error while executing this command! \n Please try again.",
           ephemeral: true,

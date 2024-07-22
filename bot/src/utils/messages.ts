@@ -1,4 +1,4 @@
-import { AutocompleteInteraction, BaseMessageOptions, Channel, ChatInputCommandInteraction, CommandInteraction, GuildBasedChannel, GuildMember, Interaction, InteractionReplyOptions, MessageCreateOptions, TextBasedChannel, User } from "discord.js";
+import { AnySelectMenuInteraction, AutocompleteInteraction, BaseMessageOptions, ButtonInteraction, ChatInputCommandInteraction, GuildMember, Interaction, InteractionReplyOptions, InteractionResponse, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 const baseMessage: BaseMessageOptions = {
@@ -8,16 +8,17 @@ const baseMessage: BaseMessageOptions = {
     files: [],
 }
 
-export const sendInteractionMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, message: InteractionReplyOptions = baseMessage, follow: Boolean = false) => {
+export const sendInteractionMessage = async (interaction: ChatInputCommandInteraction | ButtonInteraction | AnySelectMenuInteraction, message: InteractionReplyOptions = baseMessage, follow: Boolean = false): Promise<Message<boolean> | void | InteractionResponse> => {
     if (!interaction || !message) return console.log("Missing parameters for sendInteractionMessage")
     try {
         if (follow) {
-            return (await interaction.followUp(message));
+            await interaction.followUp({ ...message, fetchReply: true });
         } else if (interaction.deferred || interaction.replied) {
-            return (await interaction.editReply(message));
+            await interaction.editReply(message);
         } else {
-            return (await interaction.reply(message));
+            await interaction.reply(message);
         }
+        return interaction.fetchReply();
 
     } catch (error) {
         console.log("An error occured in sendInteractionMessage function !", error)
@@ -31,15 +32,15 @@ export const sendDmMessage = async (client: WelcomerClient, user: GuildMember, m
         let fetchedUser = await client.users.fetch(user)
         return await fetchedUser.send(message);
     } catch (error) {
-        return error; 
+        return error;
     }
 }
 
-export const sendChannelMessage = async (client: WelcomerClient, channel: TextBasedChannel, message: MessageCreateOptions = baseMessage) => { 
+export const sendChannelMessage = async (client: WelcomerClient, channel: TextBasedChannel, message: MessageCreateOptions = baseMessage) => {
     try {
         return await channel.send(message);
     } catch (error) {
-        console.log("An error occured in sendChannelMessage function !", error) 
+        console.log("An error occured in sendChannelMessage function !", error)
         return error;
     }
 }
