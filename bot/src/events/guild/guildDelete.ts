@@ -6,6 +6,6 @@ import { deleteGuild } from "../../utils/database";
 export default class GuildDelete implements EventType {
     name = "guildDelete";
     async execute(guild: Guild): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
-        await deleteGuild(guild.id)
+        await deleteGuild(guild)
     }
 }

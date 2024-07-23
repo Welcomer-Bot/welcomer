@@ -16,36 +16,34 @@ export const connectionStatus = connection.readyState;
 
 export const createGuild = async (guild: Guild) => {
     try {
-        let guildDb = await GuildSchema.findOne({ id: guild.id });
-        if (guildDb) {
-            await GuildSchema.updateOne({ id: guild.id }, guild, { new: true });
-        } else {
-            guildDb = new GuildSchema(guild);
+            let guildDb = new GuildSchema(guild);
             guildDb._tempData = guild
             await guildDb.save();
-
-        }
         return guildDb;
 
     } catch (error) {
-        return;
+        throw new Error("An error occured while trying to save the guild to the database: " + error)
     }
 };
 
 
-export const deleteGuild = async (guildId: string) => {
+export const deleteGuild = async (guild: Guild) => {
     try {
-        return await GuildSchema.findOneAndDelete({ id: guildId })
+        return await GuildSchema.findOneAndDelete({ id: guild.id })
     } catch (error) {
-        return;
+        throw new Error("An error occured while trying to delete the guild from the database: " + error)
     }
 
 };
 
-export const getGuild = async (guildId: string) => {
+export const getGuild = async (guild: Guild) => {
     try {
-        return await GuildSchema.findOne({ id: guildId });
+        let guildDb = await GuildSchema.findOne({ id: guild.id });
+        if (!guildDb) {
+            guildDb = await createGuild(guild)
+        }
+        return guildDb;
     } catch (error) {
-        return null; 
+        throw new Error("An error occured while trying to get the guild from the database: " + error)
     }
 }

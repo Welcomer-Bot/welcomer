@@ -1,5 +1,6 @@
-import { AnySelectMenuInteraction, AutocompleteInteraction, BaseMessageOptions, ButtonInteraction, ChatInputCommandInteraction, GuildMember, Interaction, InteractionReplyOptions, InteractionResponse, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, BaseMessageOptions, ButtonBuilder, GuildMember, Interaction, InteractionReplyOptions, InteractionResponse, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
+import { helpButton } from "./buttons";
 
 const baseMessage: BaseMessageOptions = {
     content: "",
@@ -8,7 +9,7 @@ const baseMessage: BaseMessageOptions = {
     files: [],
 }
 
-export const sendInteractionMessage = async (interaction: ChatInputCommandInteraction | ButtonInteraction | AnySelectMenuInteraction, message: InteractionReplyOptions = baseMessage, follow: Boolean = false): Promise<Message<boolean> | void | InteractionResponse> => {
+export const sendInteractionMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, message: InteractionReplyOptions = baseMessage, follow: Boolean = false): Promise<Message<boolean> | void | InteractionResponse> => {
     if (!interaction || !message) return console.log("Missing parameters for sendInteractionMessage")
     try {
         if (follow) {
@@ -43,4 +44,20 @@ export const sendChannelMessage = async (client: WelcomerClient, channel: TextBa
         console.log("An error occured in sendChannelMessage function !", error)
         return error;
     }
+}
+
+export const sendErrorMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, error: string) => {
+    (await interaction.fetchReply()).removeAttachments();
+
+    await sendInteractionMessage(
+        interaction,
+        {
+            content: error,
+            ephemeral: true,
+            embeds: [],
+            components: [new ActionRowBuilder<ButtonBuilder>().addComponents(helpButton)],
+            files: [],
+        },
+        true
+    );
 }

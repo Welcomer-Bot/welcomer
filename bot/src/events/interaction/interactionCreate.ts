@@ -1,7 +1,7 @@
 import { Interaction, InteractionResponse, Message } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
-import { EventType } from '../../types';
-import { sendInteractionMessage } from "../../utils/messages";
+import { EventType } from "../../types";
+import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
 
 export default class InteractionCreateEvent implements EventType {
   name = "interactionCreate";
@@ -10,7 +10,7 @@ export default class InteractionCreateEvent implements EventType {
     interaction: Interaction,
     client: WelcomerClient
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
-    if (!interaction.inGuild()) return;
+    if (!interaction.inGuild() && !interaction.isAutocomplete()) return sendErrorMessage(interaction, "This command can only be used in a server.")
 
     try {
       switch (true) {
@@ -27,13 +27,7 @@ export default class InteractionCreateEvent implements EventType {
             await command.execute(interaction, client);
           } catch (error) {
             console.error("There was an error on interactionCreate: ", error);
-            await sendInteractionMessage(interaction, {
-              content:
-                ":warning: There was an error while executing this command! \n Please try again.",
-              ephemeral: true,
-              embeds: [],
-              components: [],
-            });
+            await sendErrorMessage(interaction, `:warning: There was an error while executing this command!\n Please try again. ${ error ? "```" + error + "```" : "" }`)
           }
           break;
         }
@@ -42,17 +36,11 @@ export default class InteractionCreateEvent implements EventType {
           if (!selectMenu) return;
           try {
             // await interaction.deferReply({ ephemeral: selectMenu.ephemeral });
-            await interaction.deferUpdate()
+            await interaction.deferUpdate();
             await selectMenu.execute(interaction, client);
           } catch (error) {
             console.error("There was an error on interactionCreate: ", error);
-            // await sendInteractionMessage(interaction, {
-            //   content:
-            //     ":warning: There was an error while executing this command! \n Please try again.",
-            //   ephemeral: true,
-            //   embeds: [],
-            //   components: [],
-            // });
+            await sendErrorMessage(interaction, `:warning: There was an error while executing this select menu!\n Please try again. ${error ? "```" + error + "```" : ""}`)
           }
 
           break;
@@ -65,38 +53,19 @@ export default class InteractionCreateEvent implements EventType {
             await button.execute(interaction, client);
           } catch (error) {
             console.error("There was an error on interactionCreate: ", error);
-            await sendInteractionMessage(interaction, {
-              content:
-                ":warning: There was an error while executing this command! \n Please try again.",
-              ephemeral: true,
-              embeds: [],
-              components: [],
-            });
+            await sendErrorMessage(interaction, `:warning: There was an error while executing this button!\n Please try again. ${error ? "```" + error + "```" : ""}`,)
           }
           break;
         }
 
-
         default: {
-          sendInteractionMessage(interaction as any, {
-            content: "This interaction type is not supported or there was an error while handling your command !",
-            ephemeral: true,
-            embeds: [],
-            components: []
-          })
+          await sendErrorMessage(interaction, "This interaction type is not supported or there was an error while handling your command !")
         }
       }
     } catch (error) {
       console.error("There was an error on interactionCreate: ", error);
       if (!interaction.isAutocomplete()) {
-        await sendInteractionMessage(interaction as any, {
-          content:
-            ":warning: There was an error while executing this command! \n Please try again.",
-          ephemeral: true,
-          embeds: [],
-          components: [],
-
-        });
+        sendErrorMessage(interaction, `:warning: There was an error while executing this command! \n Please try again. ${error ? "```" + error + "```" : ""}`)
       }
     }
   }
