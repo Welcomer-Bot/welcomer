@@ -20,4 +20,4 @@ ___
 > - [ ] Add editConfig command
 > - [ ] Add preview of message in editConfig command
 
-
+- [ ] Add sentry.io to handle errors and report them
