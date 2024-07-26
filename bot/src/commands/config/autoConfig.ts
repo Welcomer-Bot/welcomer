@@ -15,7 +15,7 @@ export default class AutoConfigCommand implements CommandType {
         if (!interaction.guild) return;
 
         let guildDb = await getGuild(interaction.guild)
-        throw new Error("Not implemented yet")
         await sendInteractionMessage(interaction, { embeds: [autoConfigEmbed(guildDb, client)] }, true)
+
     }
 }

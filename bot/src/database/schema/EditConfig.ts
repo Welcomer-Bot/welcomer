@@ -10,7 +10,7 @@ export interface editConfigType {
     expireAt: Date
 }
 
-let editConfigSchema = new Schema<editConfigType>(
+const editConfigSchema = new Schema<editConfigType>(
     {
         interactionId: {
             type: String,

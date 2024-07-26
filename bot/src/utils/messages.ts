@@ -48,7 +48,6 @@ export const sendChannelMessage = async (client: WelcomerClient, channel: TextBa
 
 export const sendErrorMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, error: string) => {
     (await interaction.fetchReply()).removeAttachments();
-
     await sendInteractionMessage(
         interaction,
         {

@@ -5,7 +5,7 @@ export const autoConfigButton = new ButtonBuilder()
     .setLabel("Setup Welcomer")
     .setStyle(ButtonStyle.Primary)
     .setCustomId("autoConfigButton")
-    .setEmoji("<:welcomer_new:1262837579062186054>")
+    .setEmoji("<:welcomer:1265400113342451855>")
 
 export const helpButton = new ButtonBuilder()
     .setLabel("Support Server - Help")

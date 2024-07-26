@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, Guild, MessageCreateOptions, TextChann
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType, GuildFormated } from "../../types";
 import { guildAddOwnerMessage } from "../../utils/constants";
-import { createGuild } from "../../utils/database";
+import { createGuild, getGuild } from "../../utils/database";
 import { embedHelperOnGuildCreate } from "../../utils/embeds";
 
 import { autoConfigButton, dashButton, helpButton } from "../../utils/buttons";
@@ -12,7 +12,7 @@ import { sendChannelMessage, sendDmMessage } from "../../utils/messages";
 export default class GuildCreate implements EventType {
     name = "guildCreate"
     async execute(guild: Guild, client: WelcomerClient): Promise<void> {
-        let guildDb = await createGuild(guild);
+        let guildDb = await getGuild(guild);
         let systemChannel = guild.systemChannelId ? await guild.channels.fetch(guild.systemChannelId) as TextChannel : null;
 
         const guildOwner = await guild.fetchOwner();
