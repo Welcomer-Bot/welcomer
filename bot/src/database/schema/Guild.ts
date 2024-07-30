@@ -74,39 +74,71 @@ const GuildSchema = new Schema<GuildFormated>({
             type: Boolean,
             default: false,
         },
-        dmEnabled: {
-            type: Boolean,
-            default: false,
-        },
-        channel: {
-            type: String,
-            default: null,
-        },
-        message: {
-            type: String,
-            default: "Welcome {member} to {server}!",
-            maxlength: 2000,
-        },
-        dmMessage: {
-            type: String,
-            default: "Welcome {member} to {server}!",
-            maxlength: 2000,
-        },
-        image: {
-            backgroundId: {
-                type: Number,
-                default: null,
-            },
+        dm: {
             enabled: {
                 type: Boolean,
                 default: false,
             },
-            theme: {
+            message: {
                 type: String,
-                default: "default",
+                default: "Welcome {member} to {server}!",
+                maxlength: 2000,
+            },
+            image: {
+                enabled: {
+                    type: Boolean,
+                    default: false,
+                },
+                url: {
+                    type: String,
+                    default: null,
+                },
+            },
+            embed: {
+                enabled: {
+                    type: Boolean,
+                    default: false,
+                },
+                title: {
+                    type: String,
+                    default: "Welcome {member} to {server}!",
+                    maxlength: 256,
+                },
+                description: {
+                    type: String,
+                    default: "You are the {count} member to join!",
+                    maxlength: 2048,
+                },
+                color: {
+                    type: Number || String,
+                    default: 0,
+                },
+                footer: {
+                    enabled: {
+                        type: Boolean,
+                        default: true,
+                    },
+                    text: {
+                        type: String,
+                        default: "{member} joined at {joinedAt}",
+                        maxlength: 2014,
+                    },
+                    icon: {
+                        type: String,
+                        default: null,
+                        maxlength: 2048,
+                    },
+                },
+                timestamp: {
+                    type: Boolean,
+                    default: true,
+                },
+            },
+            channel: {
+                type: String,
+                default: null,
             },
         },
-        // end of image
     },
     leaver: {
         embed: {
@@ -190,14 +222,14 @@ const GuildSchema = new Schema<GuildFormated>({
                 default: "default",
             },
         }, // end of leaver module
-        imageGallery: [
-            {
-                id: Number,
-                name: String,
-                url: String,
-            },
-        ],
     },
+    imageGallery: [
+        {
+            id: Number,
+            name: String,
+            url: String,
+        },
+    ],
     _tempData: {
         type: Schema.Types.Mixed,
         select: false

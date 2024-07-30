@@ -53,6 +53,7 @@ export interface GuildFormated {
     mutual?: boolean;
     _tempData?: Guild
     _id?: string;
+    imageGallery? : imageGallery[]
 }
 
 export type Channel = {
@@ -79,38 +80,55 @@ export type Member = {
 
 export interface Module {
     enabled: boolean;
-    dmEnabled: boolean;
     channel: string | null;
     message: string;
-    dmMessage: string;
-    image: ModuleImage[];
-    embed: ModuleEmbed[];
-    webhook: ModuleWebhook[];
+    dm: DmModule;
+    image: ImageModule;
+    embed: EmbedModule;
+    webhook: WebhookModule;
 };
 
-export type ModuleImage = {
+export type ImageModule = {
     enabled: boolean;
     backgroundId: string;
     theme: string;
 };
 
-export type ModuleEmbed = {
+export type EmbedModule = {
     enabled: boolean;
     title: string;
     description: string;
     color: string;
-    footer: ModuleEmbedFooter[];
+    footer: EmbedModuleFooter;
+    timestamp: boolean;
 };
 
-export type ModuleEmbedFooter = {
+export type EmbedModuleFooter = {
     enabled: boolean;
     text: string;
     icon: string;
 };
 
-export type ModuleWebhook = {
+export type WebhookModule = {
     enabled: boolean;
     id: string;
     name: string;
     avatar: string;
 };
+
+export type DmModule = {
+    enabled: boolean;
+    message: string;
+    image: {
+        enabled: boolean;
+        url: string;
+    },
+    embed: EmbedModule
+
+};
+
+export type imageGallery = {
+    id: string;
+    url: string;
+    name: string;
+}

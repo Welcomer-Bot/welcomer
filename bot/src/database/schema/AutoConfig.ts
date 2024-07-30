@@ -32,7 +32,7 @@
 //  8.3.6. Enable/Disable DM Embed Timestamp
 // 9. Finish
 
-import { Schema } from "mongoose";
+import { model, Schema } from "mongoose";
 import { Module } from "../../types";
 
 export interface AutoConfigType {
@@ -42,7 +42,7 @@ export interface AutoConfigType {
     options: Module;
 }
 
-const autoConfigShcema = new Schema<AutoConfigType>({
+const autoConfigSchema = new Schema<AutoConfigType>({
     guildId: {
         type: String,
         required: true,
@@ -206,3 +206,5 @@ const autoConfigShcema = new Schema<AutoConfigType>({
         },
     },
 })
+
+export default model<AutoConfigType>('AutoConfig', autoConfigSchema);
