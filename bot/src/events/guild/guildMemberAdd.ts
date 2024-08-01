@@ -11,9 +11,6 @@ export default class GuildMemberAdd implements EventType {
     name: string = 'guildMemberAdd';
     async execute(member: GuildMember, client: WelcomerClient): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
         let welcomeOptions = await getWelcomeOptions(member.guild);
-        console.log(welcomeOptions)
-        console.log(welcomeOptions.enabled)
-        console.log(welcomeOptions.channel)
         if (!welcomeOptions?.enabled || welcomeOptions.channel == null) return console.log("The welcome module is not enabled or the channel is not set")
         let channel = member.guild.channels.cache.get(welcomeOptions.channel)
         if (!channel || !channel.isTextBased()) return console.log("The channel is not a valid text channel")

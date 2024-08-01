@@ -1,7 +1,36 @@
-import { APIEmbed } from 'discord.js';
+import { ColorResolvable } from 'discord.js';
 import { Schema } from "mongoose";
 
-export const EmbedSchema = new Schema<APIEmbed>({
+export interface WelcomerEmbed {
+    title: string;
+    description: string;
+    url: string;
+    color: ColorResolvable;
+    footer: {
+        text: string;
+        icon_url: string;
+    };
+    image: {
+        url: string;
+        isGeneratedImage: boolean;
+    };
+    timestamp: boolean;
+    thumbnail: {
+        url: string;
+    };
+    author: {
+        name: string;
+        url: string;
+        icon_url: string;
+    };
+    fields: {
+        name: string;
+        value: string;
+        inline: boolean;
+    }[];
+}
+
+export const EmbedSchema = new Schema<WelcomerEmbed>({
     title: {
         type: String,
         maxlength: 256,
@@ -32,10 +61,11 @@ export const EmbedSchema = new Schema<APIEmbed>({
             default: null,
             maxlength: 2048,
         },
-        icon: {
+        icon_url: {
             type: String,
             default: null,
         },
+
     },
     image: {
         url: {
@@ -46,26 +76,15 @@ export const EmbedSchema = new Schema<APIEmbed>({
             type: Boolean,
             default: true,
         },
-        height: {
-            type: Number,
-            default: null,
-        },
-        width: {
-            type: Number,
-            default: null,
-        },
     },
+    timestamp: {
+        type: Boolean,
+        default: false,
+    },
+
     thumbnail: {
         url: {
             type: String,
-            default: null,
-        },
-        height: {
-            type: Number,
-            default: null,
-        },
-        width: {
-            type: Number,
             default: null,
         },
     },
@@ -78,7 +97,7 @@ export const EmbedSchema = new Schema<APIEmbed>({
             type: String,
             default: null,
         },
-        icon: {
+        icon_url: {
             type: String,
             default: null,
         },

@@ -26,3 +26,12 @@ ___
 ### Links I used that inspired me
 
 https://message.style/app/editor
+
+
+### Good to know
+
+Message limits: all characters for one message ( content + all embeds characters ) -> 6000 characters
+In embeds limits: 
+| Field       | Limits         |
+| ----------- | -------------- |
+| title       | 256 characters |

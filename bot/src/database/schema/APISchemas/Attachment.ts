@@ -8,16 +8,8 @@ export const attachementSchema = new Schema<APIAttachment>({
         type: String,
         required: true
     },
-    proxy_url: {
+    filename: {
         type: String,
-        required: true
-    },
-    height: {
-        type: Number,
-        required: true
-    },
-    width: {
-        type: Number,
         required: true
     }
 })

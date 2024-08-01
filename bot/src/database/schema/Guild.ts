@@ -22,6 +22,7 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
         },
         message: {
             type: String,
+            default: "Welcome to the server",
             maxlength: 2000,
         },
         embeds: {

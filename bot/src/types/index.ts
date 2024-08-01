@@ -1,5 +1,6 @@
 import { AnySelectMenuInteraction, APIAttachment, APIEmbed, ButtonInteraction, ChatInputCommandInteraction, ColorResolvable, Guild, InteractionResponse, Message, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
+import { WelcomerEmbed } from "../database/schema/APISchemas/Embed";
 
 export interface modalType {
     customId: string;
@@ -83,7 +84,7 @@ export interface Module {
     channel: string | null;
     message: string;
     dm?: DmModule;
-    embeds: APIEmbed[];
+    embeds: WelcomerEmbed[];
     attachements: APIAttachment[];
     webhook: WebhookModule;
 };
