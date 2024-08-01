@@ -8,7 +8,7 @@ export default class EmitMenu implements SelectMenuType {
     customId: string = "emitMenu"
     async execute(interaction: StringSelectMenuInteraction, client: WelcomerClient, ...options: any): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
         let event = interaction.values[0];
-        if (!client.admins.includes(interaction.user.id)) return;
+        if (!client.admins.includes(interaction.user.id)) return sendInteractionMessage(interaction, { content: "You are not allowed to use this command.", ephemeral: true })
         await interaction.editReply({ components: interaction.message.components });
         switch (event) {
             case "guildMemberAdd":

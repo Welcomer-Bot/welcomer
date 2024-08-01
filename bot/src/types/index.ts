@@ -1,4 +1,4 @@
-import { AnySelectMenuInteraction, ButtonInteraction, ChatInputCommandInteraction, Guild, InteractionResponse, Message, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
+import { AnySelectMenuInteraction, APIAttachment, APIEmbed, ButtonInteraction, ChatInputCommandInteraction, ColorResolvable, Guild, InteractionResponse, Message, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 export interface modalType {
@@ -82,52 +82,57 @@ export interface Module {
     enabled: boolean;
     channel: string | null;
     message: string;
-    dm: DmModule;
-    image: ImageModule;
-    embed: EmbedModule;
+    dm?: DmModule;
+    embeds: APIEmbed[];
+    attachements: APIAttachment[];
     webhook: WebhookModule;
 };
 
-export type ImageModule = {
+export interface ImageModule {
     enabled: boolean;
     backgroundId: string;
     theme: string;
 };
 
-export type EmbedModule = {
-    enabled: boolean;
+export interface EmbedModule {
     title: string;
     description: string;
-    color: string;
+    url: string;
+    color: ColorResolvable;
+    image: ImageEmbedModule;
     footer: EmbedModuleFooter;
+    thumbnail: string;
     timestamp: boolean;
 };
 
-export type EmbedModuleFooter = {
+export interface ImageEmbedModule {
+    enabled: boolean;
+    isGeneratedImage: boolean;
+    image: string;
+}
+
+export interface EmbedModuleFooter {
     enabled: boolean;
     text: string;
     icon: string;
 };
 
-export type WebhookModule = {
+export interface WebhookModule {
     enabled: boolean;
     id: string;
     name: string;
     avatar: string;
 };
 
-export type DmModule = {
+export interface DmModule{
     enabled: boolean;
     message: string;
-    image: {
-        enabled: boolean;
-        url: string;
-    },
-    embed: EmbedModule
+    embeds: APIEmbed[];
+    attachements: APIAttachment[];
 
 };
 
-export type imageGallery = {
+export interface imageGallery {
     id: string;
     url: string;
     name: string;

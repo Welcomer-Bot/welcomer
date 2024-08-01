@@ -47,3 +47,12 @@ export const getGuild = async (guild: Guild) => {
         throw new Error("An error occured while trying to get the guild from the database: " + error)
     }
 }
+
+export const getWelcomeOptions = async (guild: Guild) => {
+    try {
+        let guildDb = await getGuild(guild);
+        return guildDb.welcomer;
+    } catch (error) {
+        throw new Error("An error occured while trying to get the welcome options from the database: " + error)
+    }
+}
