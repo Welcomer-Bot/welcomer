@@ -63,7 +63,6 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
                 default: null,
             },
         },
-
         dm: {
             enabled: {
                 type: Boolean,
@@ -93,6 +92,36 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
                         `The array exceeds the limit of 10  elements. Current length: ${props.value.length}`,
                 },
             },
+        },
+        image: {
+            enabled: {
+                type: Boolean,
+                default: false,
+            },
+            backgroundId: {
+                type: String,
+                default: null,
+            },
+            theme: {
+                type: String,
+                default: "default",
+            },
+            text: {
+                type: String,
+                default: "Welcome to the server",
+            },
+            color: {
+                type: String,
+                default: "#ffffff",
+            },
+            font: {
+                type: String,
+                default: "Arial",
+            },
+            fontSize: {
+                type: Number,
+                default: 50,
+            }
         },
     },
     leaver: {
@@ -128,36 +157,66 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
                     `The array exceeds the limit of 10  elements. Current length: ${props.value.length}`,
             },
         },
-    webhook: {
-        enabled: {
-            type: Boolean,
-            default: false,
+        image: {
+            enabled: {
+                type: Boolean,
+                default: false,
+            },
+            backgroundId: {
+                type: String,
+                default: null,
+            },
+            theme: {
+                type: String,
+                default: "default",
+            },
+            text: {
+                type: String,
+                default: "Welcome to the server",
+            },
+            color: {
+                type: String,
+                default: "#ffffff",
+            },
+            font: {
+                type: String,
+                default: "Arial",
+            },
+            fontSize: {
+                type: Number,
+                default: 50,
+            }
         },
-        id: {
-            type: String,
-            default: null,
-        },
-        name: {
-            type: String,
-            default: null,
-        },
-        avatar: {
-            type: String,
-            default: null,
+        webhook: {
+            enabled: {
+                type: Boolean,
+                default: false,
+            },
+            id: {
+                type: String,
+                default: null,
+            },
+            name: {
+                type: String,
+                default: null,
+            },
+            avatar: {
+                type: String,
+                default: null,
+            },
         },
     },
-},
     imageGallery: [
-    {
-        id: Number,
-        name: String,
-        url: String,
-    },
-],
+        {
+            id: Number,
+            name: String,
+            url: String,
+        },
+    ],
     _tempData: {
-    type: Schema.Types.Mixed,
-    select: false,
-},
+        type: Schema.Types.Mixed,
+        select: false,
+    },
 });
 
 GuildSchema.pre("save", function (next) {

@@ -21,3 +21,8 @@ ___
 > - [ ] Add preview of message in editConfig command
 
 - [ ] Add sentry.io to handle errors and report them
+
+
+### Links I used that inspired me
+
+https://message.style/app/editor

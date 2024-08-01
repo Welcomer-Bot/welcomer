@@ -92,6 +92,11 @@ export interface ImageModule {
     enabled: boolean;
     backgroundId: string;
     theme: string;
+    text: string;
+    color: string;
+    font: string;
+    fontSize: number;
+    
 };
 
 export interface EmbedModule {
