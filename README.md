@@ -32,6 +32,12 @@ https://message.style/app/editor
 
 Message limits: all characters for one message ( content + all embeds characters ) -> 6000 characters
 In embeds limits: 
-| Field       | Limits         |
-| ----------- | -------------- |
-| title       | 256 characters |
+| Field       | Limit                  |
+|-------------|------------------------|
+| title       | 256                    |
+| description | 4096                   |
+| fields      | Up to 25 field objects |
+| field.name  | 256                    |
+| field.value | 1024                   |
+| footer.text | 2048                   |
+| author.name | 256                    |
