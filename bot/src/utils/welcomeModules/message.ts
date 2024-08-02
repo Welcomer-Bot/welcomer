@@ -1,4 +1,4 @@
-import { BaseMessageOptions, EmbedBuilder, GuildMember } from "discord.js"
+import { APIEmbed, BaseMessageOptions, EmbedBuilder, GuildMember } from "discord.js"
 import { Module } from "../../types";
 
 
@@ -107,24 +107,24 @@ export async function formatMessage(options: Module, member: GuildMember) {
 
 }
 
-// export async function generateEmbed(options: Module, member: GuildMember) {
-//     let embed = new EmbedBuilder()
-//     if(options.embed.title) {
-//         embed.setTitle(formatText(options.embed.title, member))
-//     }
-//     if(options.embed.description) {
-//         embed.setDescription(formatText(options.embed.description, member))
-//     }
-//     if(options.embed.color) {
-//         embed.setColor(options.embed.color)
-//     }
-//     if(options.embed.footer.enabled) {
-//         embed.setFooter({ text: formatText(options.embed.footer.text, member), iconURL: options.embed.footer.icon })
-//     }
-//     if(options.embed.timestamp) {
-//         embed.setTimestamp()
-//     }
+export async function generateEmbed(embed: APIEmbed, member: GuildMember) {
+    let embedBuilder = new EmbedBuilder()
+    if(options.embed.title) {
+        embed.setTitle(formatText(options.embed.title, member))
+    }
+    if(options.embed.description) {
+        embed.setDescription(formatText(options.embed.description, member))
+    }
+    if(options.embed.color) {
+        embed.setColor(options.embed.color)
+    }
+    if(options.embed.footer.enabled) {
+        embed.setFooter({ text: formatText(options.embed.footer.text, member), iconURL: options.embed.footer.icon })
+    }
+    if(options.embed.timestamp) {
+        embed.setTimestamp()
+    }
 
-//     return embed
-// }
+    return embed
+}
    

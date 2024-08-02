@@ -1,10 +1,81 @@
-import { ChannelType } from "discord.js";
+import { ChannelType, APIAttachment, APIEmbed, Guild, ColorResolvable } from "discord.js";
 import { model, Model, Schema } from "mongoose";
-import { GuildFormated } from "../../types";
 import { leaverkeywords, welcomeKeywords } from "../../utils/constants";
 import { attachementSchema } from "./APISchemas/Attachment";
-import { EmbedSchema } from "./APISchemas/Embed";
+import { EmbedSchema, WelcomerEmbed } from "./APISchemas/Embed";
+export interface GuildFormated {
+    id: string;
+    welcomer: Module;
+    leaver: Module;
+    mutual?: boolean;
+    _tempData?: Guild
+    _id?: string;
+    imageGallery?: imageGallery[]
+}
 
+export interface Module {
+    enabled: boolean;
+    channel: string | null;
+    message: string;
+    dm?: DmModule;
+    embeds: WelcomerEmbed[];
+    attachements: APIAttachment[];
+    webhook: WebhookModule;
+};
+
+export interface ImageModule {
+    enabled: boolean;
+    backgroundId: string;
+    theme: string;
+    text: string;
+    color: string;
+    font: string;
+    fontSize: number;
+
+};
+
+export interface EmbedModule {
+    title: string;
+    description: string;
+    url: string;
+    color: ColorResolvable;
+    image: ImageEmbedModule;
+    footer: EmbedModuleFooter;
+    thumbnail: string;
+    timestamp: boolean;
+};
+
+export interface ImageEmbedModule {
+    enabled: boolean;
+    isGeneratedImage: boolean;
+    image: string;
+}
+
+export interface EmbedModuleFooter {
+    enabled: boolean;
+    text: string;
+    icon: string;
+};
+
+export interface WebhookModule {
+    enabled: boolean;
+    id: string;
+    name: string;
+    avatar: string;
+};
+
+export interface DmModule {
+    enabled: boolean;
+    message: string;
+    embeds: APIEmbed[];
+    attachements: APIAttachment[];
+
+};
+export interface imageGallery {
+    id: string;
+    url: string;
+    name: string;
+}
 const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
     id: {
         type: String,

@@ -1,4 +1,4 @@
-import { ColorResolvable } from 'discord.js';
+import { APIEmbed, ColorResolvable } from 'discord.js';
 import { Schema } from "mongoose";
 
 export interface WelcomerEmbed {
@@ -30,7 +30,7 @@ export interface WelcomerEmbed {
     }[];
 }
 
-export const EmbedSchema = new Schema<WelcomerEmbed>({
+export const EmbedSchema = new Schema<APIEmbed>({
     title: {
         type: String,
         maxlength: 256,
