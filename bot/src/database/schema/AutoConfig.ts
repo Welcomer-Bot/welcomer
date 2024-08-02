@@ -33,7 +33,7 @@
 // 9. Finish
 
 import { model, Schema } from "mongoose";
-import { Module } from "../../types";
+import { Module } from "./Guild";
 
 export interface AutoConfigType {
     guildId: string;

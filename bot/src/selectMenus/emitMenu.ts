@@ -1,7 +1,7 @@
 import { Guild, GuildMember, InteractionResponse, Message, StringSelectMenuInteraction } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 import { SelectMenuType } from "../types";
-import { sendInteractionMessage } from "../utils/messages";
+import { sendInteractionMessage, sendTempMessage } from "../utils/messages";
 
 
 export default class EmitMenu implements SelectMenuType {
@@ -12,7 +12,7 @@ export default class EmitMenu implements SelectMenuType {
         await interaction.editReply({ components: interaction.message.components });
         switch (event) {
             case "guildMemberAdd":
-                await sendInteractionMessage(
+                await sendTempMessage(
                     interaction,
                     { content: "Emitted guildMemberAdd event" },
                     true
@@ -20,7 +20,7 @@ export default class EmitMenu implements SelectMenuType {
                 client.emit("guildMemberAdd", interaction.member as GuildMember);
                 break;
             case "guildMemberRemove":
-                await sendInteractionMessage(
+                await sendTempMessage(
                     interaction,
                     { content: "Emitted guildMemberRemove event" },
                     true
@@ -28,7 +28,7 @@ export default class EmitMenu implements SelectMenuType {
                 client.emit("guildMemberRemove", interaction.member as GuildMember);
                 break;
             case "guildCreate":
-                await sendInteractionMessage(
+                await sendTempMessage(
                     interaction,
                     { content: "Emitted guildCreate event" },
                     true

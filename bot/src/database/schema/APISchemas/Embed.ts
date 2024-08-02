@@ -30,7 +30,7 @@ export interface WelcomerEmbed {
     }[];
 }
 
-export const EmbedSchema = new Schema<APIEmbed>({
+export const EmbedSchema = new Schema<WelcomerEmbed>({
     title: {
         type: String,
         maxlength: 256,

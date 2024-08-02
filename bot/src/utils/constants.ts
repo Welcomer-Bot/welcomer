@@ -1,6 +1,6 @@
 import { Guild, GuildMember } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
-import { GuildFormated } from "../types";
+import { GuildFormated } from "../database/schema/Guild";
 
 
 

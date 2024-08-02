@@ -21,7 +21,6 @@ export default class GuildMemberAdd implements EventType {
                 throw new Error("An error occured while trying to fetch the member: " + err)
             })
         }
-
         let message = await formatMessage(welcomeOptions, member)
         await sendChannelMessage(client, channel, message)
 

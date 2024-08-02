@@ -9,21 +9,18 @@ const baseMessage: BaseMessageOptions = {
     files: [],
 }
 
-export const sendInteractionMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, message: InteractionReplyOptions = baseMessage, follow: Boolean = false): Promise<Message<boolean> | void | InteractionResponse> => {
-    if (!interaction || !message) return console.log("Missing parameters for sendInteractionMessage")
+export const sendInteractionMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, message: InteractionReplyOptions = baseMessage, follow: Boolean = false): Promise<Message<boolean> | InteractionResponse> => {
+    if (!interaction || !message) throw new Error("Missing parameters for sendInteractionMessage")
     try {
         if (follow) {
-            await interaction.followUp({ ...message, fetchReply: true });
+            return await interaction.followUp({ ...message, fetchReply: true });
         } else if (interaction.deferred || interaction.replied) {
-            await interaction.editReply(message);
+            return await interaction.editReply(message);
         } else {
-            await interaction.reply(message);
+           return await interaction.reply(message);
         }
-        return interaction.fetchReply();
-
     } catch (error) {
-        console.log("An error occured in sendInteractionMessage function !", error)
-        return;
+        throw new Error("An error occured in sendInteractionMessage function ! " + error)
     }
 
 }
@@ -59,4 +56,16 @@ export const sendErrorMessage = async (interaction: Exclude<Interaction, Autocom
         },
         true
     );
+}
+
+export const sendTempMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, message: InteractionReplyOptions = baseMessage, follow: boolean=false, time: number = 5000) => {
+    try {
+        let sentMessage = await sendInteractionMessage(interaction, message, follow);
+        setTimeout(async () => {
+           sentMessage.delete();
+        }, time);
+    } catch (error) {
+        console.log("An error occured in sendTempMessage function !", error)
+        return error;
+    }
 }

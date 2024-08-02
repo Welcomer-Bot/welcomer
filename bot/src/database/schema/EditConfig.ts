@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { Module } from "../../types";
+import { Module } from "./Guild";
 
 export interface editConfigType {
     interactionId: string;

@@ -1,12 +1,13 @@
 import { ActionRowBuilder, ButtonBuilder, Guild, MessageCreateOptions, TextChannel } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
-import { EventType, GuildFormated } from "../../types";
+import { EventType } from "../../types";
 import { guildAddOwnerMessage } from "../../utils/constants";
-import { createGuild, getGuild } from "../../utils/database";
+import { getGuild } from "../../utils/database";
 import { embedHelperOnGuildCreate } from "../../utils/embeds";
 
 import { autoConfigButton, dashButton, helpButton } from "../../utils/buttons";
 import { sendChannelMessage, sendDmMessage } from "../../utils/messages";
+import { GuildFormated } from './../../database/schema/Guild';
 
 
 export default class GuildCreate implements EventType {
