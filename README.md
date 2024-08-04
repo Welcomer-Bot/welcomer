@@ -22,16 +22,16 @@ ___
 
 - [ ] Add sentry.io to handle errors and report them
 
-
 ### Links I used that inspired me
 
-https://message.style/app/editor
-
+<https://message.style/app/editor>
+[Link to the potential inspiration for the web editor](https://github.com/merlinfuchs/embed-generator/tree/main/embedg-app/src/components)
 
 ### Good to know
 
 Message limits: all characters for one message ( content + all embeds characters ) -> 6000 characters
-In embeds limits: 
+2000 characters per message (content)
+In embeds limits:
 | Field       | Limit                  |
 |-------------|------------------------|
 | title       | 256                    |

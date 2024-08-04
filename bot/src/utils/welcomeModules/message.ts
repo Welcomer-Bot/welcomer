@@ -1,4 +1,4 @@
-import { BaseMessageOptions, EmbedBuilder, GuildMember } from "discord.js";
+import { APIEmbed, BaseMessageOptions, EmbedBuilder, GuildMember, JSONEncodable } from "discord.js";
 import { WelcomerEmbed } from "../../database/schema/APISchemas/Embed";
 import { Module } from "../../database/schema/Guild";
 
@@ -48,9 +48,9 @@ export async function formatMessage(options: Module, member: GuildMember) {
         files: [],
     }
 
-    if (!checkTextLength(options, member)) {
-        throw new Error("The message is too long")
-    }    
+    // if (!checkTextLength(options, member)) {
+    //     throw new Error("The message is too long")
+    // }    
     message.content = formatText(options.message, member);
     
     for (const embed of options.embeds) {
@@ -58,7 +58,7 @@ export async function formatMessage(options: Module, member: GuildMember) {
         if (!message.embeds) {
             message.embeds = [];
         }
-        message.embeds = [...message.embeds, embedBuilt.toJSON()];
+        message.embeds = [...message.embeds, embedBuilt];
     }
     
     if (!message.files) {
@@ -68,6 +68,7 @@ export async function formatMessage(options: Module, member: GuildMember) {
     options.attachements.forEach(attachement => {
         message.files = [...(message.files ?? []), { attachment: attachement.url, name: attachement.filename }];
     });
+    if (isTextTooLong(message)) throw new Error("The message is too long")
     
     return message
 
@@ -120,38 +121,26 @@ export async function generateEmbed(embed: WelcomerEmbed, member: GuildMember) {
 }
 
 
-export function checkTextLength(module: Module, member: GuildMember, maxlength: number = 6000) {
-    let isValid = true;
-    let totalLength = 0;
-    let messageLength = module.message ? formatText(module.message, member).length:0;
-    if (messageLength > 2000) {
-        isValid = false;
+export function isTextTooLong(message: BaseMessageOptions, maxlength: number = 6000) {
+    let count = {
+        content: 0,
+        embedsCount: 0,
+        embeds: 0,
     }
 
-    let embedIndex = 0;
-    while (embedIndex < module.embeds.length && isValid) {
-        let embed = module.embeds[embedIndex];
-        let embedTitleLength = embed.title ? formatText(embed.title, member).length : 0;
-        let embedDescriptionLength = embed.description ? formatText(embed.description, member).length : 0;
-        let embedFooterLength = embed.footer?.text ? formatText(embed.footer.text, member).length : 0;
-        let embedAuthorLength = embed.author.name ? formatText(embed.author.name, member).length : 0;
-        let embedFieldsNameLength = embed.fields ? formatText(embed.fields.map(field => field.name).join(", "), member).length : 0;
-        let embedFieldsValueLength = embed.fields?formatText(embed.fields.map(field => field.value).join(", "), member).length:0;
+    message.content && (count.content += message.content.length)
+    message.embeds && message.embeds.forEach(embed => {
+        count.embedsCount++
+        embed = embed as APIEmbed
+        embed.title && (count.embeds += embed.title.length)
+        embed.description && (count.embeds += embed.description.length)
+        embed.footer && embed.footer.text && (count.embeds += embed.footer.text.length)
+        embed.author && embed.author.name && (count.embeds += embed.author.name.length)
+        embed.fields && embed.fields.length > 25 && (count.embeds += 6000)
+        embed.fields && embed.fields.forEach(field => {
+            count.embeds += field.name.length + field.value.length  
+        })
+    })
 
-        // Check individual embed field lengths
-        if (embedTitleLength > 256 || embedDescriptionLength > 2048 || embedFooterLength > 2048 || embedAuthorLength > 256) {
-            isValid = false;
-            break;
-        }
-
-        // Check total embed length
-        totalLength += embedTitleLength + embedDescriptionLength + embedFooterLength + embedAuthorLength + embedFieldsNameLength + embedFieldsValueLength;
-        if (totalLength > maxlength) {
-            isValid = false;
-            break;
-        }
-        embedIndex++;
-    }
-
-    return isValid;
+    return ((count.content + count.embeds <= maxlength) && count.embedsCount <= 10)
 }
