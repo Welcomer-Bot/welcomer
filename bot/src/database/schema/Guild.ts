@@ -112,7 +112,7 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
                 type: Boolean,
                 default: false,
             },
-            message: {
+            content: {
                 type: String,
                 maxlength: 2000,
             },
@@ -126,7 +126,7 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
                         `The array exceeds the limit of 20 elements. Current length: ${props.value.length}`,
                 },
             },
-            attachements: {
+            files: {
                 type: [attachementSchema],
                 validate: {
                     validator: function (value: any[]) {
