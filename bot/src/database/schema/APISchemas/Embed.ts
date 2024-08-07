@@ -30,7 +30,7 @@ export interface WelcomerEmbed {
     }[];
 }
 
-export const EmbedSchema = new Schema<WelcomerEmbed>({
+export const EmbedSchema = new Schema<APIEmbed>({
     title: {
         type: String,
         maxlength: 256,
@@ -41,11 +41,9 @@ export const EmbedSchema = new Schema<WelcomerEmbed>({
     },
     url: {
         type: String,
-        default: null,
     },
     color: {
         type: String,
-        default: "#000000",
         validate: {
             validator: function (value: string) {
                 const hexColorRegex = /^#([0-9A-F]{3}){1,2}$/i;
@@ -58,19 +56,16 @@ export const EmbedSchema = new Schema<WelcomerEmbed>({
     footer: {
         text: {
             type: String,
-            default: null,
             maxlength: 2048,
         },
         icon_url: {
             type: String,
-            default: null,
         },
 
     },
     image: {
         url: {
             type: String,
-            default: null,
         },
         isGeneratedImage: {
             type: Boolean,
@@ -78,28 +73,23 @@ export const EmbedSchema = new Schema<WelcomerEmbed>({
         },
     },
     timestamp: {
-        type: Boolean,
-        default: false,
+        type: String, 
     },
 
     thumbnail: {
         url: {
             type: String,
-            default: null,
         },
     },
     author: {
         name: {
             type: String,
-            default: null,
         },
         url: {
             type: String,
-            default: null,
         },
         icon_url: {
             type: String,
-            default: null,
         },
     },
     fields: [{
@@ -113,7 +103,6 @@ export const EmbedSchema = new Schema<WelcomerEmbed>({
         },
         inline: {
             type: Boolean,
-            default: false,
         },
     }]
 

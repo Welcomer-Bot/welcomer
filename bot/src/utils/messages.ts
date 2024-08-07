@@ -65,7 +65,6 @@ export const sendTempMessage = async (interaction: Exclude<Interaction, Autocomp
            sentMessage.delete();
         }, time);
     } catch (error) {
-        console.log("An error occured in sendTempMessage function !", error)
-        return error;
+        throw(`An error occured in sendTempMessage function: ${error}`)
     }
 }

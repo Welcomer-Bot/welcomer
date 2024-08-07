@@ -1,8 +1,16 @@
-import { ChannelType, APIAttachment, APIEmbed, Guild, ColorResolvable } from "discord.js";
+import { BaseMessageOptions, ChannelType, Guild } from "discord.js";
 import { model, Model, Schema } from "mongoose";
 import { leaverkeywords, welcomeKeywords } from "../../utils/constants";
 import { attachementSchema } from "./APISchemas/Attachment";
-import { EmbedSchema, WelcomerEmbed } from "./APISchemas/Embed";
+import { EmbedSchema } from "./APISchemas/Embed";
+
+export interface Module extends BaseMessageOptions {
+    enabled: boolean;
+    channel: string | null;
+    dm?: DmModule;
+    webhook: WebhookModule;
+
+};
 export interface GuildFormated {
     id: string;
     welcomer: Module;
@@ -13,15 +21,6 @@ export interface GuildFormated {
     imageGallery?: imageGallery[]
 }
 
-export interface Module {
-    enabled: boolean;
-    channel: string | null;
-    message: string;
-    dm?: DmModule;
-    embeds: WelcomerEmbed[];
-    attachements: APIAttachment[];
-    webhook: WebhookModule;
-};
 
 export interface ImageModule {
     enabled: boolean;
@@ -34,29 +33,6 @@ export interface ImageModule {
 
 };
 
-export interface EmbedModule {
-    title: string;
-    description: string;
-    url: string;
-    color: ColorResolvable;
-    image: ImageEmbedModule;
-    footer: EmbedModuleFooter;
-    thumbnail: string;
-    timestamp: boolean;
-};
-
-export interface ImageEmbedModule {
-    enabled: boolean;
-    isGeneratedImage: boolean;
-    image: string;
-}
-
-export interface EmbedModuleFooter {
-    enabled: boolean;
-    text: string;
-    icon: string;
-};
-
 export interface WebhookModule {
     enabled: boolean;
     id: string;
@@ -64,12 +40,8 @@ export interface WebhookModule {
     avatar: string;
 };
 
-export interface DmModule {
+export interface DmModule extends BaseMessageOptions {
     enabled: boolean;
-    message: string;
-    embeds: APIEmbed[];
-    attachements: APIAttachment[];
-
 };
 export interface imageGallery {
     id: string;
@@ -91,7 +63,7 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
             type: String,
             default: null,
         },
-        message: {
+        content: {
             type: String,
             default: "Welcome to the server",
             maxlength: 2000,
@@ -103,17 +75,17 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
                     return value.length <= 20;
                 },
                 message: (props) =>
-                    `The array exceeds the limit of 20 elements. Current length: ${props.value.length}`,
+                    `The array exceeds the limit of 20 embeds. Current length: ${props.value.length}`,
             },
         },
-        attachements: {
+        files: {
             type: [attachementSchema],
             validate: {
                 validator: function (value: any[]) {
                     return value.length <= 10;
                 },
                 message: (props) =>
-                    `The array exceeds the limit of 10  elements. Current length: ${props.value.length}`,
+                    `The array exceeds the limit of 10 files. Current length: ${props.value.length}`,
             },
         },
         webhook: {
@@ -205,7 +177,7 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
             type: String,
             default: null,
         },
-        message: {
+        content: {
             type: String,
             maxlength: 2000,
         },
@@ -219,7 +191,7 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
                     `The array exceeds the limit of 20 elements. Current length: ${props.value.length}`,
             },
         },
-        attachements: {
+        files: {
             type: [attachementSchema],
             validate: {
                 validator: function (value: any[]) {
