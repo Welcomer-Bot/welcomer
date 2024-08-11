@@ -1,8 +1,5 @@
 import { APIEmbed, BaseMessageOptions, GuildMember } from "discord.js";
-import { Module } from "../../database/schema/Guild";
-import WelcomerClient from "../../structure/WelcomerClient";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
-import { fetchTextChannel } from "../channel";
 
 export async function generateImage(member: GuildMember) {
     return "https://images.unsplash.com/photo-1721297015695-43027e98a178";
@@ -46,7 +43,10 @@ export function formatText(
         .replaceAll(/{createdAt}/g, member.user.createdAt.toDateString())
         .replaceAll(/{joinedAt}/g, member.joinedAt!.toString())
         .replaceAll(/{joinedTimestamp}/g, member.joinedTimestamp!.toString())
-        .replaceAll(/{joinedTimestampFormated}/g, `<t:${Math.floor(member.joinedTimestamp! / 1000)}:R>`)
+        .replaceAll(
+            /{joinedTimestampFormated}/g,
+            `<t:${Math.floor(member.joinedTimestamp! / 1000)}:R>`
+        )
         .replaceAll(/{time}/g, new Date().toDateString());
 }
 
@@ -76,7 +76,10 @@ export function formatEmbeds(
     return embeds;
 }
 
-export async function formatMessage(options: BaseMessageOptions, member: GuildMember) {
+export async function formatMessage(
+    options: BaseMessageOptions,
+    member: GuildMember
+) {
     let message: BaseMessageOptions = {
         content: formatText(options.content, member),
         embeds: formatEmbeds(options.embeds as APIEmbed[], member),
@@ -102,4 +105,3 @@ export async function formatMessage(options: BaseMessageOptions, member: GuildMe
 
     return message;
 }
-
