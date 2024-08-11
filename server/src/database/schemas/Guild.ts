@@ -1,6 +1,8 @@
-import { Schema, SchemaTypes, model } from "mongoose";
+import { Schema, SchemaTypes, model, Model } from "mongoose";
 import { Channel, Member, Role } from "../../utils/types";
 import { BaseMessageOptions } from "discord.js"
+import { EmbedSchema } from "./APISchemas/Embed";
+import { attachementSchema } from "./APISchemas/Attachment";
 
 export interface Guild {
   id: string;
@@ -255,10 +257,6 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
             url: String,
         },
     ],
-    _tempData: {
-        type: Schema.Types.Mixed,
-        select: false,
-    },
 });
 
 
