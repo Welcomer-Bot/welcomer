@@ -19,7 +19,7 @@ passport.deserializeUser(async (id: string, done) => {
 passport.use(new DiscordStrategy({
     clientID: process.env.DISCORD_CLIENT_ID!,
     clientSecret: process.env.DISCORD_CLIENT_SECRET!,
-    callbackURL: process.env.DISCORD_REDIRECT_URI,
+    callbackURL: process.env.DISCORD_CALLBACK_URL!,
     scope: ['identify', 'guilds']
 },
     async (accessToken: string, refreshToken: string, profile: Profile, done: any) => {

@@ -1,9 +1,0 @@
-{
-  "dependencies": {},
-  "name": "welcomer",
-  "version": "2.0.0",
-  "main": "index.js",
-  "repository": "git@github.com:clementvittu/welcomer.git",
-  "author": "Clément <contact@welcomer.app>",
-  "license": "MIT"
-}

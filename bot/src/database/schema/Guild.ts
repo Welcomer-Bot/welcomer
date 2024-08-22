@@ -13,6 +13,7 @@ export interface Module extends BaseMessageOptions {
 };
 export interface GuildFormated {
     id: string;
+    name: string;
     welcomer: Module;
     leaver: Module;
     mutual?: boolean;
@@ -53,6 +54,10 @@ const GuildSchema = new Schema<GuildFormated, Model<GuildFormated>>({
         type: String,
         required: true,
         unique: true,
+    },
+    name: {
+        type: String,
+        required: true,
     },
     welcomer: {
         enabled: {

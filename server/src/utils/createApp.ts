@@ -14,7 +14,7 @@ export function createApp(): Express {
     app.use(express.urlencoded({ extended: true }));
     
     app.use(cors({
-        origin: [process.env.CLIENT_URL as string, 'http://localhost:3005'],
+        origin: [process.env.FRONTEND_URL as string, 'http://localhost:3005'],
         credentials: true
     }));
 
