@@ -1,21 +1,19 @@
-import { SignIn } from "./../../components/signinButton";
+import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 
 export default async function Page() {
   const session = await auth();
 
-  if (!session?.user)
-    return (
-      <div>
-        <SignIn />
-      </div>
-    );
+  if (!session) {
+    return redirect("/auth/signin");
+  }
 
   return (
     <span>
-      {session.user.name}
-      {session.user.image}
+      {session.user.guilds.map((guild) => (
+        <div key={guild.id}>{guild.name}</div>
+      ))}
     </span>
   );
 }
