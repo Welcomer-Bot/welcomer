@@ -35,7 +35,7 @@ export async function GET(req: Request) {
           .map(({ id, name, icon, owner, permissions }) => ({
             id,
             name,
-            icon,
+            icon: icon ? `https://cdn.discordapp.com/icons/${id}/${icon}.png` : null,
             owner,
             permissions,
           }));
