@@ -1,7 +1,7 @@
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
-import { Image } from "@nextui-org/image";
-import NextImage from "next/image";
+import { Image as UIImage } from "@nextui-org/image";
+import { default as Image, default as NextImage } from "next/image";
 
 import { auth } from "@/auth";
 
@@ -24,6 +24,13 @@ export default async function Page() {
           className="w-[350] relative radius-8 mb-10 min-w-60 justify-evenly mx-4"
         >
           <CardBody className="p-0 flex justify-center">
+            {/* <Image
+              alt="Guild Banner"
+              className="blur h-[120] bg-cover rounded-lg opacity-70 bg-center"
+              height={120}
+              src={guild.icon || "/logo32.svg"}
+              width={350}
+            /> */}
             <div
               style={{
                 backgroundImage: `url(${guild.icon || "/logo32.svg"})`,
@@ -50,27 +57,35 @@ export default async function Page() {
           </div> */}
           <CardFooter className="flex items-center justify-between">
             <div className="flex flex-row items-center">
-
-            {guild.icon ? (
-              <Image
-              alt="Guild Icon"
-              as={NextImage}
-                classNames={{img :"border-solid border-1 border-white shadow-2xl", wrapper: "mr-2"}}
-                height={50}
-                src={guild.icon || "/logo32.svg"}
+              {guild.icon ? (
+                <UIImage
+                  alt="Guild Icon"
+                  as={NextImage}
+                  classNames={{
+                    img: "border-solid border-1 border-white shadow-2xl",
+                    wrapper: "mr-3",
+                  }}
+                  height={50}
+                  src={guild.icon || "/logo32.svg"}
                   width={50}
-              />
-            ) : (
-              <div className="w-[50] h-[50] border-solid border-2 border-white shadow-2xl rounded-large flex justify-center items-center mr-2">
-                {guild.name[0]}
-              </div>
-            )}
+                />
+              ) : (
+                <div className="w-[50px] h-[50px] border-solid border-2 border-white shadow-2xl rounded-large flex justify-center items-center mr-3">
+                  {guild.name[0]}
+                </div>
+              )}
 
-            {guild.name}
-              </div>
-            <Button className="right" color="primary">
-              Manage
-            </Button>
+              {guild.name}
+            </div>
+            {guild.mutual ? (
+              <Button className="right ml-2 font-bold" color="primary">
+                Manage
+              </Button>
+            ) : (
+              <Button className="right ml-2 font-bold" color="default">
+                Invite Bot
+              </Button>
+            )}
           </CardFooter>
         </Card>
       ))}

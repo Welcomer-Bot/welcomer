@@ -30,12 +30,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
       const res = await fetch(`${baseUrl}/api/guilds/bot`, {
         headers: {
           Authorization: `${token.accessToken}`,
         },
+        next: {
+          revalidate: 20,
+        }
       })
       if(res.status == 200) {
           session.user.guilds = await res.json();
