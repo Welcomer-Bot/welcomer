@@ -2,7 +2,6 @@ import { APIGuild } from "discord-api-types/v10";
 import NextAuth, { type DefaultSession } from "next-auth";
 
 import Discord from "./node_modules/@auth/core/providers/discord";
-import { GuildFormated } from "./lib/guilds";
 
 declare module "next-auth" {
   interface Session {
@@ -31,47 +30,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
-      const res = await fetch("https://discord.com/api/users/@me/guilds", {
+    async session({ session, token, user }) {
+      const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+      const res = await fetch(`${baseUrl}/api/guilds/bot`, {
         headers: {
-          Authorization: `Bearer ${token.accessToken}`,
+          Authorization: `${token.accessToken}`,
         },
-        next: {
-          revalidate: 60,
-        },
-      });
-
-      if (res.ok) {
-        const guilds: APIGuild[] = await res.json();
-        // returns only the guild id and name
-        session.user.guilds = guilds
-          .filter(
-            (guild: APIGuild) =>
-              guild.owner ||
-              (guild.permissions !== undefined &&
-                Number(guild.permissions) & 0x20),
-          )
-          .map(({ id, name, icon, owner, permissions }) => ({
-            id,
-            name,
-            icon,
-            owner,
-            permissions,
-          }));
-        
-        const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-        const mutualsGuilds = await fetch(`${baseUrl}/api/guilds/bot`);
-        if (res.ok) {
-          const mutuals: GuildFormated[] = await mutualsGuilds.json();
-          mutuals.forEach((guild) => {
-          const foundGuild = session.user.guilds.find((g) => g.id === guild.id);
-          if (foundGuild) {
-            foundGuild.mutual = true;
-          }
-          })
+      })
+      if(res.status == 200) {
+          session.user.guilds = await res.json();
         }
-      }
-      console.log(session.user.guilds);
       return session;
     },
   },

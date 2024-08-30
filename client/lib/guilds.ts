@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
 
 import connectDB from "./db";
-const Guild = mongoose.model("Guild")
+
+import Guild from "@/schema/Guild";
 
 export interface GuildFormated {
   id: string;

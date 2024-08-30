@@ -1,8 +1,8 @@
-import { model, Schema } from "mongoose";
+import { model, models, Schema } from "mongoose";
 
 const GuildSchema = new Schema({
   id: String,
   name: String,
 });
 
-export default model("Guild", GuildSchema);
+export default models.Guild || model("Guild", GuildSchema);
