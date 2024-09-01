@@ -8,6 +8,7 @@ import {
   NavbarMenuToggle,
   Navbar as NextUINavbar,
 } from "@nextui-org/navbar";
+import { Skeleton } from "@nextui-org/skeleton";
 import { link as linkStyles } from "@nextui-org/theme";
 import clsx from "clsx";
 import NextLink from "next/link";
@@ -15,10 +16,9 @@ import { Suspense } from "react";
 
 import NavbarUser from "./navbarUser";
 
-import { DiscordIcon, GithubIcon, Logo, TwitterIcon } from "@/components/icons";
+import { DiscordIcon, GithubIcon, Logo } from "@/components/icons";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { siteConfig } from "@/config/site";
-import { Skeleton } from "@nextui-org/skeleton";
 
 export const Navbar = () => {
   return (
@@ -53,9 +53,6 @@ export const Navbar = () => {
         justify="end"
       >
         <NavbarItem className="hidden sm:flex gap-2">
-          <Link isExternal aria-label="Twitter" href={siteConfig.links.twitter}>
-            <TwitterIcon className="text-default-500" />
-          </Link>
           <Link isExternal aria-label="Discord" href={siteConfig.links.discord}>
             <DiscordIcon className="text-default-500" />
           </Link>
@@ -64,9 +61,7 @@ export const Navbar = () => {
           </Link>
           <ThemeSwitch />
           <Suspense
-            fallback={
-              <Skeleton className="w-12 h-12 flex rounded-full" />
-            }
+            fallback={<Skeleton className="w-10 h-10 flex rounded-full" />}
           >
             <NavbarUser />
           </Suspense>
