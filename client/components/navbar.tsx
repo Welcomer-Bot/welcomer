@@ -18,6 +18,7 @@ import NavbarUser from "./navbarUser";
 import { DiscordIcon, GithubIcon, Logo, TwitterIcon } from "@/components/icons";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { siteConfig } from "@/config/site";
+import { Skeleton } from "@nextui-org/skeleton";
 
 export const Navbar = () => {
   return (
@@ -35,7 +36,7 @@ export const Navbar = () => {
               <NextLink
                 className={clsx(
                   linkStyles({ color: "foreground" }),
-                  "data-[active=true]:text-primary data-[active=true]:font-medium",
+                  "data-[active=true]:text-primary data-[active=true]:font-medium"
                 )}
                 color="foreground"
                 href={item.href}
@@ -62,7 +63,11 @@ export const Navbar = () => {
             <GithubIcon className="text-default-500" />
           </Link>
           <ThemeSwitch />
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense
+            fallback={
+              <Skeleton className="w-12 h-12 flex rounded-full" />
+            }
+          >
             <NavbarUser />
           </Suspense>
         </NavbarItem>

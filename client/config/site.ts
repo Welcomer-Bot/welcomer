@@ -10,8 +10,8 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "Docs",
-      href: "/docs",
+      label: "Dashboard",
+      href: "/dashboard",
     },
     {
       label: "Pricing",
@@ -61,9 +61,8 @@ export const siteConfig = {
     },
   ],
   links: {
-    github: "https://github.com/nextui-org/nextui",
-    twitter: "https://twitter.com/getnextui",
-    docs: "https://nextui.org",
-    discord: "https://discord.gg/9b6yyZKmH4",
+    github: "https://github.com/clementvt/welcomer",
+    docs: "https://imperiator.gitbook.io/welcomer-bot/",
+    discord: "https://discord.gg/7TGc5ZZ7aM",
   },
 };
