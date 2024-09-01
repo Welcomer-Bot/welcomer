@@ -855,7 +855,7 @@
   resolved "https://registry.yarnpkg.com/@nextui-org/shared-utils/-/shared-utils-2.0.7.tgz#c6f02f68ad7f8a3b0d5b1d92d00fa31b9ad1d671"
   integrity sha512-FxY3N0i1Al7Oz3yOQN0dSpG8UUrLIP3iYh3ubD7BhdQoZLl5xbG6++q1gqOzZXV+ZWeUFMY/or0ofzWxGHiOow==
 
-"@nextui-org/skeleton@2.0.31":
+"@nextui-org/skeleton@2.0.31", "@nextui-org/skeleton@^2.0.31":
   version "2.0.31"
   resolved "https://registry.yarnpkg.com/@nextui-org/skeleton/-/skeleton-2.0.31.tgz#b85866fe20590301d59a971edf5ed10c88ad8adc"
   integrity sha512-pT0l2skPP6Nq9edLJNQxUJI/WLKu4Lx5Vvs7nlE/9NpkxyQ805l4LiYsMD30dkjjxe+WpXtIjjAXY0BQqdid0Q==

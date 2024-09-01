@@ -26,6 +26,7 @@ export default async function Page() {
         >
           <CardBody className="p-0 flex justify-center">
             <div
+              className="image-blured"
               style={{
                 backgroundImage: `url(${guild.icon || "/logo32.svg"})`,
                 filter: "blur(10px)",
@@ -36,6 +37,25 @@ export default async function Page() {
                 backgroundPosition: "center",
               }}
             />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              {guild.icon ? (
+                <UIImage
+                  alt="Guild Icon"
+                  as={NextImage}
+                  classNames={{
+                    img: "shadow-2xl",
+                    wrapper: "w-16 h-16",
+                  }}
+                  height={64}
+                  src={guild.icon || "/logo32.svg"}
+                  width={64}
+                />
+              ) : (
+                <div className="w-16 h-16 border-solid border-2 border-white shadow-2xl rounded-large flex justify-center items-center">
+                  {guild.name[0]}
+                </div>
+              )}
+            </div>
           </CardBody>
           <CardFooter className="flex items-center justify-between">
             <div className="flex flex-row items-center">
