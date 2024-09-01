@@ -1,7 +1,8 @@
 import { Button } from "@nextui-org/button";
 import { Card, CardBody, CardFooter } from "@nextui-org/card";
 import { Image as UIImage } from "@nextui-org/image";
-import { default as Image, default as NextImage } from "next/image";
+import { default as NextImage } from "next/image";
+import Link from "next/link";
 
 import { auth } from "@/auth";
 
@@ -24,13 +25,6 @@ export default async function Page() {
           className="w-[350] relative radius-8 mb-10 min-w-60 justify-evenly mx-4"
         >
           <CardBody className="p-0 flex justify-center">
-            {/* <Image
-              alt="Guild Banner"
-              className="blur h-[120] bg-cover rounded-lg opacity-70 bg-center"
-              height={120}
-              src={guild.icon || "/logo32.svg"}
-              width={350}
-            /> */}
             <div
               style={{
                 backgroundImage: `url(${guild.icon || "/logo32.svg"})`,
@@ -43,18 +37,6 @@ export default async function Page() {
               }}
             />
           </CardBody>
-          {/* <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
-          >
-          </div> */}
           <CardFooter className="flex items-center justify-between">
             <div className="flex flex-row items-center">
               {guild.icon ? (
@@ -63,14 +45,14 @@ export default async function Page() {
                   as={NextImage}
                   classNames={{
                     img: "border-solid border-1 border-white shadow-2xl",
-                    wrapper: "mr-3",
+                    wrapper: "mr-3 w-12 h-12",
                   }}
                   height={50}
                   src={guild.icon || "/logo32.svg"}
                   width={50}
                 />
               ) : (
-                <div className="w-[50px] h-[50px] border-solid border-2 border-white shadow-2xl rounded-large flex justify-center items-center mr-3">
+                <div className="w-12 h-12 border-solid border-2 border-white shadow-2xl rounded-large flex justify-center items-center mr-3">
                   {guild.name[0]}
                 </div>
               )}
@@ -78,13 +60,23 @@ export default async function Page() {
               {guild.name}
             </div>
             {guild.mutual ? (
-              <Button className="right ml-2 font-bold" color="primary">
-                Manage
-              </Button>
+              <Link href={`/dashboard/${guild.id}`}>
+                <Button className="right ml-2 font-bold" color="primary">
+                  Manage
+                </Button>
+              </Link>
             ) : (
-              <Button className="right ml-2 font-bold" color="default">
-                Invite Bot
-              </Button>
+              <Link
+                href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.AUTH_DISCORD_ID}&permissions=8&scope=bot&guild_id=${guild.id}`}
+              >
+                <Button
+                  className="right ml-2 font-bold"
+                  color="default"
+                  type="submit"
+                >
+                  Invite Bot
+                </Button>
+              </Link>
             )}
           </CardFooter>
         </Card>

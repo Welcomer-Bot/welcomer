@@ -1,12 +1,12 @@
-import { APIGuild } from "discord-api-types/v10";
 import NextAuth, { type DefaultSession } from "next-auth";
 
 import Discord from "./node_modules/@auth/core/providers/discord";
+import { Guild } from "./types";
 
 declare module "next-auth" {
   interface Session {
     user: {
-      guilds: (Pick<APIGuild, "id" | "name" | "icon" | "owner" | "permissions"> & { mutual?: boolean })[];
+      guilds: Guild[];
     } & DefaultSession["user"];
   }
 }
