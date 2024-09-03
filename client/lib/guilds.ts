@@ -4,6 +4,7 @@ import connectDB from "./db";
 import Guild from "@/schema/Guild";
 
 export interface GuildFormated {
+  json(): any;
   id: string;
   name: string;
   icon: string;
@@ -19,5 +20,19 @@ export async function getBotGuilds(guilds: string[]): Promise<GuildFormated[]> {
     return botGuilds;
   } catch (error) {
     return [];
+  }
+}
+
+export async function getGuild(id: string): Promise<GuildFormated | null> {
+  try {
+    await connectDB();
+
+    const guild = await
+      Guild.findOne({ id });
+
+    return guild;
+  }
+  catch (error) {
+    return null;
   }
 }
