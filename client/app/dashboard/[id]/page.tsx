@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { getGuild } from "@/lib/guilds";
+import { useGuildStore } from "@/store/useGuildStore";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const session = await auth();
@@ -11,6 +12,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const guild = await getGuild(params.id);
   if (!guild) throw Error("Not Found");
+  useGuildStore((state) => state.setCurrentGuild(guild));
 
   return (
     <>
