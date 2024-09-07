@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 
-import { signIn } from "@/auth";
+import { signIn } from "@/lib/options/auth";
 
 export async function SignIn() {
   return await signIn("discord");

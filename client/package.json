@@ -32,16 +32,16 @@
 		"@react-aria/visually-hidden": "3.8.12",
 		"clsx": "2.1.1",
 		"discord-api-types": "^0.37.97",
+		"discord-oauth2": "2.11.0",
 		"framer-motion": "~11.1.1",
 		"intl-messageformat": "^10.5.0",
 		"mongodb": "^6.8.0",
 		"mongoose": "^8.6.0",
-		"next": "^14.2.6",
+		"next": "^14.2.8",
 		"next-auth": "5.0.0-beta.18",
 		"next-themes": "^0.2.1",
 		"react": "18.3.1",
-		"react-dom": "18.3.1",
-		"zustand": "^4.5.5"
+		"react-dom": "18.3.1"
 	},
 	"devDependencies": {
 		"@next/eslint-plugin-next": "^14.2.6",

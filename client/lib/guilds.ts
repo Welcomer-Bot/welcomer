@@ -1,5 +1,3 @@
-"use server";
-
 import connectDB from "./db";
 
 import Guild from "@/schema/Guild";
@@ -25,15 +23,10 @@ export async function getBotGuilds(guilds: string[]): Promise<GuildFormated[]> {
 }
 
 export async function getGuild(id: string): Promise<GuildFormated | null> {
-  try {
-    await connectDB();
+  return null;
 
-    const guild = await
-      Guild.findOne({ id });
-
-    return guild;
-  }
-  catch (error) {
-    return null;
-  }
 }
+
+// export async function getManageableGuilds(guilds: PartialGuild[]) {
+//   return guilds.filter((guild) => guild.owner || (guild.permissions !== undefined && Number(guild.permissions) & 0x8))
+// }

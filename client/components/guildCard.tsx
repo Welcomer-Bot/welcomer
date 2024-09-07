@@ -11,9 +11,9 @@ import NextImage from "next/image";
 import { redirect } from "next/navigation";
 
 import { inviteBot } from "@/lib/auth";
-import { Guild } from "@/types";
+import { GuildFormated } from "@/lib/guilds";
 
-const GuildCard = ({ guild }: { guild: Guild }) => {
+const GuildCard = ({ guild }: { guild: GuildFormated }) => {
   return (
     <Card
       key={guild.id}

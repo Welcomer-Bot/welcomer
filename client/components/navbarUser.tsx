@@ -1,4 +1,4 @@
-import { auth } from "../auth";
+import { auth } from "../lib/options/auth";
 
 import NavbarUserDropdown from "./navbarUserDropdown";
 import { SignIn } from "./signinButton";

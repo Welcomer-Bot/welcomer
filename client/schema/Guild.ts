@@ -5,4 +5,4 @@ const GuildSchema = new Schema({
   name: String,
 });
 
-export default models.Guild || model("Guild", GuildSchema);
+export default models?.Guild || model("Guild", GuildSchema);
