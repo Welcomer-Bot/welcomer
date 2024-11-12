@@ -68,7 +68,7 @@ export default class StatusCommand implements CommandType {
                  0
                );
                ram = Number(
-                 results[4].reduce((acc, totalram) => Number(acc + totalram), 0)
+                 results[2].reduce((acc, totalram) => Number(acc + totalram), 0)
                );
              });
 

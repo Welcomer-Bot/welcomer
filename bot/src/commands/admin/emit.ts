@@ -12,8 +12,6 @@ export default class Emit implements CommandType {
         .setName(this.name)
         .setDescription(this.description)
     async execute(interaction: ChatInputCommandInteraction, client: WelcomerClient, ...options: any): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
-        console.log(client.admins)
-        console.log(interaction.user.id)
         if (!client.admins.includes(interaction.user.id)) return sendInteractionMessage(interaction, { content: "You are not allowed to use this command.", ephemeral: true })
         let emitMenu = new StringSelectMenuBuilder()
             .setCustomId("emitMenu")
