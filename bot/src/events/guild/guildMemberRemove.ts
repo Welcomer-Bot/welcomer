@@ -1,13 +1,14 @@
+import { goodbyeCard } from './../../utils/welcomeCard';
 import { GuildMember, InteractionResponse, Message } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
-import { EventType } from "./../../types/index";
-import { addMemberWelcomed, getGuild } from "../../utils/getGuild";
-import { welcomeCard } from "../../utils/welcomeCard";
 import { createOrUpdateGuild } from "../../utils/createGuild";
-import { error } from "../../utils/logger";
+import { addMemberGoodbye, getGuild } from "../../utils/getGuild";
+
+import { EventType } from "./../../types/index";
+import { error } from '../../utils/logger';
 
 export default class GuildMemberAdd implements EventType {
-  name: string = "guildMemberAdd";
+  name: string = "guildMemberRemove";
   async execute(
     member: GuildMember,
     client: WelcomerClient
@@ -16,16 +17,17 @@ export default class GuildMemberAdd implements EventType {
       var guild = member.guild;
       var guilds = await getGuild(guild.id);
       if (guilds) {
-        welcomeCard(member, guild, guilds, client);
-        if (!guilds.welcomer.enabled) return;
-        addMemberWelcomed(guild);
+        goodbyeCard(member, guild, guilds, client);
+        if (!guilds.goodbyeer.enabled) return;
+        addMemberGoodbye(guild);
       } else {
         await createOrUpdateGuild(member.guild).then(() => {
-          client.emit("guildMemberAdd", member, client);
+          client.emit("guildMemberRemove", member, client);
         });
       }
-    } catch (err: Error | any) {
+    } catch (err:Error | any) {
       error(err);
     }
   }
 }
+

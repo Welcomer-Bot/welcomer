@@ -1,10 +1,11 @@
 import "dotenv/config";
 import { ClusterManager, ClusterManagerOptions, fetchRecommendedShards, HeartbeatManager, keepAliveOptions, ReClusterManager, ReClusterOptions } from "discord-hybrid-sharding";
+import { llog, logStatus } from "./utils/logger";
 
 let shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10")
 
 const managerConfig: ClusterManagerOptions = {
-    shardsPerClusters,
+    // shardsPerClusters,
     mode: "process",
     token: process.env.TOKEN,
     execArgv: [ ...process.execArgv ],
@@ -23,6 +24,14 @@ const clientPath = `${__dirname}/client.js`
 const manager = new ClusterManager(clientPath, managerConfig);
 manager.extend(new HeartbeatManager(hearthbeatConfig))
 manager.extend(new ReClusterManager());
+
+manager.on("clusterCreate", (cluster) => { 
+  logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "starting" });
+});
+
+manager.on("clusterReady", (cluster) => {
+  logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "online" });
+});
 
 
 async function spawnClusters() {

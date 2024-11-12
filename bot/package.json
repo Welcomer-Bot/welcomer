@@ -16,7 +16,9 @@
     "typescript": "^5.5.3"
   },
   "dependencies": {
-    "discord-hybrid-sharding": "^2.2.0",
+    "canvas": "^2.11.2",
+    "canvas-txt": "3.0.0",
+    "discord-hybrid-sharding": "^2.2.3",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "glob": "^11.0.0",

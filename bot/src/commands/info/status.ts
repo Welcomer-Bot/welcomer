@@ -1,7 +1,6 @@
 import { ChatInputCommandInteraction, EmbedBuilder, InteractionResponse, Message, SlashCommandBuilder } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { CommandType } from "../../types";
-import { connectionStatus } from "../../utils/database";
 import { sendInteractionMessage } from "../../utils/messages";
 
 
@@ -32,21 +31,6 @@ function formatState(state: Number) {
     }
 }
 
-function formatDbState(state: Number) {
-    switch (state) {
-        case 0:
-            return "Disconnected";
-        case 1:
-            return "Connected";
-        case 2:
-            return "Connecting";
-        case 3:
-            return "Disconnecting";
-        default:
-            return "Unknown";
-    }
-}
-
 export default class StatusCommand implements CommandType {
     name = "status";
     description = "Get the bot status";
@@ -58,6 +42,35 @@ export default class StatusCommand implements CommandType {
         if (!client.isReady()) {
             return sendInteractionMessage(interaction, { content: "The client is not ready yet" })
         }
+
+
+             let ram;
+             let membersize;
+             let guildsize;
+
+             const promises = [
+               client.cluster.broadcastEval("this.guilds.cache.size"),
+               client.cluster.broadcastEval(
+                 "this.guilds.cache.reduce((acc, guild) => acc + (guild.memberCount||0), 0)"
+               ),
+               client.cluster.broadcastEval(
+                 "Number(Number(process.memoryUsage().rss/1024/1024).toFixed(0))"
+               ),
+             ];
+
+             await Promise.all(promises).then((results) => {
+               guildsize = results[0].reduce(
+                 (acc, guildCount) => Number(acc + guildCount),
+                 0
+               );
+               membersize = results[1].reduce(
+                 (acc, memberCount) => Number(acc + memberCount),
+                 0
+               );
+               ram = Number(
+                 results[4].reduce((acc, totalram) => Number(acc + totalram), 0)
+               );
+             });
 
         let statusEmbed = new EmbedBuilder()
             .setTitle(`${client.user?.username} status:`)
@@ -74,7 +87,7 @@ export default class StatusCommand implements CommandType {
                 },
                 {
                     name: ":hourglass_flowing_sand: Uptime",
-                    value: `<t:${client.readyTimestamp / 1000}:R> (${Math.floor(interaction.client.uptime / 1000 / 60)} minutes)`,
+                    value: `<t:${Math.round(client.readyTimestamp / 1000)}:R> (${Math.floor(interaction.client.uptime / 1000 / 60)} minutes)`,
                     inline: true,
                 },
                 {
@@ -88,8 +101,18 @@ export default class StatusCommand implements CommandType {
                     inline: true,
                 },
                 {
-                    name: ":desktop: Database Connection",
-                    value: `${formatDbState(connectionStatus)}`,
+                    name: ":id: Guilds",
+                    value: `${guildsize}`,
+                    inline: true,
+                },
+                {
+                    name: ":id: Members",
+                    value: `${membersize}`,
+                    inline: true,
+                },
+                {
+                    name: ":id: RAM",
+                    value: `${ram}MB`,
                     inline: true,
                 },
             )

@@ -8,7 +8,7 @@ export default class ReadyEvent implements EventType {
     name = "ready";
     once = true;
     async execute(client: WelcomerClient) {
-        console.log(`${client.user?.username} is ready !`)
+        console.log(`${client.user?.username} is ready (Cluster: ${client.cluster.id})!`)
         // trigger the clusterReady event
         client.cluster.emit("clusterReady", client.cluster);
 
