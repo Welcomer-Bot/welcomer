@@ -21,9 +21,7 @@ export default class GuildMemberAdd implements EventType {
         if (!guilds.goodbyeer.enabled) return;
         addMemberGoodbye(guild);
       } else {
-        await createOrUpdateGuild(member.guild).then(() => {
-          client.emit("guildMemberRemove", member, client);
-        });
+        await createOrUpdateGuild(member.guild);
       }
     } catch (err:Error | any) {
       error(err);

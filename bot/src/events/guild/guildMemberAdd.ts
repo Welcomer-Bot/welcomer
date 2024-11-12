@@ -20,9 +20,7 @@ export default class GuildMemberAdd implements EventType {
         if (!guilds.welcomer.enabled) return;
         addMemberWelcomed(guild);
       } else {
-        await createOrUpdateGuild(member.guild).then(() => {
-          client.emit("guildMemberAdd", member, client);
-        });
+        await createOrUpdateGuild(member.guild);
       }
     } catch (err: Error | any) {
       error(err);
