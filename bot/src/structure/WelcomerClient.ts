@@ -83,7 +83,7 @@ export default class WelcomerClient extends Client implements WelcomerClientType
     .catch((err) => {
       console.error("An error occured while starting the bot", err);
     });
-    this.loadCommands();
+    this.loadCommands(true);
   }
 
   public async loadCommands(reloadRest: boolean = false): Promise<void> {
