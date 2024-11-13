@@ -1,11 +1,11 @@
 import "dotenv/config";
 import { ClusterManager, ClusterManagerOptions, fetchRecommendedShards, HeartbeatManager, keepAliveOptions, ReClusterManager, ReClusterOptions } from "discord-hybrid-sharding";
-import { llog, logStatus } from "./utils/logger";
+import { logStatus } from "./utils/logger";
 
 let shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10")
 
 const managerConfig: ClusterManagerOptions = {
-    // shardsPerClusters,
+    shardsPerClusters,
     mode: "process",
     token: process.env.TOKEN,
     execArgv: [ ...process.execArgv ],
