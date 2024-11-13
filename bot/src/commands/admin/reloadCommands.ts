@@ -18,7 +18,7 @@ export default class reloadCommands implements CommandType {
         .setName(this.name)
         .setDescription(this.description)
         .addBooleanOption((option) =>
-            option.setName("reloadRest").setDescription("Send new commands to rest").setRequired(false)
+            option.setName("reloadrest").setDescription("Send new commands to rest").setRequired(false)
       );
   async execute(
     interaction: ChatInputCommandInteraction,
@@ -30,7 +30,7 @@ export default class reloadCommands implements CommandType {
         content: "You are not allowed to use this command.",
         ephemeral: true,
       });
-    const reloadRest = interaction.options.getBoolean("reloadRest") || false;
+    const reloadRest = interaction.options.getBoolean("reloadrest") || false;
     await client.cluster.broadcastEval(async (c) => {
       await c.loadCommands(reloadRest);
     });
