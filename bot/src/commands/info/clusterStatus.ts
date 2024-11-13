@@ -105,11 +105,6 @@ export default class ClusterStatusCommand implements CommandType {
             value: cluster.memoryUsage.toString() + "MB",
             inline: true,
           },
-          {
-            name: ":arrows_counterclockwise: Guilds in this cluster",
-            value: cluster.allGuildscluster.length.toString(),
-            inline: true,
-          }
         );
       for (const shard of cluster.perShardcluster) {
         embed.addFields({
