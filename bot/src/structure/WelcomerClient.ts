@@ -13,19 +13,21 @@ import {
 } from "discord.js";
 import { CommandType, EventType, modalType, SelectMenuType } from "../types";
 import WelcomerClientType from "../types/WelcomerClientType";
-import { loadEvents } from "./handlers";
 import { loadFiles } from "./loader";
 
-export default class WelcomerClient extends Client implements WelcomerClientType {
+export default class WelcomerClient
+  extends Client
+  implements WelcomerClientType
+{
   public commands = new Collection<string, CommandType>();
   public modals = new Collection<string, modalType>();
   public buttons = new Collection<string, any>();
   public events = new Collection<string, EventType>();
   public selectMenus = new Collection<string, SelectMenuType>();
   public commandsData = new Collection<string, APIApplicationCommand>();
-  public cluster: ClusterClient<this>;
-  public admins: string[];
-  public images: Collection<string, AttachmentBuilder>;
+  public cluster = new ClusterClient<this>(this);
+  public admins = process.env.ADMINS?.split(",") || [];
+  public images = new Collection<string, AttachmentBuilder>();
 
   emit(event: string, ...args: any[]): boolean {
     return super.emit(event, ...args);
@@ -63,10 +65,6 @@ export default class WelcomerClient extends Client implements WelcomerClientType
       },
     });
     this.init();
-    this.images = new Collection();
-
-    this.cluster = new ClusterClient(this);
-    this.admins = process.env.ADMINS?.split(",") || [];
 
     this.images.set(
       "banner",
@@ -75,18 +73,21 @@ export default class WelcomerClient extends Client implements WelcomerClientType
   }
 
   public async init(): Promise<void> {
-    loadEvents(this);
+    this.loadCommands();
+    this.loadEvents();
+    this.loadModals();
+    this.loadSelectMenus();
+    this.loadButtons();
     this.login(process.env.TOKEN)
-    .then(() => {
-      console.log("Client is starting");
-    })
-    .catch((err) => {
-      console.error("An error occured while starting the bot", err);
-    });
-    this.loadCommands(true);
+      .then(() => {
+        console.log("Client is starting");
+      })
+      .catch((err) => {
+        console.error("An error occured while starting the bot", err);
+      });
   }
 
-  public async loadCommands(reloadRest: boolean = false): Promise<void> {
+  public async loadCommands(reloadRest: boolean = true): Promise<void> {
     this.commands.clear();
     this.commandsData.clear();
 
@@ -94,7 +95,6 @@ export default class WelcomerClient extends Client implements WelcomerClientType
     let commands_array: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     let command_admin: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     let files = await loadFiles(`dist/commands`);
-    // console.log(Files)
 
     try {
       for (let file of files) {
@@ -146,6 +146,90 @@ export default class WelcomerClient extends Client implements WelcomerClientType
       }
     } catch (e) {
       console.error("An error occured on loadCommands!", e);
+    }
+  }
+
+  public async loadEvents(): Promise<void> {
+    this.events.clear();
+    let events = new Array();
+    let files = await loadFiles("dist/events");
+    for (let file of files) {
+      try {
+        let eventFile = require(file).default;
+        let event: EventType = new eventFile();
+        let execute = (...args: any[]) => event.execute(...args, this);
+        let target = event.cluster ? this.cluster : this;
+        if (event.prodEvent && process.env.NODE_ENV?.trim() !== "production")
+          continue;
+        (target as WelcomerClient)[event.once ? "once" : "on"](
+          event.name,
+          execute
+        );
+        this.events.set(event.name, event);
+        events.push({ Event: event.name, Status: "✅" });
+      } catch (e) {
+        events.push({ Event: file, Status: "❌" });
+        console.error(e);
+      }
+    }
+    console.log(`Loaded ${events.length} events.`);
+    console.table(events);
+  }
+
+  public async loadModals(): Promise<void> {
+    this.modals.clear();
+
+    let files = await loadFiles(`dist/modals`);
+    try {
+      files.forEach((file) => {
+        const modalFile = require(file).default;
+        const modal: modalType = new modalFile();
+        if (modal.customId.startsWith("editConfigModal")) {
+          // store customId with W and L attached to the end
+          this.modals.set(modal.customId + "W", modal);
+          this.modals.set(modal.customId + "L", modal);
+        } else {
+          this.modals.set(modal.customId, modal);
+        }
+      });
+    } catch (e) {
+      console.error("An error occured on loadModals!" + e);
+    }
+  }
+
+  public async loadSelectMenus(): Promise<void> {
+    this.selectMenus.clear();
+
+    let files = await loadFiles(`dist/selectMenus`);
+    for (let file of files) {
+      try {
+        let selectMenuFile = require(file).default;
+        let selectMenu: SelectMenuType = new selectMenuFile();
+        if (selectMenu.customId.startsWith("editConfigSelectMenu")) {
+          // store customId with W and L attached to the end
+          this.selectMenus.set(selectMenu.customId + "W", selectMenu);
+          this.selectMenus.set(selectMenu.customId + "L", selectMenu);
+        } else {
+          this.selectMenus.set(selectMenu.customId, selectMenu);
+        }
+      } catch (e) {
+        console.error("An error occured on loadSelectMenus!" + e);
+      }
+    }
+  }
+
+  public async loadButtons(): Promise<void> {
+    this.buttons.clear();
+
+    let files = await loadFiles(`dist/buttons`);
+    for (let file of files) {
+      try {
+        let buttonFile = require(file).default;
+        let button: SelectMenuType = new buttonFile();
+        this.buttons.set(button.customId, button);
+      } catch (e) {
+        console.error("An error occured on loadButtons!" + e);
+      }
     }
   }
 }

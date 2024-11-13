@@ -4,7 +4,6 @@ import {
   Message,
   SlashCommandBuilder,
 } from "discord.js";
-import { loadCommands } from "../../structure/handlers";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { CommandType } from "../../types";
 import { sendInteractionMessage } from "../../utils/messages";

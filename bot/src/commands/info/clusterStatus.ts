@@ -12,13 +12,13 @@ import { sendInteractionMessage } from "../../utils/messages";
 export default class ClusterStatusCommand implements CommandType {
   name = "clusterstatus";
   description = "Get the bot status";
+  admin = true;
   data = new SlashCommandBuilder()
     .setName(this.name)
     .setDescription(this.description);
   async execute(
     interaction: ChatInputCommandInteraction,
-    client: WelcomerClient,
-    ...options: any
+    client: WelcomerClient
   ): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
     if (!client.isReady()) {
       return sendInteractionMessage(interaction, {
@@ -26,10 +26,12 @@ export default class ClusterStatusCommand implements CommandType {
       });
     }
 
-    const res = await client.cluster.broadcastEval((c) => {
-      return {
-        clusterId: c.cluster.id,
-        shardIds: [...c.cluster.shardList],
+    try {
+      
+      const res = await client.cluster.broadcastEval((c) => {
+        return {
+          clusterId: c.cluster.id,
+          shardIds: [...c.cluster.shardList],
         totalGuilds: c.guilds.cache.size,
         totalMembers: c.guilds.cache
           .map((g) => g.memberCount)
@@ -62,8 +64,8 @@ export default class ClusterStatusCommand implements CommandType {
               .filter((x) => x.shardId === shardId)
               .map((g) => g.memberCount)
               .reduce((a, b) => a + b, 0),
-          };
-        }),
+            };
+          }),
       };
     });
 
@@ -112,13 +114,9 @@ export default class ClusterStatusCommand implements CommandType {
       for (const shard of cluster.perShardcluster) {
         embed.addFields({
           name: `:id: Shard ${shard.shardId}`,
-          value: `:ping_pong: Ping: ${
-            shard.ping
-          }ms\n:hourglass_flowing_sand: Uptime: <t:${Math.round(
+          value: `:hourglass_flowing_sand: Uptime: <t:${Math.round(
             (Date.now() - shard.uptime) / 1000
-          )}:R>\n:chart_with_upwards_trend: Guilds: ${
-            shard.guilds
-          }\n:chart_with_upwards_trend: Members: ${shard.members}`,
+          )}:R>\n:chart_with_upwards_trend: Guilds: ${shard.guilds}\n`,
           inline: false,
         });
       }
@@ -138,5 +136,11 @@ export default class ClusterStatusCommand implements CommandType {
         embeds: chunk,
       });
     }
+  } catch (error) {
+      sendInteractionMessage(interaction, ({
+        content: "There was an error while fetching or formating bot data, please try again !",
+        ephemeral: true,
+    }))
+  }
   }
 }

@@ -27,6 +27,21 @@ manager.extend(new ReClusterManager());
 
 manager.on("clusterCreate", (cluster) => { 
   logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "starting" });
+  cluster.on("death", (cluster) => {
+    logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "dead" });
+  })
+  cluster.on('error', (error) => {
+    console.error("Cluster error", error)
+  })
+  cluster.on('disconnect', (warn) => {
+    console.warn("Cluster disconnect", warn)
+  })
+  cluster.on('reconnecting', (warn) => {
+    logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "reconnecting" });
+  })
+  cluster.on('resumed', () => {
+    logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "resumed" });
+  })
 });
 
 manager.on("clusterReady", (cluster) => {
@@ -70,4 +85,8 @@ spawnClusters();
 
 process.on("unhandledRejection", (error) => {
   console.error(error)
+});
+
+process.on("uncaughtException", (error) => {
+  console.error(error);
 });
