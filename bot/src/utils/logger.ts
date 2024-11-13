@@ -2,7 +2,6 @@ import { APIEmbed, CommandInteraction, Embed } from "discord.js";
 
 const {
   EmbedBuilder,
-  Client,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
@@ -19,7 +18,10 @@ const addRemoveHook = new WebhookClient({
 });
 const statusHook = new WebhookClient({ url: process.env.STATUS_WEBHOOK });
 
-export const error = (message: Error, interaction?: CommandInteraction): void => {
+export const error = (
+  message: Error,
+  interaction?: CommandInteraction
+): void => {
   try {
     const embed = new EmbedBuilder()
       .setTitle(
@@ -67,10 +69,12 @@ export const error = (message: Error, interaction?: CommandInteraction): void =>
     });
     try {
       if (interaction) {
-        interaction.editReply({
-          embeds: [userEmbed],
-          components: [errorButton],
-        }).catch(console.error);
+        interaction
+          .editReply({
+            embeds: [userEmbed],
+            components: [errorButton],
+          })
+          .catch(console.error);
         return;
       }
     } catch (err) {
@@ -129,7 +133,7 @@ export const addedGuildMessage = (embed: Embed) => {
     console.log(e);
   }
 };
-export const removedGuildMessage = (embed: Embed| APIEmbed) => {
+export const removedGuildMessage = (embed: Embed | APIEmbed) => {
   try {
     addRemoveHook.send({ embeds: [embed] });
   } catch (e) {
@@ -142,9 +146,10 @@ export const logStatus = ({
   status,
 }: {
   cluster: number;
-  shard: number|string;
+  shard: number | string;
   status: string;
-}) => {
+  }) => {
+  if (process.env.NODE_ENV === "development") return;
   if (status === "starting") {
     statusHook.send({
       embeds: [

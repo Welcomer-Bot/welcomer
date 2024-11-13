@@ -27,7 +27,6 @@ export default class ReadyEvent implements EventType {
         await loadModals(client);
         await loadButtons(client);
         await loadSelectMenus(client);
-        await loadCommands(client);
 
         setInterval(async () => {
             await setStatus();

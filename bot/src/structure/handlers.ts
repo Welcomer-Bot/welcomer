@@ -51,7 +51,7 @@ export const loadCommands = async function (client: WelcomerClient) {
             } else {
                 commands_array.push(command.data.toJSON());
             }
-            client.commands.set(command.data.name, command);
+            client.commands.set(command.data.name.toLowerCase(), command);
         }
         client.application?.commands.set(commands_array);
 
