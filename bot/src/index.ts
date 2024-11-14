@@ -28,7 +28,7 @@ manager.extend(new ReClusterManager());
 manager.on("clusterCreate", (cluster) => { 
   logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "starting" });
   cluster.on("death", (cluster) => {
-    logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "dead" });
+    logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "death" });
   })
   cluster.on('error', (error) => {
     console.error("Cluster error", error)

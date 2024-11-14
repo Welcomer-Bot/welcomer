@@ -27,8 +27,7 @@ export default class ClusterStatusCommand implements CommandType {
     }
 
     try {
-      
-      const res = await client.cluster.broadcastEval((c) => {
+      let res = await client.cluster.broadcastEval((c) => {
         return {
           clusterId: c.cluster.id,
           shardIds: [...c.cluster.shardList],
@@ -131,7 +130,8 @@ export default class ClusterStatusCommand implements CommandType {
         embeds: chunk,
       });
     }
-  } catch (error) {
+    } catch (error) {
+      console.error(error);
       sendInteractionMessage(interaction, ({
         content: "There was an error while fetching or formating bot data, please try again !",
         ephemeral: true,

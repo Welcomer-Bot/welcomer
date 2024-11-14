@@ -203,7 +203,7 @@ export const logStatus = ({
         },
       ],
     });
-  } else {
-    console.log(`Status: ${status} on cluster ${cluster}, shard ${shard}`);
-  }
+  } 
+  console.log(`Status: ${status} on cluster ${cluster}, shard ${shard}`);
+  
 };
