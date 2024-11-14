@@ -3,11 +3,13 @@ import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types";
 
 import { getGuild } from "../../utils/getGuild";
+import { createOrUpdateGuild } from "../../utils/createGuild";
 
 export default class GuildCreate implements EventType {
   name = "guildCreate";
   async execute(guild: Guild, client: WelcomerClient): Promise<void> {
-    await getGuild(guild.id);
+    await createOrUpdateGuild(guild);
+
     // let systemChannel = guild.systemChannelId ? await guild.channels.fetch(guild.systemChannelId) as TextChannel : null;
 
     // const guildOwner = await guild.fetchOwner();
