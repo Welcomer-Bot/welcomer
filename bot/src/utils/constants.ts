@@ -1,4 +1,4 @@
-import { ActionRowBuilder, BaseMessageOptions, BaseSelectMenuBuilder, EmbedBuilder, Guild, GuildMember, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "discord.js";
+import { ActionRowBuilder, BaseMessageOptions, BaseSelectMenuBuilder, EmbedBuilder, Guild, GuildMember, InteractionReplyOptions, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 import { GuildFormated } from "../database/schema/Guild";
 import { BaseMessage } from "discord-hybrid-sharding";
@@ -81,8 +81,9 @@ export const testSelectMenu = new StringSelectMenuBuilder()
     })
 );
   
-export const testCommandMessage: BaseMessageOptions = {
-    embeds: [
+export const testCommandMessage: InteractionReplyOptions = {
+    ephemeral: true,
+  embeds: [
            new EmbedBuilder()
             .setTitle("Select an event to test :arrow_heading_down: ")
             .setColor("#161f2f"),
