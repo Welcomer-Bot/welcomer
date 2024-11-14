@@ -234,6 +234,4 @@ export default class WelcomerClient
       }
     }
   }
-
-
 }

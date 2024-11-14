@@ -8,7 +8,7 @@ export const getGuild = async (guildId: string) => {
       method: "GET",
       headers: new Headers({
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.TOKEN}`,
+        Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
       }),
     }).then((res) => res.json());
     if (res.error) {
@@ -26,7 +26,7 @@ export const getGuildsStats = async () => {
       method: "GET",
       headers: new Headers({
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.TOKEN}`,
+        Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
       }),
     }).then((res) => res.json());
     if (res.error) {
@@ -43,7 +43,7 @@ export const addMemberWelcomed = async (guild: Guild) => {
     method: "GET",
     headers: new Headers({
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.TOKEN}`,
+      Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
     }),
   }).then((res) => res.json());
 };
@@ -53,7 +53,7 @@ export const addMemberGoodbye = async (guild: Guild) => {
     method: "GET",
     headers: new Headers({
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.TOKEN}`,
+      Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
     }),
   }).then((res) => res.json());
 };
@@ -63,7 +63,7 @@ export const deleteGuild = async function (id: string) {
     method: "DELETE",
     headers: new Headers({
       "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.TOKEN}`,
+      Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
     }),
   }).then((res) => res.json());
   if (res.error) {

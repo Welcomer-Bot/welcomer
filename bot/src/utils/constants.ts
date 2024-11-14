@@ -1,6 +1,7 @@
-import { Guild, GuildMember } from "discord.js";
+import { ActionRowBuilder, BaseMessageOptions, BaseSelectMenuBuilder, EmbedBuilder, Guild, GuildMember, StringSelectMenuBuilder, StringSelectMenuOptionBuilder } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 import { GuildFormated } from "../database/schema/Guild";
+import { BaseMessage } from "discord-hybrid-sharding";
 
 
 
@@ -57,3 +58,34 @@ You can also test the configuration with the command ${testCommand ? "</test:" +
 
 export const welcomeKeywords = ['welcome', 'greetings', 'hello'];
 export const leaverkeywords = ['goodbye', 'adios', 'welcome']
+
+
+export const testSelectMenu = new StringSelectMenuBuilder()
+  .setCustomId("test-menu")
+  .setOptions(
+    new StringSelectMenuOptionBuilder({
+      label: "Test User Joining",
+      value: "Welcome",
+      emoji: {
+        name: "join",
+        id: "1011593313314410496",
+      },
+    }),
+    new StringSelectMenuOptionBuilder({
+      label: "Test User Leaving",
+      value: "Goodbye",
+      emoji: {
+        name: "leave",
+        id: "1011593334466297918",
+      },
+    })
+);
+  
+export const testCommandMessage: BaseMessageOptions = {
+    embeds: [
+           new EmbedBuilder()
+            .setTitle("Select an event to test :arrow_heading_down: ")
+            .setColor("#161f2f"),
+    ],
+    components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(testSelectMenu)],
+} 

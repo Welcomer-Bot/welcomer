@@ -34,7 +34,7 @@ export const sendDmMessage = async (client: WelcomerClient, user: GuildMember, m
     }
 }
 
-export const sendChannelMessage = async (client: WelcomerClient, channel: TextBasedChannel, message: MessageCreateOptions = baseMessage) => {
+export const sendChannelMessage = async (channel: TextBasedChannel, message: MessageCreateOptions = baseMessage) => {
     try {
         return await channel.send(message);
     } catch (error) {
