@@ -7,6 +7,7 @@ import {
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types";
 import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
+import { log } from "../../utils/logger";
 
 export default class InteractionCreateEvent implements EventType {
   name = "interactionCreate";
@@ -33,6 +34,10 @@ export default class InteractionCreateEvent implements EventType {
             if (command?.noDefer) return command.execute(interaction, client);
             await interaction.deferReply({ ephemeral: command?.ephemeral });
             await command.execute(interaction, client);
+            log(
+              `Interaction command called: /${interaction.commandName}`,
+              interaction
+            );
           } catch (error) {
             console.error("There was an error on interactionCreate: ", error);
             await sendErrorMessage(

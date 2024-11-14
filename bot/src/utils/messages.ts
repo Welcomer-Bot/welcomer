@@ -44,18 +44,20 @@ export const sendChannelMessage = async (channel: TextBasedChannel, message: Mes
 }
 
 export const sendErrorMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, error: string) => {
-    (await interaction.fetchReply()).removeAttachments();
-    await sendInteractionMessage(
-        interaction,
-        {
-            content: error,
-            ephemeral: true,
-            embeds: [],
-            components: [new ActionRowBuilder<ButtonBuilder>().addComponents(helpButton)],
-            files: [],
-        },
-        true
-    );
+    try {
+        (await interaction.fetchReply()).removeAttachments();
+        await sendInteractionMessage(
+            interaction,
+            {
+                content: error,
+                ephemeral: true,
+                embeds: [],
+                components: [new ActionRowBuilder<ButtonBuilder>().addComponents(helpButton)],
+                files: [],
+            },
+            true
+        );
+    }catch{}
 }
 
 export const sendTempMessage = async (interaction: Exclude<Interaction, AutocompleteInteraction>, message: InteractionReplyOptions = baseMessage, follow: boolean=false, time: number = 5000) => {

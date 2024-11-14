@@ -88,7 +88,7 @@ export const error = (
   }
 };
 
-export const log = (message: Error, interaction: CommandInteraction) => {
+export const log = (message: string, interaction: CommandInteraction) => {
   try {
     const embed = new EmbedBuilder()
       .setTitle(`Log: ${message}`)
@@ -98,11 +98,11 @@ export const log = (message: Error, interaction: CommandInteraction) => {
       embed.addFields(
         {
           name: "From",
-          value: interaction.guild?.name || "Unknown Guild",
+          value: `${interaction.guild?.name || "Unknown Guild"} (${interaction.guild?.id})`,
         },
         {
           name: "Triggered by",
-          value: interaction.user.tag,
+          value: `${interaction.user.tag} (${interaction.user.id})`,
         }
       );
     }
@@ -141,20 +141,22 @@ export const removedGuildMessage = (embed: Embed | APIEmbed) => {
   }
 };
 export const logStatus = ({
-  cluster,
-  shard,
+  clusterId,
+  shardId,
   status,
 }: {
-  cluster: number;
-  shard: number | string;
+  clusterId?: number;
+  shardId: number | string;
   status: string;
-  }) => {
+}) => {
   if (process.env.NODE_ENV === "development") return;
   if (status === "starting") {
     statusHook.send({
       embeds: [
         {
-          title: `Welcomer is Starting -- Cluster ${cluster}, Shard ${shard} is starting`,
+          title: `Welcomer is Starting -- ${
+            clusterId ? `clusterId ${clusterId}` : ""
+          }, shardId ${shardId} is starting`,
           timestamp: new Date(),
         },
       ],
@@ -164,7 +166,9 @@ export const logStatus = ({
     statusHook.send({
       embeds: [
         {
-          title: `Welcomer is Online -- Cluster ${cluster}, Shard ${shard} is online`,
+          title: `Welcomer is Online -- ${
+            clusterId ? `clusterId ${clusterId}` : ""
+          }, shardId ${shardId} is online`,
           color: 65280,
           timestamp: new Date(),
         },
@@ -175,7 +179,9 @@ export const logStatus = ({
     statusHook.send({
       embeds: [
         {
-          title: `Welcomer is partially offline -- Cluster ${cluster}, Shard ${shard} is offline`,
+          title: `Welcomer is partially offline -- ${
+            clusterId ? `clusterId ${clusterId}` : ""
+          }, shardId ${shardId} is offline`,
           color: "16711680",
           timestamp: new Date(),
         },
@@ -186,7 +192,9 @@ export const logStatus = ({
     statusHook.send({
       embeds: [
         {
-          title: `Welcomer is partially offline -- Clusyer ${cluster}, Shard ${shard} is reconnecting`,
+          title: `Welcomer is partially offline -- ${
+            clusterId ? `clusterId ${clusterId}` : ""
+          }, shardId ${shardId} is reconnecting`,
           color: "16737024",
           timestamp: new Date(),
         },
@@ -197,13 +205,18 @@ export const logStatus = ({
     statusHook.send({
       embeds: [
         {
-          title: `Welcomer is Online -- Cluster ${cluster}, Shard ${shard} has resumed`,
+          title: `Welcomer is Online -- ${
+            clusterId ? `clusterId ${clusterId}` : ""
+          }, shardId ${shardId} has resumed`,
           color: "65280",
           timestamp: new Date(),
         },
       ],
     });
-  } 
-  console.log(`Status: ${status} on cluster ${cluster}, shard ${shard}`);
-  
+  }
+  console.log(
+    `Status: ${status} on ${
+      clusterId ? `clusterId ${clusterId}` : ""
+    }, shardId ${shardId}`
+  );
 };

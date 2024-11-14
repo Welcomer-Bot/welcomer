@@ -65,9 +65,6 @@ export default class WelcomerClient
       },
     });
     this.init();
-    this.on("shardReady", (id) => {
-      console.log(`Shard ${id} is ready`);
-    });
     this.images.set(
       "banner",
       new AttachmentBuilder("banner.png").setFile("assets/banner.png")
