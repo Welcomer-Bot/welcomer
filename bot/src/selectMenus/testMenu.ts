@@ -23,6 +23,7 @@ export default class TestMenu implements SelectMenuType {
     ...options: any
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
     try {
+      
       await interaction.editReply({
         components: interaction.message.components,
       });

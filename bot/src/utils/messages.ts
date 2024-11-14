@@ -1,4 +1,4 @@
-import { ActionRowBuilder, AutocompleteInteraction, BaseMessageOptions, ButtonBuilder, GuildMember, Interaction, InteractionReplyOptions, InteractionResponse, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, BaseMessageOptions, ButtonBuilder, GuildMember, GuildTextBasedChannel, Interaction, InteractionReplyOptions, InteractionResponse, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 import { helpButton } from "./buttons";
 
@@ -34,7 +34,7 @@ export const sendDmMessage = async (client: WelcomerClient, user: GuildMember, m
     }
 }
 
-export const sendChannelMessage = async (channel: TextBasedChannel, message: MessageCreateOptions = baseMessage) => {
+export const sendChannelMessage = async (channel: GuildTextBasedChannel, message: MessageCreateOptions = baseMessage) => {
     try {
         return await channel.send(message);
     } catch (error) {

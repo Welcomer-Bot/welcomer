@@ -6,8 +6,8 @@ import {
 } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types";
-import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
 import { log } from "../../utils/logger";
+import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
 
 export default class InteractionCreateEvent implements EventType {
   name = "interactionCreate";
@@ -55,7 +55,10 @@ export default class InteractionCreateEvent implements EventType {
           try {
             // await interaction.deferReply({ ephemeral: selectMenu.ephemeral });
             await interaction.deferUpdate();
-            if (interaction.user.id !== interaction.message.author.id)
+            if (
+              interaction.user.id !==
+              interaction.message.interactionMetadata?.user.id
+            ) {
               return sendInteractionMessage(
                 interaction,
                 {
@@ -64,6 +67,7 @@ export default class InteractionCreateEvent implements EventType {
                 },
                 true
               );
+            }
             await selectMenu.execute(interaction, client);
           } catch (error) {
             console.error("There was an error on interactionCreate: ", error);
@@ -82,7 +86,10 @@ export default class InteractionCreateEvent implements EventType {
           if (!button) return;
           try {
             await interaction.deferUpdate();
-            if (interaction.user.id !== interaction.message.author.id)
+            if (
+              interaction.user.id !==
+              interaction.message.interactionMetadata?.user.id
+            ) {
               return sendInteractionMessage(
                 interaction,
                 {
@@ -91,6 +98,7 @@ export default class InteractionCreateEvent implements EventType {
                 },
                 true
               );
+            }
             await button.execute(interaction, client);
           } catch (error) {
             console.error("There was an error on interactionCreate: ", error);

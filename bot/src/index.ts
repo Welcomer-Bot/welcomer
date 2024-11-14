@@ -26,9 +26,9 @@ manager.extend(new HeartbeatManager(hearthbeatConfig))
 manager.extend(new ReClusterManager());
 
 manager.on("clusterCreate", (cluster) => { 
-  logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "starting" });
+  logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "starting" });
   cluster.on("death", (cluster) => {
-    logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "death" });
+    logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "death" });
   })
   cluster.on('error', (error) => {
     console.error("Cluster error", error)
@@ -37,15 +37,15 @@ manager.on("clusterCreate", (cluster) => {
     console.warn("Cluster disconnect", warn)
   })
   cluster.on('reconnecting', (warn) => {
-    logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "reconnecting" });
+    logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "reconnecting" });
   })
   cluster.on('resumed', () => {
-    logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "resumed" });
+    logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "resumed" });
   })
 });
 
 manager.on("clusterReady", (cluster) => {
-  logStatus({ cluster: cluster.id, shard: cluster.shardList.join(','), status: "online" });
+  logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "online" });
 });
 
 

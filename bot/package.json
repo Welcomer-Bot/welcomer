@@ -19,7 +19,7 @@
     "canvas": "^2.11.2",
     "canvas-txt": "3.0.0",
     "discord-hybrid-sharding": "^2.2.3",
-    "discord.js": "^14.15.3",
+    "discord.js": "^14.16.3",
     "dotenv": "^16.4.5",
     "glob": "^11.0.0",
     "joi": "^17.13.3",
