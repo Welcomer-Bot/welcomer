@@ -4,7 +4,9 @@ import { logStatus } from "../../utils/logger";
 export default class ShardDisconnect implements EventType {
   name = "shardDisconnect";
   once = true;
-  async execute(shardId: number) {
-    logStatus({ shardId, status: "ready" });
+  async execute(closeEvent: CloseEvent, shardId: number) {
+    if (!shardId) return;
+    console.log(`Shard ${shardId} is as disconnected`, closeEvent);
+    logStatus({ shardId, status: "death" });
   }
 }

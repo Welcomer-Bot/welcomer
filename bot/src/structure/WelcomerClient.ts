@@ -65,6 +65,7 @@ export default class WelcomerClient
       },
     });
     this.init();
+    this.on
     this.images.set(
       "banner",
       new AttachmentBuilder("banner.png").setFile("assets/banner.png")
