@@ -1,13 +1,9 @@
 import { Guild, GuildMember, TextChannel } from "discord.js";
 
-const { createCanvas, loadImage } = require("canvas");
+import { createCanvas, loadImage } from "canvas";
 const canvasTxt = require("canvas-txt").default;
-const {
-  AttachmentBuilder,
-  EmbedBuilder,
-  PermissionFlagsBits,
-} = require("discord.js");
-const logger = require("./logger");
+import { AttachmentBuilder, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import { error } from "./logger";
 
 export const welcomeCard = async (
   member: GuildMember,
@@ -138,12 +134,12 @@ export const welcomeCard = async (
             }
           }
         } catch (err) {
-          logger.error(err);
+          error(err as Error);
         }
       }
     }
   } catch (err) {
-    logger.error(err);
+    error(err as Error);
   }
 };
 
@@ -277,12 +273,12 @@ export const goodbyeCard = async (
             }
           }
         } catch (err) {
-          logger.error(err);
+          error(err as Error);
         }
       }
     }
   } catch (err) {
-    logger.error(err);
+    error(err as Error);
   }
 };
 

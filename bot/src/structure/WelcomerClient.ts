@@ -1,5 +1,6 @@
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
 import {
+  ActivityType,
   APIApplicationCommand,
   AttachmentBuilder,
   Client,
@@ -11,23 +12,26 @@ import {
   RESTPostAPIChatInputApplicationCommandsJSONBody,
   Routes,
 } from "discord.js";
-import { CommandType, EventType, modalType, SelectMenuType } from "../types";
-import WelcomerClientType from "../types/WelcomerClientType";
+import {
+  ButtonType,
+  CommandType,
+  EventType,
+  modalType,
+  SelectMenuType,
+} from "../types";
 import { loadFiles } from "./loader";
 
-export default class WelcomerClient
-  extends Client
-  implements WelcomerClientType
-{
+export default class WelcomerClient extends Client {
   public commands = new Collection<string, CommandType>();
   public modals = new Collection<string, modalType>();
-  public buttons = new Collection<string, any>();
+  public buttons = new Collection<string, ButtonType>();
   public events = new Collection<string, EventType>();
   public selectMenus = new Collection<string, SelectMenuType>();
   public commandsData = new Collection<string, APIApplicationCommand>();
   public cluster = new ClusterClient<this>(this);
   public admins = process.env.ADMINS?.split(",") || [];
-  public images = new Collection<string, AttachmentBuilder>();
+  public images = new Map<string, AttachmentBuilder>();
+  public managerReady: boolean = false;
 
   emit(event: string, ...args: any[]): boolean {
     return super.emit(event, ...args);
@@ -35,6 +39,15 @@ export default class WelcomerClient
 
   constructor() {
     super({
+      presence: {
+        status: "dnd",
+        activities: [
+          {
+            name: "gears booting up..",
+            type: ActivityType.Watching,
+          },
+        ],
+      },
       shards: getInfo().SHARD_LIST,
       shardCount: getInfo().TOTAL_SHARDS,
       intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
@@ -65,7 +78,6 @@ export default class WelcomerClient
       },
     });
     this.init();
-    this.on
     this.images.set(
       "banner",
       new AttachmentBuilder("banner.png").setFile("assets/banner.png")
@@ -78,6 +90,10 @@ export default class WelcomerClient
     this.loadModals();
     this.loadSelectMenus();
     this.loadButtons();
+
+    this.cluster.on("managerReady", () => {
+      this.managerReady = true;
+    });
     this.login(process.env.TOKEN)
       .then(() => {
         console.log("Client is starting");
@@ -225,7 +241,7 @@ export default class WelcomerClient
     for (let file of files) {
       try {
         let buttonFile = require(file).default;
-        let button: SelectMenuType = new buttonFile();
+        let button: ButtonType = new buttonFile();
         this.buttons.set(button.customId, button);
       } catch (e) {
         console.error("An error occured on loadButtons!" + e);
