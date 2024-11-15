@@ -82,7 +82,7 @@ export const testSelectMenu = new StringSelectMenuBuilder()
 );
   
 export const testCommandMessage: InteractionReplyOptions = {
-    ephemeral: true,
+  ephemeral: true,
   embeds: [
            new EmbedBuilder()
             .setTitle("Select an event to test :arrow_heading_down: ")

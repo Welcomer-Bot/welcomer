@@ -10,6 +10,7 @@ import { testCommandMessage } from "../../utils/constants";
 
 export default class implements CommandType {
     name = "test";
+    ephemeral?: boolean | undefined = true;
     description = "Test your current welcome/goodbye configuration";
     data = new SlashCommandBuilder()
         .setName(this.name)

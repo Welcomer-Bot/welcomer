@@ -155,8 +155,8 @@ export const logStatus = ({
       embeds: [
         {
           title: `Welcomer is Starting -- ${
-            clusterId ? `cluster ${clusterId}` : ""
-          }, shards ${shardId} are starting`,
+            clusterId ? `cluster ${clusterId},` : ""
+        }, shards ${shardId} are starting`,
           timestamp: new Date(),
         },
       ],
@@ -167,8 +167,8 @@ export const logStatus = ({
       embeds: [
         {
           title: `Welcomer is Online -- ${
-            clusterId ? `cluster ${clusterId}` : ""
-          }, shards ${shardId} are online`,
+            clusterId ? `cluster ${clusterId},` : ""
+        }, shards ${shardId} are online`,
           color: 65280,
           timestamp: new Date(),
         },
@@ -180,8 +180,8 @@ export const logStatus = ({
       embeds: [
         {
           title: `Welcomer is partially offline -- ${
-            clusterId ? `cluster ${clusterId}` : ""
-          }, shards ${shardId} are offline`,
+            clusterId ? `cluster ${clusterId},` : ""
+        }, shards ${shardId} are offline`,
           color: "16711680",
           timestamp: new Date(),
         },
@@ -193,8 +193,8 @@ export const logStatus = ({
       embeds: [
         {
           title: `Welcomer is partially offline -- ${
-            clusterId ? `cluster ${clusterId}` : ""
-          }, shards ${shardId} are reconnecting`,
+            clusterId ? `cluster ${clusterId},` : ""
+        }, shards ${shardId} are reconnecting`,
           color: "16737024",
           timestamp: new Date(),
         },
@@ -206,8 +206,8 @@ export const logStatus = ({
       embeds: [
         {
           title: `Welcomer is Online -- ${
-            clusterId ? `cluster ${clusterId}` : ""
-          }, shards ${shardId} ares resumed`,
+            clusterId ? `cluster ${clusterId},` : ""
+        }, shards ${shardId} ares resumed`,
           color: "65280",
           timestamp: new Date(),
         },
@@ -216,6 +216,6 @@ export const logStatus = ({
   }
   console.log(
     `Status: ${status} on ${
-      clusterId ? `cluster ${clusterId}` : ""
-    }, shards ${shardId}`);
+      clusterId ? `cluster ${clusterId},` : ""
+    } shards ${shardId}`);
 };
