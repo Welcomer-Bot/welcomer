@@ -18,7 +18,7 @@ export default class GuildMemberAdd implements EventType {
       var guilds = await getGuild(guild.id);
       if (guilds) {
         goodbyeCard(member, guild, guilds, client);
-        if (!guilds.goodbyeer.enabled) return;
+        if (!guilds.goodbyer.enabled) return;
         addMemberGoodbye(guild);
       } else {
         await createOrUpdateGuild(member.guild);

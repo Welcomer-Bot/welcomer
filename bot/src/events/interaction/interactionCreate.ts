@@ -16,7 +16,10 @@ export default class InteractionCreateEvent implements EventType {
     interaction: Exclude<Interaction, AutocompleteInteraction>,
     client: WelcomerClient
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
-    if (!interaction.inGuild() && !interaction.isAutocomplete())
+    if (
+      !interaction.inGuild() ||
+      (interaction.isAutocomplete && !interaction.isAutocomplete())
+    )
       return sendErrorMessage(
         interaction,
         "This command can only be used in a server."

@@ -33,6 +33,8 @@ export default class TestMenu implements SelectMenuType {
       InfoEmbed.setTitle(`Testing ${value} message`);
 
       let guild = await getGuild(interaction.guild!.id);
+      if (!guild) return;
+      // @ts-ignore
       let guildModule = guild[arg];
       let realChannelId = guildModule.channel;
 

@@ -4,7 +4,7 @@ export const createOrUpdateGuild = async (guild: {
   channels: { cache: any };
 }) => {
   try {
-    const res = await fetch(serverUrl + "/api/bot/updateGuilds", {
+    return await fetch(serverUrl + "/api/bot/updateGuilds", {
       method: "POST",
       headers: new Headers({
         "Content-Type": "application/json",
@@ -22,10 +22,6 @@ export const createOrUpdateGuild = async (guild: {
         return { error: 'Failed to update guild' };
       }
     });
-    if (res.error) {
-      return console.error(res.error);
-    }
-    return res;
   } catch (error) {
     console.log(error);
   }

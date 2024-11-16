@@ -1,22 +1,16 @@
 import { APIEmbed, CommandInteraction, Embed } from "discord.js";
 
-const {
-  EmbedBuilder,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  WebhookClient,
-} = require("discord.js");
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, WebhookClient } from "discord.js";
 
 /**
  * @param {Client} client
  */
 
-const log_hook = new WebhookClient({ url: process.env.LOGS_WEBHOOK });
+const log_hook = new WebhookClient({ url: process.env.LOGS_WEBHOOK! });
 const addRemoveHook = new WebhookClient({
-  url: process.env.ADD_REMOVE_WEBHOOK,
+  url: process.env.ADD_REMOVE_WEBHOOK!,
 });
-const statusHook = new WebhookClient({ url: process.env.STATUS_WEBHOOK });
+const statusHook = new WebhookClient({ url: process.env.STATUS_WEBHOOK! });
 
 export const error = (
   message: Error,
@@ -53,7 +47,7 @@ export const error = (
         .setLabel("Support")
         .setStyle(ButtonStyle.Link)
         .setURL("https://discord.gg/7TGc5ZZ7aM")
-    );
+    ) as ActionRowBuilder<ButtonBuilder>;
 
     let userEmbed = new EmbedBuilder()
       .setTitle("An error has occured")
@@ -157,7 +151,7 @@ export const logStatus = ({
           title: `Welcomer is Starting -- ${
             clusterId ? `cluster ${clusterId},` : ""
         }, shards ${shardId} are starting`,
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         },
       ],
     });
@@ -170,7 +164,7 @@ export const logStatus = ({
             clusterId ? `cluster ${clusterId},` : ""
         }, shards ${shardId} are online`,
           color: 65280,
-          timestamp: new Date(),
+          timestamp: new Date().toISOString(),
         },
       ],
     });
@@ -182,8 +176,8 @@ export const logStatus = ({
           title: `Welcomer is partially offline -- ${
             clusterId ? `cluster ${clusterId},` : ""
         }, shards ${shardId} are offline`,
-          color: "16711680",
-          timestamp: new Date(),
+          color: 16711680,
+          timestamp: new Date().toISOString(),
         },
       ],
     });
@@ -195,8 +189,8 @@ export const logStatus = ({
           title: `Welcomer is partially offline -- ${
             clusterId ? `cluster ${clusterId},` : ""
         }, shards ${shardId} are reconnecting`,
-          color: "16737024",
-          timestamp: new Date(),
+          color: 16737024,
+          timestamp: new Date().toISOString(),
         },
       ],
     });
@@ -208,8 +202,8 @@ export const logStatus = ({
           title: `Welcomer is Online -- ${
             clusterId ? `cluster ${clusterId},` : ""
         }, shards ${shardId} ares resumed`,
-          color: "65280",
-          timestamp: new Date(),
+          color: 65280,
+          timestamp: new Date().toISOString(),
         },
       ],
     });
