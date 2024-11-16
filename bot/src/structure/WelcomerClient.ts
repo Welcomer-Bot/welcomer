@@ -8,9 +8,7 @@ import {
   GatewayIntentBits,
   Options,
   Partials,
-  REST,
   RESTPostAPIChatInputApplicationCommandsJSONBody,
-  Routes,
 } from "discord.js";
 import {
   ButtonType,
@@ -103,11 +101,10 @@ export default class WelcomerClient extends Client {
       });
   }
 
-  public async loadCommands(reloadRest: boolean = true): Promise<void> {
+  public async loadCommands(): Promise<void> {
     this.commands.clear();
     this.commandsData.clear();
 
-    let rest = new REST({ version: "10" }).setToken(process.env.TOKEN!);
     let commands_array: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     let command_admin: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     let files = await loadFiles(`src/commands`);
@@ -122,43 +119,6 @@ export default class WelcomerClient extends Client {
           commands_array.push(command.data.toJSON());
         }
         this.commands.set(command.data.name.toLowerCase(), command);
-      }
-      this.application?.commands.set(commands_array);
-
-      if (reloadRest) {
-        console.log(
-          `Started loading ${
-            commands_array.length + command_admin.length
-          } commands`
-        );
-        try {
-          let data = (await rest.put(
-            Routes.applicationCommands(process.env.CLIENT_ID!),
-            { body: commands_array }
-          )) as APIApplicationCommand[];
-
-          let data_admin = (await rest.put(
-            Routes.applicationGuildCommands(
-              process.env.CLIENT_ID!,
-              process.env.ADMIN_GUILD_ID!
-            ),
-            { body: command_admin }
-          )) as APIApplicationCommand[];
-
-          if (!data || !data_admin)
-            return console.error("An error occured on loadCommands!");
-          data.forEach((command) => {
-            this.commandsData.set(command.name, command);
-          });
-          data_admin.forEach((command) => {
-            this.commandsData.set(command.name, command);
-          });
-          console.log(
-            `Loaded ${commands_array.length + command_admin.length} commands`
-          );
-        } catch (error) {
-          console.log(error);
-        }
       }
     } catch (e) {
       console.error("An error occured on loadCommands!", e);
