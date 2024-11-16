@@ -1,6 +1,7 @@
-import { ActivityType } from "discord.js";
+import { ActivityType, ApplicationCommandType } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types";
+import { waitForManager } from "../../utils/functions";
 
 
 export default class ReadyEvent implements EventType {
@@ -8,8 +9,10 @@ export default class ReadyEvent implements EventType {
     once = true;
     async execute(client: WelcomerClient) {
         console.log(`${client.user?.username} is ready (Cluster: ${client.cluster.id})!`)
-        // trigger the clusterReady event
-        client.cluster.emit("clusterReady", client.cluster);
+        await setStatus();
+        setInterval(async () => {
+            await setStatus();
+        }, 120000);
 
         async function setStatus() {
             let messages = [
@@ -22,10 +25,21 @@ export default class ReadyEvent implements EventType {
             client.user?.setActivity(message, { type: ActivityType.Watching });
         }
 
-        await setStatus();
+        if (client.cluster.id === 0) {
+            await waitForManager(client);
+            for (const command of client.commands.values()) {
+                if (command.type !== ApplicationCommandType.ChatInput) continue;
+                command.contexts = [0];
+                command.dmPermission = false;
 
-        setInterval(async () => {
-            await setStatus();
-        }, 120000);
+                
+            }
+            await client.application?.commands.set([...client.commands.values()]).then(async (commandsData) => {
+                console.log("Commands registered!");
+                console.log(commandsData);
+            })
+        }
+
+
     };
 }

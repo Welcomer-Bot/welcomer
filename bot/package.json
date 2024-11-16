@@ -5,8 +5,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "export NODE_ENV=development && nodemon",
-    "build": "rm -rf dist && tsc",
-    "start": "node dist/index.js"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prod": "export NODE_ENV=production && yarn build && yarn start"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
