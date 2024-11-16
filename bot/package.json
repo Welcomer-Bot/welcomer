@@ -3,14 +3,16 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",
+  "exports": "./dist/index.mjs",
   "scripts": {
     "dev": "export NODE_ENV=development && nodemon",
-    "build": "rm -rf dist && tsc",
-    "start": "node dist/index.js"
+    "build": "pkgroll --clean-dist",
+    "start": "node dist/index.mjs"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",
     "nodemon": "^3.1.4",
+    "pkgroll": "^2.5.1",
     "ts-node": "^10.9.2",
     "tsx": "^4.16.2",
     "typescript": "^5.5.3"

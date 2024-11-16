@@ -1,5 +1,6 @@
 import { EventType } from "../../types";
 import { logStatus } from "../../utils/logger";
+import { CloseEvent } from "ws";
 
 export default class ShardDisconnect implements EventType {
   name = "shardDisconnect";

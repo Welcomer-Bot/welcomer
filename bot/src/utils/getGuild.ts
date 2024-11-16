@@ -1,20 +1,24 @@
+import { GuildFormated } from '../database/schema/Guild';
 import { Guild } from "discord.js";
 
 const serverUrl = process.env.SERVER_URL;
 
 export const getGuild = async (guildId: string) => {
   try {
-    const res = await fetch(serverUrl + "/api/bot/guild/" + guildId, {
+    return await fetch(serverUrl + "/api/bot/guild/" + guildId, {
       method: "GET",
       headers: new Headers({
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
       }),
-    }).then((res) => res.json());
-    if (res.error) {
-      return null;
-    }
-    return res.guild;
+    }).then(async (res) => {
+      if (res.ok) {
+        const data = (await res.json()) as { guild: GuildFormated };
+        return data.guild;
+      } else {
+        return null;
+      }
+    });
   } catch (error) {
     return null;
   }
@@ -22,17 +26,19 @@ export const getGuild = async (guildId: string) => {
 
 export const getGuildsStats = async () => {
   try {
-    const res = await fetch(serverUrl + "/api/bot/guilds", {
+    return await fetch(serverUrl + "/api/bot/guilds", {
       method: "GET",
       headers: new Headers({
         "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
       }),
-    }).then((res) => res.json());
-    if (res.error) {
-      return null;
-    }
-    return res;
+    }).then((res) => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        return null;
+      }
+    });
   } catch (error) {
     return null;
   }
@@ -59,15 +65,17 @@ export const addMemberGoodbye = async (guild: Guild) => {
 };
 
 export const deleteGuild = async function (id: string) {
-  var res = await fetch(`${serverUrl}/api/bot/guild/${id}`, {
+  return await fetch(`${serverUrl}/api/bot/guild/${id}`, {
     method: "DELETE",
     headers: new Headers({
       "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
     }),
-  }).then((res) => res.json());
-  if (res.error) {
-    return false;
-  }
-  return true;
+  }).then((res) => {
+    if (res.ok) {
+      return true;
+    } else {
+      return false;
+    }
+  });
 };

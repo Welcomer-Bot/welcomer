@@ -110,7 +110,7 @@ export default class WelcomerClient extends Client {
     let rest = new REST({ version: "10" }).setToken(process.env.TOKEN!);
     let commands_array: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     let command_admin: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
-    let files = await loadFiles(`dist/commands`);
+    let files = await loadFiles(`src/commands`);
 
     try {
       for (let file of files) {
@@ -168,7 +168,7 @@ export default class WelcomerClient extends Client {
   public async loadEvents(): Promise<void> {
     this.events.clear();
     let events = new Array();
-    let files = await loadFiles("dist/events");
+    let files = await loadFiles("src/events");
     for (let file of files) {
       try {
         let eventFile = require(file).default;
@@ -195,7 +195,7 @@ export default class WelcomerClient extends Client {
   public async loadModals(): Promise<void> {
     this.modals.clear();
 
-    let files = await loadFiles(`dist/modals`);
+    let files = await loadFiles(`src/modals`);
     try {
       files.forEach((file) => {
         const modalFile = require(file).default;
@@ -216,7 +216,7 @@ export default class WelcomerClient extends Client {
   public async loadSelectMenus(): Promise<void> {
     this.selectMenus.clear();
 
-    let files = await loadFiles(`dist/selectMenus`);
+    let files = await loadFiles(`src/selectMenus`);
     for (let file of files) {
       try {
         let selectMenuFile = require(file).default;
@@ -237,7 +237,7 @@ export default class WelcomerClient extends Client {
   public async loadButtons(): Promise<void> {
     this.buttons.clear();
 
-    let files = await loadFiles(`dist/buttons`);
+    let files = await loadFiles(`src/buttons`);
     for (let file of files) {
       try {
         let buttonFile = require(file).default;
