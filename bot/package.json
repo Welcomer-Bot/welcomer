@@ -6,9 +6,8 @@
   "exports": "./dist/index.mjs",
   "scripts": {
     "dev": "export NODE_ENV=development && nodemon",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "prod": "export NODE_ENV=production && yarn build && yarn start"
+    "start": "npx tsx ./src/index.ts",
+    "prod": "export NODE_ENV=production && yarn start"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
