@@ -150,7 +150,7 @@ export const logStatus = ({
         {
           title: `Welcomer is Starting -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        }, shards ${shardId} are starting`,
+        } shards ${shardId} are starting`,
           timestamp: new Date().toISOString(),
         },
       ],
@@ -162,7 +162,7 @@ export const logStatus = ({
         {
           title: `Welcomer is Online -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        }, shards ${shardId} are online`,
+        } shards ${shardId} are online`,
           color: 65280,
           timestamp: new Date().toISOString(),
         },
@@ -175,7 +175,7 @@ export const logStatus = ({
         {
           title: `Welcomer is partially offline -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        }, shards ${shardId} are offline`,
+        } shards ${shardId} are offline`,
           color: 16711680,
           timestamp: new Date().toISOString(),
         },
@@ -188,7 +188,7 @@ export const logStatus = ({
         {
           title: `Welcomer is partially offline -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        }, shards ${shardId} are reconnecting`,
+        } shards ${shardId} are reconnecting`,
           color: 16737024,
           timestamp: new Date().toISOString(),
         },
@@ -201,7 +201,7 @@ export const logStatus = ({
         {
           title: `Welcomer is Online -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        }, shards ${shardId} ares resumed`,
+        } shards ${shardId} ares resumed`,
           color: 65280,
           timestamp: new Date().toISOString(),
         },
