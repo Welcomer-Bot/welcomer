@@ -13,12 +13,9 @@ export default class reloadCommands implements CommandType {
   description = "Reload all commands on all clusters";
   admin = true;
   noDefer?: boolean | undefined = true;
-    data = new SlashCommandBuilder()
-        .setName(this.name)
-        .setDescription(this.description)
-        .addBooleanOption((option) =>
-            option.setName("reloadrest").setDescription("Send new commands to rest").setRequired(false)
-      );
+  data = new SlashCommandBuilder()
+    .setName(this.name)
+    .setDescription(this.description);
   async execute(
     interaction: ChatInputCommandInteraction,
     client: WelcomerClient,
@@ -29,9 +26,8 @@ export default class reloadCommands implements CommandType {
         content: "You are not allowed to use this command.",
         ephemeral: true,
       });
-    const reloadRest = interaction.options.getBoolean("reloadrest") || false;
     await client.cluster.broadcastEval(async (c) => {
-      await c.loadCommands(reloadRest);
+      await c.loadCommands();
     });
   }
 }

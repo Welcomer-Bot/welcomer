@@ -11,22 +11,23 @@
     "prod": "export NODE_ENV=production && yarn build && yarn start"
   },
   "devDependencies": {
-    "@types/node": "^20.14.9",
-    "nodemon": "^3.1.4",
-    "pkgroll": "^2.5.1",
+    "@types/node": "^22.10.2",
+    "nodemon": "^3.1.9",
+    "pkgroll": "^2.6.0",
     "ts-node": "^10.9.2",
-    "tsx": "^4.16.2",
-    "typescript": "^5.5.3"
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
-    "canvas": "^2.11.2",
-    "canvas-txt": "3.0.0",
+    "canvas": "^3.0.0",
+    "canvas-txt": "4.1.1",
+    "discord-api-types": "^0.37.114",
     "discord-hybrid-sharding": "^2.2.3",
     "discord.js": "^14.16.3",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "glob": "^11.0.0",
     "joi": "^17.13.3",
-    "mongoose": "^8.4.5",
-    "zod": "^3.23.8"
+    "mongoose": "^8.9.2",
+    "zod": "^3.24.1"
   }
 }
