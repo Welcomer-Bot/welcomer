@@ -11,7 +11,7 @@ export interface GuildFormated {
     id: string;
     name: string;
     welcomer: Module;
-    goodbyer: Module;
+    goodbyeer: Module;
     mutual?: boolean;
     _tempData?: Guild
     _id?: string;

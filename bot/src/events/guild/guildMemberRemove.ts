@@ -7,7 +7,7 @@ import { goodbyeCard } from './../../utils/welcomeCard';
 import { error } from '../../utils/logger';
 import { EventType } from "./../../types/index";
 
-export default class GuildMemberAdd implements EventType {
+export default class GuildMemberRemove implements EventType {
   name: string = "guildMemberRemove";
   async execute(
     member: GuildMember,
@@ -18,7 +18,8 @@ export default class GuildMemberAdd implements EventType {
       var guilds = await getGuild(guild.id);
       if (guilds) {
         goodbyeCard(member, guild, guilds, client);
-        if (!guilds.goodbyer.enabled) return;
+        console.log(guilds);
+        if (!guilds.goodbyeer.enabled) return;
         addMemberGoodbye(guild);
       } else {
         await createOrUpdateGuild(member.guild);
