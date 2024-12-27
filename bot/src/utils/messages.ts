@@ -1,4 +1,4 @@
-import { ActionRowBuilder, AutocompleteInteraction, BaseMessageOptions, ButtonBuilder, GuildMember, GuildTextBasedChannel, Interaction, InteractionReplyOptions, InteractionResponse, Message, MessageCreateOptions, TextBasedChannel } from "discord.js";
+import { ActionRowBuilder, AutocompleteInteraction, BaseMessageOptions, ButtonBuilder, GuildMember, GuildTextBasedChannel, Interaction, InteractionReplyOptions, InteractionResponse, Message, MessageCreateOptions } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 import { helpButton } from "./buttons";
 

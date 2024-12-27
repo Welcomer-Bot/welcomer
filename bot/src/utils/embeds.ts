@@ -1,6 +1,6 @@
 import { EmbedBuilder } from "discord.js";
-import WelcomerClient from "../structure/WelcomerClient";
 import { GuildFormated } from "../database/schema/Guild";
+import WelcomerClient from "../structure/WelcomerClient";
 
 
 export const embedHelperOnGuildCreate = new EmbedBuilder()

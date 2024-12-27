@@ -1,5 +1,4 @@
 import { EventType } from "../../types";
-import { logStatus } from "../../utils/logger";
 
 export default class ShardError implements EventType {
   name = "shardError";

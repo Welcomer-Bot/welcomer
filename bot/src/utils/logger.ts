@@ -1,6 +1,6 @@
 import { APIEmbed, CommandInteraction, Embed } from "discord.js";
 
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, WebhookClient } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, WebhookClient } from "discord.js";
 
 /**
  * @param {Client} client

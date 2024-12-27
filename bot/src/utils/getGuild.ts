@@ -1,5 +1,5 @@
-import { GuildFormated } from '../database/schema/Guild';
 import { Guild } from "discord.js";
+import { GuildFormated } from '../database/schema/Guild';
 
 const serverUrl = process.env.SERVER_URL;
 

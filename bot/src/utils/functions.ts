@@ -1,4 +1,4 @@
-import { TextChannel, PermissionResolvable } from "discord.js";
+import { PermissionResolvable, TextChannel } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 
 export const formatNumber = (num: number) => {

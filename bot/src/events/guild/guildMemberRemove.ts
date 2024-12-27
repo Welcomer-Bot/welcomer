@@ -1,11 +1,11 @@
-import { goodbyeCard } from './../../utils/welcomeCard';
 import { GuildMember, InteractionResponse, Message } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { createOrUpdateGuild } from "../../utils/createGuild";
 import { addMemberGoodbye, getGuild } from "../../utils/getGuild";
+import { goodbyeCard } from './../../utils/welcomeCard';
 
-import { EventType } from "./../../types/index";
 import { error } from '../../utils/logger';
+import { EventType } from "./../../types/index";
 
 export default class GuildMemberAdd implements EventType {
   name: string = "guildMemberRemove";

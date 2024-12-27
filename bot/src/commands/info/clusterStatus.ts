@@ -1,17 +1,13 @@
 import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
   ChatInputCommandInteraction,
   EmbedBuilder,
   InteractionResponse,
   Message,
-  SlashCommandBuilder,
+  SlashCommandBuilder
 } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { CommandType } from "../../types";
 import { sendInteractionMessage } from "../../utils/messages";
-import cluster from "cluster";
 
 export default class ClusterStatusCommand implements CommandType {
   name = "clusterstatus";

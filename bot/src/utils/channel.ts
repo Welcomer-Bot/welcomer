@@ -1,5 +1,5 @@
-import { Guild, TextBasedChannel, TextChannel } from "discord.js"
-import WelcomerClient from "../structure/WelcomerClient"
+import { TextBasedChannel } from "discord.js";
+import WelcomerClient from "../structure/WelcomerClient";
 
 
 export const fetchTextChannel = async (channelId: string, client: WelcomerClient): Promise<TextBasedChannel> => {

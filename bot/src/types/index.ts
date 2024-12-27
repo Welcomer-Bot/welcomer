@@ -1,6 +1,5 @@
-import { AnySelectMenuInteraction, APIAttachment, APIEmbed, ButtonInteraction, ChatInputApplicationCommandData, ChatInputCommandInteraction, ColorResolvable, Guild, InteractionResponse, Message, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
+import { AnySelectMenuInteraction, ButtonInteraction, ChatInputApplicationCommandData, ChatInputCommandInteraction, InteractionResponse, Message, ModalMessageModalSubmitInteraction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
-import { WelcomerEmbed } from "../database/schema/APISchemas/Embed";
 
 export interface modalType {
     customId: string;

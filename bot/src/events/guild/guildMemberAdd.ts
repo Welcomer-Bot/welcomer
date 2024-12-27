@@ -1,10 +1,10 @@
 import { GuildMember, InteractionResponse, Message } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
-import { EventType } from "./../../types/index";
-import { addMemberWelcomed, getGuild } from "../../utils/getGuild";
-import { welcomeCard } from "../../utils/welcomeCard";
 import { createOrUpdateGuild } from "../../utils/createGuild";
+import { addMemberWelcomed, getGuild } from "../../utils/getGuild";
 import { error } from "../../utils/logger";
+import { welcomeCard } from "../../utils/welcomeCard";
+import { EventType } from "./../../types/index";
 
 export default class GuildMemberAdd implements EventType {
   name: string = "guildMemberAdd";

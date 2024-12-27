@@ -1,5 +1,5 @@
+import { glob } from "glob";
 import path from "path";
-import {glob} from "glob"
 
 export async function deleteCachedFile(file: string) {
     let filePath = path.resolve(file);

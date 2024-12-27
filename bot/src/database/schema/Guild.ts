@@ -1,8 +1,4 @@
-import { BaseMessageOptions, ChannelType, Guild } from "discord.js";
-import { model, Model, Schema } from "mongoose";
-import { leaverkeywords, welcomeKeywords } from "../../utils/constants";
-import { attachementSchema } from "./APISchemas/Attachment";
-import { EmbedSchema } from "./APISchemas/Embed";
+import { BaseMessageOptions, Guild } from "discord.js";
 
 export interface Module extends BaseMessageOptions {
     enabled: boolean;

@@ -2,7 +2,6 @@ import { Guild } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types";
 
-import { getGuild } from "../../utils/getGuild";
 import { createOrUpdateGuild } from "../../utils/createGuild";
 
 export default class GuildCreate implements EventType {
