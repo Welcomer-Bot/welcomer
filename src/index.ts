@@ -1,6 +1,11 @@
 import { ClusterManager, ClusterManagerOptions, fetchRecommendedShards, HeartbeatManager, keepAliveOptions, ReClusterManager, ReClusterOptions } from "discord-hybrid-sharding";
 import "dotenv/config";
-import { logStatus } from "./utils/logger";
+import Logger from "./structure/Logger";
+
+if (!process.env.LOG_WEBHOOK || !process.env.STATUS_WEBHOOK || !process.env.ADD_REMOVE_WEBHOOK) {
+  throw new Error("Missing webhook urls in .env");
+}
+const logger = new Logger(process.env.LOG_WEBHOOK, process.env.STATUS_WEBHOOK, process.env.ADD_REMOVE_WEBHOOK);
 
 
 const shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10")
@@ -27,9 +32,9 @@ manager.extend(new HeartbeatManager(hearthbeatConfig))
 manager.extend(new ReClusterManager());
 
 manager.on("clusterCreate", (cluster) => { 
-  logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "starting" });
+  logger.status(cluster, "starting");
   cluster.on("death", (cluster) => {
-    logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "death" });
+    logger.status(cluster, "death");
   })
   cluster.on('error', (error) => {
     console.error("Cluster error", error)
@@ -38,15 +43,15 @@ manager.on("clusterCreate", (cluster) => {
     console.warn("Cluster disconnect", warn)
   })
   cluster.on('reconnecting', () => {
-    logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "reconnecting" });
+    logger.status(cluster, "reconnecting");
   })
   cluster.on('resumed', () => {
-    logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "resumed" });
+    logger.status(cluster, "resumed");
   })
 });
 
 manager.on("clusterReady", (cluster) => {
-  logStatus({ clusterId: cluster.id, shardId: cluster.shardList.join(','), status: "online" });
+  logger.status(cluster, "ready");
 });
 
 

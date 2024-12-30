@@ -29,14 +29,14 @@ model Welcomer {
   content   String
   embeds    Embed[] /// @zod.max(10)
   DM        DM?
-  created   DateTime? @default(now())
-  updated   DateTime? @default(now())
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime? @updatedAt
 }
 
 model Leaver {
   id        Int      @unique @default(autoincrement()) /// @zod.optional()
   guildId   String   @unique
-  guild     Guild    @relation(fields: [guildId], references: [id])
+  guild     Guild?    @relation(fields: [guildId], references: [id])
   channelId String
   content   String
   embeds    Embed[]

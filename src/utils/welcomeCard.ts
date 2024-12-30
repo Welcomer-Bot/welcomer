@@ -7,7 +7,6 @@ import {
 } from "discord.js";
 import WelcomerClient from "src/structure/WelcomerClient";
 import { parseDiscordMessage } from "./functions";
-import { error } from "./logger";
 import { sendChannelMessage } from "./messages";
 
 export const welcomeCard = async (
@@ -44,7 +43,7 @@ export const welcomeCard = async (
       sendChannelMessage(channel, message);
     }
   } catch (err) {
-    error(err as Error);
+    client.logger.error(err as Error);
   }
 };
 
@@ -83,7 +82,7 @@ export const goodbyeCard = async (
       sendChannelMessage(channel, message);
     }
   } catch (err) {
-    error(err as Error);
+    client.logger.error(err as Error);
   }
 };
 

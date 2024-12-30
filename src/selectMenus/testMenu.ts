@@ -1,3 +1,4 @@
+import { Leaver, Welcomer } from "@prisma/client";
 import {
   EmbedBuilder,
   GuildMember,
@@ -7,9 +8,9 @@ import {
   StringSelectMenuInteraction,
   TextChannel,
 } from "discord.js";
+import { getLeaver, getWelcomer } from "src/utils/database";
 import WelcomerClient from "../structure/WelcomerClient";
 import { checkPermsForChannel } from "../utils/functions";
-import { getGuild } from "../utils/getGuild";
 import { sendInteractionMessage } from "../utils/messages";
 import { goodbyeCard, welcomeCard } from "../utils/welcomeCard";
 import { SelectMenuType } from "./../types/index";
@@ -36,11 +37,18 @@ export default class TestMenu implements SelectMenuType {
         );
       const arg = value === "Welcome" ? "welcomer" : "leaver";
       InfoEmbed.setTitle(`Testing ${value} message`);
-
-      const guild = await getGuild(interaction.guild!.id);
-      if (!guild) return;
-      const guildModule = guild[arg];
-      if (!guildModule) throw new Error("Unknown module");
+      let guildModule: Welcomer | Leaver | null;
+      if (arg === "welcomer") {
+        guildModule = await getWelcomer(interaction.guild!.id);
+      } else {
+        guildModule = await getLeaver(interaction.guild!.id);
+      }
+      if (!guildModule)
+        return sendInteractionMessage(
+          interaction,
+          { content: `No ${value} module found.`, ephemeral: true },
+          true
+        );
       const realChannelId = guildModule.channelId;
 
       const currentChannelPermissionErrors: string[] = [];
@@ -119,21 +127,21 @@ export default class TestMenu implements SelectMenuType {
         });
       }
 
-      switch (value) {
-        case "Welcome":
+      switch (arg) {
+        case "welcomer":
           welcomeCard(
             interaction.member as GuildMember,
             interaction.guild!,
-            guild,
+            guildModule,
             client,
             currentChannel as TextChannel
           );
           break;
-        case "Goodbye":
+        case "leaver":
           goodbyeCard(
             interaction.member as GuildMember,
             interaction.guild!,
-            guild,
+            guildModule,
             client,
             currentChannel as TextChannel
           );

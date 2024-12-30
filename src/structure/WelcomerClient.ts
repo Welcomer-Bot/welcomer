@@ -17,7 +17,8 @@ import {
   ModalType,
   SelectMenuType,
 } from "../types";
-import { loadFiles } from "./loader";
+import { loadFiles } from "../utils/loader";
+import Logger from "./Logger";
 
 export default class WelcomerClient extends Client {
   public commands = new Collection<string, CommandType>();
@@ -30,6 +31,8 @@ export default class WelcomerClient extends Client {
   public admins = process.env.ADMINS?.split(",") || [];
   public images = new Map<string, AttachmentBuilder>();
   public managerReady: boolean = false;
+  public logger: Logger;
+
   emit(event: string, ...args: unknown[]): boolean {
     return super.emit(event, ...args);
   }
@@ -74,6 +77,19 @@ export default class WelcomerClient extends Client {
         },
       },
     });
+    if (
+      !process.env.LOG_WEBHOOK ||
+      !process.env.STATUS_WEBHOOK ||
+      !process.env.ADD_REMOVE_WEBHOOK
+    ) {
+      throw new Error("Missing webhook urls in .env");
+    }
+    this.logger = new Logger(
+      process.env.LOG_WEBHOOK,
+      process.env.STATUS_WEBHOOK,
+      process.env.ADD_REMOVE_WEBHOOK
+    );
+
     this.init();
     this.images.set(
       "banner",
@@ -82,9 +98,7 @@ export default class WelcomerClient extends Client {
 
     this.cluster.on("ready", () => {
       this.loadEvents();
-    })
-    
-    
+    });
   }
 
   public async init(): Promise<void> {
@@ -214,5 +228,4 @@ export default class WelcomerClient extends Client {
       }
     }
   }
-
 }

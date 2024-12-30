@@ -4,7 +4,6 @@ import WelcomerClient from "../../structure/WelcomerClient";
 import { goodbyeCard } from "./../../utils/welcomeCard";
 
 import { getLeaver } from "src/utils/database";
-import { error } from "../../utils/logger";
 import { EventType } from "./../../types/index";
 
 export default class GuildMemberRemove implements EventType {
@@ -20,7 +19,7 @@ export default class GuildMemberRemove implements EventType {
       goodbyeCard(member, guild, module, client);
       // addMemberGoodbye(guild);
     } catch (err: Error | unknown) {
-      error(err as Error);
+      client.logger.error(err as Error);
     }
   }
 }

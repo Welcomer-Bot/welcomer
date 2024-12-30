@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 
 export const embedHelperOnGuildCreate = new EmbedBuilder()
   .setTitle(
@@ -16,3 +16,34 @@ export const autoConfigEmbed = function () {
     `:wave: Welcome to Welcomer - Your gateway to a warm and customized welcome!`
   );
 };
+
+export function errorEmbedBuilder(
+  message: string,
+  stack?: string | undefined,
+  interaction?: CommandInteraction
+) {
+  const embed = new EmbedBuilder()
+    .setTitle(
+      `Error
+          \n ${message}`
+    )
+    .setDescription(`**${stack || "No description provided"}**`)
+    .setColor("#ff0000")
+    .setTimestamp();
+  if (interaction) {
+    embed.addFields(
+      {
+        name: "From",
+        value: interaction.guild?.name || "Unknown Guild",
+      },
+      {
+        name: "Triggered by",
+        value: interaction.user.tag,
+      },
+      {
+        name: "Command",
+        value: interaction.commandName,
+      }
+    );
+  }
+}

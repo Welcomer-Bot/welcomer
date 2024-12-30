@@ -1,12 +1,13 @@
 import { EmbedBuilder, Guild, InteractionResponse, Message } from "discord.js";
-import { EventType } from "../../types";
-import { error, removedGuildMessage } from "../../utils/logger";
+import WelcomerClient from "src/structure/WelcomerClient";
 import { deleteGuild } from "src/utils/database";
+import { EventType } from "../../types";
 
 export default class GuildDelete implements EventType {
   name = "guildDelete";
   async execute(
-    guild: Guild
+    guild: Guild,
+    client: WelcomerClient
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
     try {
       await deleteGuild(guild.id);
@@ -19,9 +20,9 @@ export default class GuildDelete implements EventType {
           value: guild.memberCount + " members",
         })
         .setTimestamp();
-      removedGuildMessage(removeEmbed.toJSON());
+      client.logger.addRemoveGuild(removeEmbed);
     } catch (err: Error | unknown) {
-      error(err as Error);
+      client.logger.error(err as Error);
     }
   }
 }

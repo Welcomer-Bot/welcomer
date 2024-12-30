@@ -6,8 +6,8 @@ export const WelcomerModel = z.object({
   guildId: z.string(),
   channelId: z.string(),
   content: z.string(),
-  created: z.date().nullish(),
-  updated: z.date().nullish(),
+  createdAt: z.date().nullish(),
+  updatedAt: z.date().nullish(),
 })
 
 export interface CompleteWelcomer extends z.infer<typeof WelcomerModel> {

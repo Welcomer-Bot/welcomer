@@ -11,7 +11,7 @@ export const LeaverModel = z.object({
 })
 
 export interface CompleteLeaver extends z.infer<typeof LeaverModel> {
-  guild: CompleteGuild
+  guild?: CompleteGuild | null
   embeds: CompleteEmbed[]
 }
 
@@ -21,6 +21,6 @@ export interface CompleteLeaver extends z.infer<typeof LeaverModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedLeaverModel: z.ZodSchema<CompleteLeaver> = z.lazy(() => LeaverModel.extend({
-  guild: RelatedGuildModel,
+  guild: RelatedGuildModel.nullish(),
   embeds: RelatedEmbedModel.array(),
 }))

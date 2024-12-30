@@ -6,7 +6,6 @@ import {
 } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types";
-import { log } from "../../utils/logger";
 import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
 
 export default class InteractionCreateEvent implements EventType {
@@ -34,7 +33,7 @@ export default class InteractionCreateEvent implements EventType {
             if (command?.noDefer) return command.execute(interaction, client);
             await interaction.deferReply({ ephemeral: command?.ephemeral });
             await command.execute(interaction, client);
-            log(
+            client.logger.info(
               `Interaction command called: /${interaction.commandName}`,
               interaction
             );
