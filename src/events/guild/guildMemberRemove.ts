@@ -1,9 +1,9 @@
 import { GuildMember, InteractionResponse, Message } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
-import { createOrUpdateGuild } from "../../utils/createGuild";
-import { addMemberGoodbye, getGuild } from "../../utils/getGuild";
+
 import { goodbyeCard } from "./../../utils/welcomeCard";
 
+import { getLeaver } from "src/utils/database";
 import { error } from "../../utils/logger";
 import { EventType } from "./../../types/index";
 
@@ -15,14 +15,10 @@ export default class GuildMemberRemove implements EventType {
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
     try {
       const guild = member.guild;
-      const guilds = await getGuild(guild.id);
-      if (guilds) {
-        goodbyeCard(member, guild, guilds, client);
-        if (!guilds.leaver) return;
-        addMemberGoodbye(guild);
-      } else {
-        await createOrUpdateGuild(member.guild);
-      }
+      const module = await getLeaver(guild.id);
+      if (!module) return;
+      goodbyeCard(member, guild, module, client);
+      // addMemberGoodbye(guild);
     } catch (err: Error | unknown) {
       error(err as Error);
     }

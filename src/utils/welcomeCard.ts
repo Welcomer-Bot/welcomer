@@ -1,3 +1,4 @@
+import { Leaver, Welcomer } from "@prisma/client";
 import {
   Guild,
   GuildBasedChannel,
@@ -5,7 +6,6 @@ import {
   PermissionFlagsBits,
 } from "discord.js";
 import WelcomerClient from "src/structure/WelcomerClient";
-import { CompleteGuild } from "../../prisma/schema/guild";
 import { parseDiscordMessage } from "./functions";
 import { error } from "./logger";
 import { sendChannelMessage } from "./messages";
@@ -13,37 +13,35 @@ import { sendChannelMessage } from "./messages";
 export const welcomeCard = async (
   member: GuildMember,
   guild: Guild,
-  guildDb: CompleteGuild,
+  module: Welcomer,
   client: WelcomerClient,
   testchannel: GuildBasedChannel | null = null
 ) => {
   try {
-    if (guildDb.welcomer) {
-      let channel = testchannel;
-      if (!channel) {
-        channel =
-          guild.channels.cache.find(
-            (channel) => channel.id === guildDb.welcomer?.channelId
-          ) || null;
-      }
-      if (!channel) return;
-      const content = parseDiscordMessage(guildDb.welcomer.content, member);
-      if (
-        client.user &&
-        channel.isTextBased() &&
-        channel
-          .permissionsFor(client.user)
-          ?.has([
-            PermissionFlagsBits.SendMessages,
-            PermissionFlagsBits.AttachFiles,
-            PermissionFlagsBits.ViewChannel,
-          ])
-      ) {
-        const message = {
-          content,
-        };
-        sendChannelMessage(channel, message);
-      }
+    let channel = testchannel;
+    if (!channel) {
+      channel =
+        guild.channels.cache.find(
+          (channel) => channel.id === module?.channelId
+        ) || null;
+    }
+    if (!channel) return;
+    const content = parseDiscordMessage(module.content, member);
+    if (
+      client.user &&
+      channel.isTextBased() &&
+      channel
+        .permissionsFor(client.user)
+        ?.has([
+          PermissionFlagsBits.SendMessages,
+          PermissionFlagsBits.AttachFiles,
+          PermissionFlagsBits.ViewChannel,
+        ])
+    ) {
+      const message = {
+        content,
+      };
+      sendChannelMessage(channel, message);
     }
   } catch (err) {
     error(err as Error);
@@ -53,38 +51,36 @@ export const welcomeCard = async (
 export const goodbyeCard = async (
   member: GuildMember,
   guild: Guild,
-  guildDb: CompleteGuild,
+  module: Leaver,
   client: WelcomerClient,
   testchannel: GuildBasedChannel | null = null
 ) => {
   try {
-    if (guildDb.leaver) {
-      let channel = testchannel;
-      if (!channel) {
-        channel =
-          guild.channels.cache.find(
-            (channel) => channel.id === guildDb.leaver?.channelId
-          ) || null;
-      }
-      if (!channel) return;
-      if (!channel) return;
-      const content = parseDiscordMessage(guildDb.leaver.content, member);
-      if (
-        client.user &&
-        channel.isTextBased() &&
-        channel
-          .permissionsFor(client.user)
-          ?.has([
-            PermissionFlagsBits.SendMessages,
-            PermissionFlagsBits.AttachFiles,
-            PermissionFlagsBits.ViewChannel,
-          ])
-      ) {
-        const message = {
-          content,
-        };
-        sendChannelMessage(channel, message);
-      }
+    let channel = testchannel;
+    if (!channel) {
+      channel =
+        guild.channels.cache.find(
+          (channel) => channel.id === module?.channelId
+        ) || null;
+    }
+    if (!channel) return;
+    if (!channel) return;
+    const content = parseDiscordMessage(module.content, member);
+    if (
+      client.user &&
+      channel.isTextBased() &&
+      channel
+        .permissionsFor(client.user)
+        ?.has([
+          PermissionFlagsBits.SendMessages,
+          PermissionFlagsBits.AttachFiles,
+          PermissionFlagsBits.ViewChannel,
+        ])
+    ) {
+      const message = {
+        content,
+      };
+      sendChannelMessage(channel, message);
     }
   } catch (err) {
     error(err as Error);

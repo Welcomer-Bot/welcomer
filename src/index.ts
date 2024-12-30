@@ -1,7 +1,7 @@
 import { ClusterManager, ClusterManagerOptions, fetchRecommendedShards, HeartbeatManager, keepAliveOptions, ReClusterManager, ReClusterOptions } from "discord-hybrid-sharding";
 import "dotenv/config";
 import { logStatus } from "./utils/logger";
-import "../../instrument.js"
+
 
 const shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10")
 
@@ -9,11 +9,11 @@ const managerConfig: ClusterManagerOptions = {
     shardsPerClusters,
     mode: "process",
     token: process.env.TOKEN,
-    execArgv: [ ...process.execArgv ],
-     restarts: {
-    max: 5,
-    interval: 60 * 60000,
-  },
+  execArgv: [...process.execArgv],
+        restarts: {
+        max: 5, // Maximum amount of restarts per cluster
+        interval: 60000 * 60, // Interval to reset restarts
+    },
 }
 
 const hearthbeatConfig: keepAliveOptions = {
@@ -58,6 +58,8 @@ async function spawnClusters() {
           `this.ws.status && this.isReady() ? this.ws.reconnect() : 0`,
         );
       }, 60000);
+    }).catch((error) => {
+      console.error(error)
     });
     setInterval(reclusterShards, 24 * 60 * 60 * 1000);
   } catch (error) {
@@ -93,11 +95,3 @@ process.on("uncaughtException", (error) => {
 });
 
 
-import * as Sentry from "@sentry/node";
-
-try {
-  // @ts-expect-error test error
-  foo();
-} catch (e) {
-  Sentry.captureException(e);
-}

@@ -61,6 +61,10 @@ export default class WelcomerClient extends Client {
           maxSize: 1,
           keepOverLimit: (member) => member.id === member.client.user.id,
         },
+        GuildMessageManager: 0,
+        GuildBanManager: 0,
+        PresenceManager: 0,
+        VoiceStateManager: 0,
       }),
       sweepers: {
         ...Options.DefaultSweeperSettings,
@@ -75,6 +79,12 @@ export default class WelcomerClient extends Client {
       "banner",
       new AttachmentBuilder("banner.png").setFile("assets/banner.png")
     );
+
+    this.cluster.on("ready", () => {
+      this.loadEvents();
+    })
+    
+    
   }
 
   public async init(): Promise<void> {
@@ -204,4 +214,5 @@ export default class WelcomerClient extends Client {
       }
     }
   }
+
 }
