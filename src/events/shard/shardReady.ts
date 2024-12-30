@@ -6,6 +6,7 @@ export default class ShardReady implements EventType {
   once = true;
   async execute(shardId: number, client: WelcomerClient) {
     if (!shardId) return;
+    console.log(`Shard ${shardId} is ready`);
     client.logger.shardStatus(shardId, "ready");
   }
 }

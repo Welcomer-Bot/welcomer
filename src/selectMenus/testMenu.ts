@@ -46,7 +46,7 @@ export default class TestMenu implements SelectMenuType {
       if (!guildModule)
         return sendInteractionMessage(
           interaction,
-          { content: `No ${value} module found.`, ephemeral: true },
+          { content: `No ${arg} module found. Please enable it first with the [dashboard](<https://welcomer.app>)`, ephemeral: true },
           true
         );
       const realChannelId = guildModule.channelId;

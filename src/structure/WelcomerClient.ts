@@ -90,14 +90,14 @@ export default class WelcomerClient extends Client {
       process.env.ADD_REMOVE_WEBHOOK
     );
 
-    this.init();
     this.images.set(
       "banner",
       new AttachmentBuilder("banner.png").setFile("assets/banner.png")
     );
 
     this.cluster.on("ready", () => {
-      this.loadEvents();
+      this.managerReady = true;
+      this.init();
     });
   }
 
@@ -108,9 +108,6 @@ export default class WelcomerClient extends Client {
     this.loadSelectMenus();
     this.loadButtons();
 
-    this.cluster.on("managerReady", () => {
-      this.managerReady = true;
-    });
     this.login(process.env.TOKEN)
       .then(() => {
         console.log("Client is starting");

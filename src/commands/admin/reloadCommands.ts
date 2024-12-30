@@ -12,7 +12,6 @@ export default class reloadCommands implements CommandType {
   name = "reloadcommands";
   description = "Reload all commands on all clusters";
   admin = true;
-  noDefer?: boolean | undefined = true;
   data = new SlashCommandBuilder()
     .setName(this.name)
     .setDescription(this.description);
@@ -27,6 +26,12 @@ export default class reloadCommands implements CommandType {
       });
     await client.cluster.broadcastEval(async (c) => {
       await c.loadCommands();
-    });
+    }).then(() => {
+      sendInteractionMessage(interaction, {
+        content: "Commands reloaded on all clusters!",
+        ephemeral: true,
+      });
+    }
+    );
   }
 }

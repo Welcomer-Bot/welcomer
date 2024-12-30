@@ -10,7 +10,7 @@ export default class implements CommandType {
   name = "config";
   description = "Configure the bot";
   data = new SlashCommandBuilder()
-    .setName("config")
+    .setName(this.name)
     .setDescription(this.description);
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     const embed = new EmbedBuilder()
