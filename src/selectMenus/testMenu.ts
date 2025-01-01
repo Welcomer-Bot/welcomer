@@ -46,7 +46,10 @@ export default class TestMenu implements SelectMenuType {
       if (!guildModule)
         return sendInteractionMessage(
           interaction,
-          { content: `No ${arg} module found. Please enable it first with the [dashboard](<https://welcomer.app>)`, ephemeral: true },
+          {
+            content: `No ${arg} module found. Please enable it first with the [dashboard](<https://welcomer.app>)`,
+            ephemeral: true,
+          },
           true
         );
       const realChannelId = guildModule.channelId;
@@ -55,32 +58,36 @@ export default class TestMenu implements SelectMenuType {
       const realChannelPermissionErrors: string[] = [];
 
       const realChannel = interaction.guild!.channels.cache.get(realChannelId);
-      const currentChannel = interaction.channel;
+      let currentChannel = interaction.channel;
+
+      if (!realChannel) {
+        InfoEmbed.setColor("#ff0000").setDescription(
+          `Channel is not set, please set it with the [dashboard](<https://welcomer.app>)`
+        );
+        return sendInteractionMessage(
+          interaction,
+          { embeds: [InfoEmbed], ephemeral: true },
+          true
+        );
+      }
 
       InfoEmbed.setColor("#33cc33")
         .setDescription(
           `This is a test function, test message will be sent in this channel, if ${value.toLowerCase()} module is not enabled, nothing will be sent.`
         )
-        .addFields(
-          {
-            name: "``Enabled``",
-            value: guildModule
-              ? "**:white_check_mark:  enabled**"
-              : "**<a:greytick:1011928045810090054> disabled**",
-          },
-          {
-            name: "<:channel:1011932902637977650> ``Channel:``",
-            value: guildModule.channelId
-              ? `<#${guildModule.channelId}>`
-              : "**NOT SET (No messages will be sent)**",
-          }
-        );
+        .addFields({
+          name: "<:channel:1011932902637977650> ``Channel:``",
+          value: "<#" + guildModule.channelId + ">",
+        });
 
       const permissionNames = {
         [PermissionsBitField.Flags.SendMessages.toString()]: "Send Messages",
         [PermissionsBitField.Flags.EmbedLinks.toString()]: "Embed Links",
         [PermissionsBitField.Flags.AttachFiles.toString()]: "Attach Files",
       };
+      if (currentChannel === realChannel) {
+        currentChannel = null;
+      }
 
       for (const channel of [currentChannel, realChannel]) {
         if (!channel) continue;
@@ -127,6 +134,11 @@ export default class TestMenu implements SelectMenuType {
         });
       }
 
+      sendInteractionMessage(
+        interaction,
+        { embeds: [InfoEmbed], ephemeral: true },
+        true
+      );
       switch (arg) {
         case "welcomer":
           welcomeCard(
@@ -152,10 +164,5 @@ export default class TestMenu implements SelectMenuType {
     } catch (error) {
       console.log(error);
     }
-    sendInteractionMessage(
-      interaction,
-      { embeds: [InfoEmbed], ephemeral: true },
-      true
-    );
   }
 }

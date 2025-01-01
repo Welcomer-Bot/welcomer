@@ -21,5 +21,5 @@ export interface CompleteEmbedField extends z.infer<typeof EmbedFieldModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedEmbedFieldModel: z.ZodSchema<CompleteEmbedField> = z.lazy(() => EmbedFieldModel.extend({
-  embed: RelatedEmbedModel.optional().nullish(),
+  embed: RelatedEmbedModel.nullish(),
 }))

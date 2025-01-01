@@ -20,5 +20,5 @@ export interface CompleteEmbedFooter extends z.infer<typeof EmbedFooterModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedEmbedFooterModel: z.ZodSchema<CompleteEmbedFooter> = z.lazy(() => EmbedFooterModel.extend({
-  embed: RelatedEmbedModel.optional().nullish(),
+  embed: RelatedEmbedModel.nullish(),
 }))

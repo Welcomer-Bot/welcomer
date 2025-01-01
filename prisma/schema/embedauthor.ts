@@ -21,5 +21,5 @@ export interface CompleteEmbedAuthor extends z.infer<typeof EmbedAuthorModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedEmbedAuthorModel: z.ZodSchema<CompleteEmbedAuthor> = z.lazy(() => EmbedAuthorModel.extend({
-  embed: RelatedEmbedModel.optional().nullish(),
+  embed: RelatedEmbedModel.nullish(),
 }))

@@ -1,11 +1,15 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
+}
+
+generator zod {
+  provider              = "zod-prisma"
+  output                = "./schema"
+  relationModel         = "true"
+  modelSuffix           = "Model"
+  useDecimalJs          = "true"
+  prismaJsonNullability = "true"
+  modelCase             = "PascalCase"
 }
 
 datasource db {
@@ -15,111 +19,109 @@ datasource db {
 
 model Guild {
   id        String    @id @unique
-  welcomer  Welcomer?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
   leaver    Leaver?
-  createdAt DateTime?  @default(now())
-  updatedAt DateTime?  @updatedAt
+  welcomer  Welcomer?
 }
 
 model Welcomer {
-  id        Int      @unique @default(autoincrement()) /// @zod.optional()
-  guildId   String   @unique
-  guild     Guild?   @relation(fields: [guildId], references: [id])
-  channelId String
-  content   String
-  embeds    Embed[] /// @zod.max(10)
+  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  guildId   String    @unique
+  channelId String?
+  content   String?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt 
   DM        DM?
-  createdAt   DateTime? @default(now())
-  updatedAt   DateTime? @updatedAt
+  embeds    Embed[]
+  guild     Guild?     @relation(fields: [guildId], references: [id])
 }
 
 model Leaver {
-  id        Int      @unique @default(autoincrement()) /// @zod.optional()
-  guildId   String   @unique
-  guild     Guild?    @relation(fields: [guildId], references: [id])
-  channelId String
-  content   String
-  embeds    Embed[]
+  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  guildId   String    @unique
+  channelId String?
+  content   String?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+  embeds    Embed[]
+  guild     Guild?     @relation(fields: [guildId], references: [id])
 }
 
 model DM {
-  id        Int      @unique @default(autoincrement())
-  moduleId  Int      @unique
-  module    Welcomer @relation(fields: [moduleId], references: [id])
+  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  moduleId  Int       @unique
   message   String
-  embeds    Embed[]
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+  module    Welcomer  @relation(fields: [moduleId], references: [id])
+  embeds    Embed[]
 }
- 
+
 model Embed {
-  id           Int          @id @default(autoincrement()) /// @zod.optional()
-  title        String?      @db.VarChar(256) 
+  id           Int          @id @default(autoincrement())  /// @zod.optional()
+  title        String?      @db.VarChar(256)
   description  String?      @db.VarChar(4096)
   color        String?
   timestamp    DateTime?
   timestampNow Boolean?
-  footer       EmbedFooter?
-  fields       EmbedField[]
-  author       EmbedAuthor?
-  image        EmbedImage?
   thumbnail    String?
   url          String?
-  created      DateTime?     @default(now()) /// @zod.optional()
-  updated      DateTime?     @default(now()) /// @zod.optional()
-
-  // relations
-  welcomerId Int?
-  welcomer   Welcomer? @relation(fields: [welcomerId], references: [id])
-  leaverId   Int?
-  leaver     Leaver?   @relation(fields: [leaverId], references: [id])
-  DMId       Int?
-  DM         DM?       @relation(fields: [DMId], references: [id])
+  created      DateTime?    @default(now())
+  updated      DateTime?    @default(now())
+  welcomerId   Int?
+  leaverId     Int?
+  DMId         Int?
+  DM           DM?          @relation(fields: [DMId], references: [id])
+  leaver       Leaver?      @relation(fields: [leaverId], references: [id])
+  welcomer     Welcomer?    @relation(fields: [welcomerId], references: [id])
+  author       EmbedAuthor?
+  fields       EmbedField[]
+  footer       EmbedFooter?
+  image        EmbedImage?
 }
 
 model EmbedImage {
-  id        Int      @id @default(autoincrement())
-  embedId   Int      @unique
-  embed     Embed    @relation(fields: [embedId], references: [id])
+  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  embedId   Int       @unique
   url       String
   width     Int?
   heigth    Int?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+  embed     Embed?     @relation(fields: [embedId], references: [id])
 }
 
 model EmbedAuthor {
-  id        Int      @id @default(autoincrement())/// @zod.optional()
-  embedId   Int?      @unique/// @zod.optional()
-  embed     Embed?    @relation(fields: [embedId], references: [id])/// @zod.optional()
+  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  embedId   Int?      @unique
   name      String?
   iconUrl   String?
-  url       String? @db.VarChar(256)
+  url       String?   @db.VarChar(256)
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+  embed     Embed?    @relation(fields: [embedId], references: [id])
 }
 
 model EmbedField {
-  id        Int      @id @default(autoincrement())/// @zod.optional()
-  embedId   Int?      @unique/// @zod.optional()
-  embed     Embed?    @relation(fields: [embedId], references: [id])/// @zod.optional()
+  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  embedId   Int?      @unique
   name      String
   value     String
   inline    Boolean?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
+  embed     Embed?    @relation(fields: [embedId], references: [id])
 }
 
 model EmbedFooter {
-  id        Int      @id @default(autoincrement())/// @zod.optional()
-  embedId   Int?      @unique /// @zod.optional()
-  embed     Embed?    @relation(fields: [embedId], references: [id]) /// @zod.optional()
+  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  embedId   Int?      @unique
   text      String?   @db.VarChar(2048)
   iconUrl   String?
-  createdAt DateTime? @default(now())/// @zod.optional()
-  updatedAt DateTime? @updatedAt/// @zod.optional()
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  embed     Embed?    @relation(fields: [embedId], references: [id])
 }
 
 model User {
@@ -129,8 +131,8 @@ model User {
   avatar        String?
   accessToken   String?
   refreshToken  String?
-  createdAt     DateTime?    @default(now())
-  updatedAt     DateTime?    @updatedAt
+  createdAt     DateTime?   @default(now())
+  updatedAt     DateTime?   @updatedAt
   guilds        UserGuild[]
 }
 
@@ -140,11 +142,11 @@ model UserGuild {
   icon        String?
   banner      String?
   permissions String?
-  channels    Channels[]
   userId      String
+  createdAt   DateTime?  @default(now())
+  updatedAt   DateTime?  @updatedAt
+  channels    Channels[]
   user        User       @relation(fields: [userId], references: [id])
-  createdAt   DateTime?   @default(now())
-  updatedAt   DateTime?   @updatedAt
 }
 
 model Channels {
@@ -152,29 +154,8 @@ model Channels {
   type      String
   name      String
   guildId   String
-  guild     UserGuild @relation(fields: [guildId], references: [id])
   channelId String
-  createdAt DateTime?  @default(now())
-  updatedAt DateTime?  @updatedAt
-}
-
-generator zod {
-  provider = "zod-prisma"
-  output   = "./schema" // (default) the directory where generated zod schemas will be saved
-
-  relationModel = true // (default) Create and export both plain and related models.
-  // relationModel         = "default" // Do not export model without relations.
-  // relationModel         = false // Do not generate related model
-
-  modelCase = "PascalCase" // (default) Output models using pascal case (ex. UserModel, PostModel)
-  // modelCase             = "camelCase" // Output models using camel case (ex. userModel, postModel)
-
-  modelSuffix = "Model" // (default) Suffix to apply to your prisma models when naming Zod schemas
-
-  // useDecimalJs          = false // (default) represent the prisma Decimal type using as a JS number
-  useDecimalJs = true // represent the prisma Decimal type using Decimal.js (as Prisma does)
-
-  // https://www.prisma.io/docs/concepts/components/prisma-client/working-with-fields/working-with-json-fields#filtering-by-null-values
-  prismaJsonNullability = true // (default) uses prisma's scheme for JSON field nullability
-  // prismaJsonNullability = false // allows null assignment to optional JSON fields
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  guild     UserGuild @relation(fields: [guildId], references: [id])
 }

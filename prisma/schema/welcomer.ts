@@ -1,19 +1,19 @@
 import * as z from "zod"
-import { CompleteGuild, RelatedGuildModel, CompleteEmbed, RelatedEmbedModel, CompleteDM, RelatedDMModel } from "./index"
+import { CompleteDM, RelatedDMModel, CompleteEmbed, RelatedEmbedModel, CompleteGuild, RelatedGuildModel } from "./index"
 
 export const WelcomerModel = z.object({
   id: z.number().int().optional(),
   guildId: z.string(),
-  channelId: z.string(),
-  content: z.string(),
+  channelId: z.string().nullish(),
+  content: z.string().nullish(),
   createdAt: z.date().nullish(),
   updatedAt: z.date().nullish(),
 })
 
 export interface CompleteWelcomer extends z.infer<typeof WelcomerModel> {
-  guild?: CompleteGuild | null
-  embeds: CompleteEmbed[]
   DM?: CompleteDM | null
+  embeds: CompleteEmbed[]
+  guild: CompleteGuild
 }
 
 /**
@@ -22,7 +22,7 @@ export interface CompleteWelcomer extends z.infer<typeof WelcomerModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedWelcomerModel: z.ZodSchema<CompleteWelcomer> = z.lazy(() => WelcomerModel.extend({
-  guild: RelatedGuildModel.nullish(),
-  embeds: RelatedEmbedModel.array().max(10),
   DM: RelatedDMModel.nullish(),
+  embeds: RelatedEmbedModel.array(),
+  guild: RelatedGuildModel,
 }))

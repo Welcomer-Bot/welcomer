@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { CompleteEmbedFooter, RelatedEmbedFooterModel, CompleteEmbedField, RelatedEmbedFieldModel, CompleteEmbedAuthor, RelatedEmbedAuthorModel, CompleteEmbedImage, RelatedEmbedImageModel, CompleteWelcomer, RelatedWelcomerModel, CompleteLeaver, RelatedLeaverModel, CompleteDM, RelatedDMModel } from "./index"
+import { CompleteDM, RelatedDMModel, CompleteLeaver, RelatedLeaverModel, CompleteWelcomer, RelatedWelcomerModel, CompleteEmbedAuthor, RelatedEmbedAuthorModel, CompleteEmbedField, RelatedEmbedFieldModel, CompleteEmbedFooter, RelatedEmbedFooterModel, CompleteEmbedImage, RelatedEmbedImageModel } from "./index"
 
 export const EmbedModel = z.object({
   id: z.number().int().optional(),
@@ -18,13 +18,13 @@ export const EmbedModel = z.object({
 })
 
 export interface CompleteEmbed extends z.infer<typeof EmbedModel> {
-  footer?: CompleteEmbedFooter | null
-  fields: CompleteEmbedField[]
-  author?: CompleteEmbedAuthor | null
-  image?: CompleteEmbedImage | null
-  welcomer?: CompleteWelcomer | null
-  leaver?: CompleteLeaver | null
   DM?: CompleteDM | null
+  leaver?: CompleteLeaver | null
+  welcomer?: CompleteWelcomer | null
+  author?: CompleteEmbedAuthor | null
+  fields?: CompleteEmbedField | null
+  footer?: CompleteEmbedFooter | null
+  image?: CompleteEmbedImage | null
 }
 
 /**
@@ -33,11 +33,11 @@ export interface CompleteEmbed extends z.infer<typeof EmbedModel> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const RelatedEmbedModel: z.ZodSchema<CompleteEmbed> = z.lazy(() => EmbedModel.extend({
-  footer: RelatedEmbedFooterModel.nullish(),
-  fields: RelatedEmbedFieldModel.array(),
-  author: RelatedEmbedAuthorModel.nullish(),
-  image: RelatedEmbedImageModel.nullish(),
-  welcomer: RelatedWelcomerModel.nullish(),
-  leaver: RelatedLeaverModel.nullish(),
   DM: RelatedDMModel.nullish(),
+  leaver: RelatedLeaverModel.nullish(),
+  welcomer: RelatedWelcomerModel.nullish(),
+  author: RelatedEmbedAuthorModel.nullish(),
+  fields: RelatedEmbedFieldModel.nullish(),
+  footer: RelatedEmbedFooterModel.nullish(),
+  image: RelatedEmbedImageModel.nullish(),
 }))
