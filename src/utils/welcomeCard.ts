@@ -8,6 +8,8 @@ import {
 import WelcomerClient from "src/structure/WelcomerClient";
 import { parseDiscordMessage } from "./functions";
 import { sendChannelMessage } from "./messages";
+import { getEmbeds } from "./database";
+import { formatEmbeds } from "./embeds";
 
 export const welcomeCard = async (
   member: GuildMember,
@@ -37,8 +39,10 @@ export const welcomeCard = async (
           PermissionFlagsBits.ViewChannel,
         ])
     ) {
+      const embeds = await getEmbeds("welcomer", module.id);
       const message = {
         content,
+        embeds: formatEmbeds(embeds, member),
       };
       sendChannelMessage(channel, message);
     }

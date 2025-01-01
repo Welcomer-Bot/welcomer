@@ -134,7 +134,7 @@ export default class TestMenu implements SelectMenuType {
         });
       }
 
-      sendInteractionMessage(
+      await sendInteractionMessage(
         interaction,
         { embeds: [InfoEmbed], ephemeral: true },
         true

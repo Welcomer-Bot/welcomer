@@ -7,6 +7,7 @@ import {
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types";
 import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
+import { createOrUpdateGuild } from "src/utils/guild";
 
 export default class InteractionCreateEvent implements EventType {
   name = "interactionCreate";
@@ -27,6 +28,7 @@ export default class InteractionCreateEvent implements EventType {
         }
         case interaction.isChatInputCommand(): {
           // interaction = interaction as ChatInputCommandInteraction;
+          await createOrUpdateGuild(interaction.guild);
           const command = client.commands.get(interaction.commandName);
           if (!command) return;
           try {
