@@ -19,5 +19,5 @@
         "types": [ "node", "ws" ] // @types/node + @types/ws for showing the types...
     },
     "include": [ "src/**/*.ts" ],
-    "exclude": [ "node_modules" ]
+    "exclude": [ "node_modules", "prisma/schema/*" ]
   }

@@ -1,6 +1,6 @@
 import { PrismaClient, Welcomer, Leaver, Guild as GuildDb } from "@prisma/client";
 import { Guild } from "discord.js";
-import { CompleteEmbed } from "prisma/schema";
+import { CompleteEmbed } from "../types";
 const prisma = new PrismaClient();
 
 export async function getGuild(guildId: string): Promise<GuildDb | null> {
@@ -55,11 +55,7 @@ export async function getEmbeds(module: "welcomer" | "leaver", moduleId: number)
             fields: true,
             author: true,
             footer: true,
-            image: {
-                include: {
-                    embed: true,
-                },
-            },
+            image: true,
         }
     });
 }

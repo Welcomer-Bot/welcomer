@@ -2,15 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-generator zod {
-  provider              = "zod-prisma"
-  output                = "./schema"
-  relationModel         = "true"
-  modelSuffix           = "Model"
-  useDecimalJs          = "true"
-  prismaJsonNullability = "true"
-  modelCase             = "PascalCase"
-}
 
 datasource db {
   provider = "postgresql"
@@ -27,14 +18,14 @@ model Guild {
 
 model Welcomer {
   id        Int       @id @default(autoincrement())  /// @zod.optional()
-  guildId   String    @unique
+  guildId   String?    @unique
   channelId String?
   content   String?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt 
   DM        DM?
-  embeds    Embed[]
-  guild     Guild?     @relation(fields: [guildId], references: [id])
+  embeds    Embed[] /// @zod.optional()
+  guild     Guild?     @relation(fields: [guildId], references: [id]) /// @zod.optional()
 }
 
 model Leaver {
@@ -44,8 +35,8 @@ model Leaver {
   content   String?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embeds    Embed[]
-  guild     Guild?     @relation(fields: [guildId], references: [id])
+  embeds    Embed[] /// @zod.optional()
+  guild     Guild    @relation(fields: [guildId], references: [id])
 }
 
 model DM {
@@ -54,7 +45,7 @@ model DM {
   message   String
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  module    Welcomer  @relation(fields: [moduleId], references: [id])
+  module    Welcomer  @relation(fields: [moduleId], references: [id]) /// @zod.optional()
   embeds    Embed[]
 }
 
@@ -72,9 +63,9 @@ model Embed {
   welcomerId   Int?
   leaverId     Int?
   DMId         Int?
-  DM           DM?          @relation(fields: [DMId], references: [id])
-  leaver       Leaver?      @relation(fields: [leaverId], references: [id])
-  welcomer     Welcomer?    @relation(fields: [welcomerId], references: [id])
+  DM           DM?          @relation(fields: [DMId], references: [id]) /// @zod.optional()
+  leaver       Leaver?      @relation(fields: [leaverId], references: [id]) /// @zod.optional()
+  welcomer     Welcomer?    @relation(fields: [welcomerId], references: [id]) /// @zod.optional()
   author       EmbedAuthor?
   fields       EmbedField[]
   footer       EmbedFooter?
@@ -83,13 +74,13 @@ model Embed {
 
 model EmbedImage {
   id        Int       @id @default(autoincrement())  /// @zod.optional()
-  embedId   Int       @unique
+  embedId   Int?       @unique
   url       String
   width     Int?
   heigth    Int?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embed     Embed?     @relation(fields: [embedId], references: [id])
+  embed     Embed?   @relation(fields: [embedId], references: [id]) /// @zod.optional()
 }
 
 model EmbedAuthor {
@@ -100,18 +91,18 @@ model EmbedAuthor {
   url       String?   @db.VarChar(256)
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embed     Embed?    @relation(fields: [embedId], references: [id])
+  embed     Embed?    @relation(fields: [embedId], references: [id]) /// @zod.optional()
 }
 
 model EmbedField {
   id        Int       @id @default(autoincrement())  /// @zod.optional()
-  embedId   Int?      @unique
+  embedId   Int?
   name      String
   value     String
   inline    Boolean?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embed     Embed?    @relation(fields: [embedId], references: [id])
+  embed     Embed?    @relation(fields: [embedId], references: [id]) /// @zod.optional()
 }
 
 model EmbedFooter {
@@ -121,7 +112,7 @@ model EmbedFooter {
   iconUrl   String?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embed     Embed?    @relation(fields: [embedId], references: [id])
+  embed     Embed?    @relation(fields: [embedId], references: [id]) /// @zod.optional()
 }
 
 model User {
@@ -133,7 +124,7 @@ model User {
   refreshToken  String?
   createdAt     DateTime?   @default(now())
   updatedAt     DateTime?   @updatedAt
-  guilds        UserGuild[]
+  guilds        UserGuild[] /// @zod.nullable()
 }
 
 model UserGuild {
@@ -142,20 +133,20 @@ model UserGuild {
   icon        String?
   banner      String?
   permissions String?
-  userId      String
+  userId      String?
   createdAt   DateTime?  @default(now())
   updatedAt   DateTime?  @updatedAt
   channels    Channels[]
-  user        User       @relation(fields: [userId], references: [id])
+  user        User?      @relation(fields: [userId], references: [id])
 }
 
 model Channels {
   id        String    @id
   type      String
   name      String
-  guildId   String
+  guildId   String?
   channelId String
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  guild     UserGuild @relation(fields: [guildId], references: [id])
+  guild     UserGuild? @relation(fields: [guildId], references: [id]) /// @zod.optional()
 }

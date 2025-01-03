@@ -5,7 +5,7 @@ import {
   EmbedBuilder,
   GuildMember,
 } from "discord.js";
-import { CompleteEmbed } from "prisma/schema";
+import { CompleteEmbed } from "../../types";
 import { getEmbeds } from "../database";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
 

@@ -1,3 +1,4 @@
+import { EmbedAuthor, EmbedField, EmbedFooter, EmbedImage } from './../../node_modules/.prisma/client/index.d';
 import {
   AnySelectMenuInteraction,
   ButtonInteraction,
@@ -10,6 +11,7 @@ import {
   SlashCommandOptionsOnlyBuilder,
 } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
+import { Embed } from "@prisma/client";
 
 export interface ModalType {
   customId: string;
@@ -93,4 +95,11 @@ export type Member = {
   avatar: string;
   roles: string[];
   permissions: string;
+};
+
+export type CompleteEmbed = Embed & {
+  fields: EmbedField[],
+  author: EmbedAuthor,
+  footer: EmbedFooter,
+  image: EmbedImage,
 };
