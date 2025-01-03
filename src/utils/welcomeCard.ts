@@ -6,16 +6,16 @@ import {
   PermissionFlagsBits,
 } from "discord.js";
 import WelcomerClient from "src/structure/WelcomerClient";
-import { parseDiscordMessage } from "./functions";
 import { sendChannelMessage } from "./messages";
 import { formatMessage } from "./welcomeModules/message";
 
-export const welcomeCard = async (
+export const generateCard = async (
   member: GuildMember,
   guild: Guild,
-  module: Welcomer,
+  module: Welcomer | Leaver,
   client: WelcomerClient,
-  testchannel: GuildBasedChannel | null = null
+  testchannel: GuildBasedChannel | null = null,
+  type: "welcomer" | "leaver" = "welcomer"
 ) => {
   try {
     let channel = testchannel;
@@ -37,46 +37,7 @@ export const welcomeCard = async (
           PermissionFlagsBits.ViewChannel,
         ])
     ) {
-      const message = await formatMessage(module, member);
-      sendChannelMessage(channel, message);
-    }
-  } catch (err) {
-    client.logger.error(err as Error);
-  }
-};
-
-export const goodbyeCard = async (
-  member: GuildMember,
-  guild: Guild,
-  module: Leaver,
-  client: WelcomerClient,
-  testchannel: GuildBasedChannel | null = null
-) => {
-  try {
-    let channel = testchannel;
-    if (!channel) {
-      channel =
-        guild.channels.cache.find(
-          (channel) => channel.id === module?.channelId
-        ) || null;
-    }
-    if (!channel) return;
-    if (!channel) return;
-    const content = parseDiscordMessage(module.content, member);
-    if (
-      client.user &&
-      channel.isTextBased() &&
-      channel
-        .permissionsFor(client.user)
-        ?.has([
-          PermissionFlagsBits.SendMessages,
-          PermissionFlagsBits.AttachFiles,
-          PermissionFlagsBits.ViewChannel,
-        ])
-    ) {
-      const message = {
-        content,
-      };
+      const message = await formatMessage(module, type, member);
       sendChannelMessage(channel, message);
     }
   } catch (err) {

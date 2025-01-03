@@ -71,9 +71,10 @@ export function formatEmbeds(
 
 export async function formatMessage(
   module: Welcomer | Leaver,
+  moduleName: "welcomer" | "leaver",
   member: GuildMember
 ) {
-  const embeds = await getEmbeds("welcomer", module.id);
+  const embeds = await getEmbeds(moduleName, module.id);
   const message: BaseMessageOptions = {
     content: formatText(module.content, member),
     embeds: formatEmbeds(embeds, member),

@@ -46,7 +46,7 @@ export async function getWelcomer(guildId: string): Promise<Welcomer | null> {
     });
 }
 
-export async function getEmbeds(module: string, moduleId: number): Promise<CompleteEmbed[]> {
+export async function getEmbeds(module: "welcomer" | "leaver", moduleId: number): Promise<CompleteEmbed[]> {
     return await prisma.embed.findMany({
         where: {
         [`${module}Id`]: moduleId,

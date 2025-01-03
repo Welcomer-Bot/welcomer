@@ -12,7 +12,7 @@ import { getLeaver, getWelcomer } from "src/utils/database";
 import WelcomerClient from "../structure/WelcomerClient";
 import { checkPermsForChannel } from "../utils/functions";
 import { sendInteractionMessage } from "../utils/messages";
-import { goodbyeCard, welcomeCard } from "../utils/welcomeCard";
+import { generateCard } from "../utils/welcomeCard";
 import { SelectMenuType } from "./../types/index";
 
 export default class TestMenu implements SelectMenuType {
@@ -139,30 +139,16 @@ export default class TestMenu implements SelectMenuType {
         { embeds: [InfoEmbed], ephemeral: true },
         true
       );
-      switch (arg) {
-        case "welcomer":
-          welcomeCard(
-            interaction.member as GuildMember,
-            interaction.guild!,
-            guildModule,
-            client,
-            currentChannel as TextChannel
-          );
-          break;
-        case "leaver":
-          goodbyeCard(
-            interaction.member as GuildMember,
-            interaction.guild!,
-            guildModule,
-            client,
-            currentChannel as TextChannel
-          );
-          break;
-        default:
-          break;
-      }
+      generateCard(
+        interaction.member as GuildMember,
+        interaction.guild!,
+        guildModule,
+        client,
+        currentChannel,
+        arg
+      );
     } catch (error) {
-      console.log(error);
+      client.logger.error(error as Error);
     }
   }
 }
