@@ -1,28 +1,30 @@
-import { Guild } from "discord.js";
-import { EventType } from "../../types";
+import { ActionRowBuilder, ButtonBuilder, Guild } from "discord.js";
+import WelcomerClient from "src/structure/WelcomerClient";
+import { dashButton, helpButton } from "src/utils/buttons";
+import { embedHelperOnGuildCreate } from "src/utils/embeds";
 import { createOrUpdateGuild } from "src/utils/guild";
-
+import { sendChannelMessage } from "src/utils/messages";
+import { EventType } from "../../types";
+import { fetchTextChannel } from "./../../utils/channel";
 
 export default class GuildCreate implements EventType {
   name = "guildCreate";
-  async execute(guild: Guild): Promise<void> {
+  async execute(guild: Guild, client: WelcomerClient): Promise<void> {
     await createOrUpdateGuild(guild);
 
-    // let systemChannel = guild.systemChannelId ? await guild.channels.fetch(guild.systemChannelId) as TextChannel : null;
+    const systemChannel = fetchTextChannel(guild.systemChannelId, client);
 
-    // const guildOwner = await guild.fetchOwner();
-
-    // const DmMessage: MessageCreateOptions = {
-    //     content: guildAddOwnerMessage(guildOwner, guild, guildDb as GuildFormated, client),
-    //     components: [new ActionRowBuilder<ButtonBuilder>().addComponents(helpButton, dashButton)]
-    // }
-    // sendDmMessage(client, guildOwner, DmMessage)
-    // if (systemChannel) {
-    //     sendChannelMessage(client, systemChannel, {
-    //         embeds: [embedHelperOnGuildCreate],
-    //         files: [client.images.get("banner")?.attachment as any],
-    //         components: [new ActionRowBuilder<ButtonBuilder>().addComponents(autoConfigButton, helpButton, dashButton)]
-    //     })
-    // }
+    if (systemChannel) {
+      sendChannelMessage(systemChannel, {
+        embeds: [embedHelperOnGuildCreate],
+        files: [client.images.get("banner")?.attachment],
+        components: [
+          new ActionRowBuilder<ButtonBuilder>().addComponents(
+            helpButton,
+            dashButton
+          ),
+        ],
+      });
+    }
   }
 }

@@ -1,6 +1,4 @@
-import { CompleteEmbed } from './../../prisma/schema/embed';
-import { ColorResolvable, CommandInteraction, EmbedBuilder, GuildMember } from "discord.js";
-import { parseDiscordMessage } from './functions';
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 
 export const embedHelperOnGuildCreate = new EmbedBuilder()
   .setTitle(
@@ -11,7 +9,7 @@ export const embedHelperOnGuildCreate = new EmbedBuilder()
   )
   .setColor("#161f2f")
   .setImage("attachment://banner.png")
-  .setFooter({ text: "Powered by Welcomer | Made with ❤️ by Clement" });
+  .setFooter({ text: "Powered by Welcomer" });
 
 export const autoConfigEmbed = function () {
   return new EmbedBuilder().setTitle(
@@ -48,18 +46,4 @@ export function errorEmbedBuilder(
       }
     );
   }
-}
-
-export function formatEmbeds(embeds: CompleteEmbed[], member: GuildMember) {
-  return embeds.map((embed) => {
-    return new EmbedBuilder()
-      .setTitle(parseDiscordMessage(embed.title, member))
-      .setDescription(parseDiscordMessage(embed.description, member))
-      .setColor(embed.color as ColorResolvable)
-      .setFooter(embed.footer ? { text: parseDiscordMessage(embed.footer.text,member), iconURL: embed.footer.iconUrl } : undefined)
-      .setAuthor(embed.author ? { name: parseDiscordMessage(embed.author.name, member), iconURL: embed.author.iconUrl } : undefined)
-      .setImage(embed.image?.url)
-      .setThumbnail(embed.thumbnail)
-      .setTimestamp(embed.timestampNow ? new Date() : embed.timestamp);
-  });
 }

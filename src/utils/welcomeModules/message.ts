@@ -1,4 +1,12 @@
-import { APIEmbed, BaseMessageOptions, GuildMember } from "discord.js";
+import { Leaver, Welcomer } from "@prisma/client";
+import {
+  BaseMessageOptions,
+  ColorResolvable,
+  EmbedBuilder,
+  GuildMember,
+} from "discord.js";
+import { CompleteEmbed } from "prisma/schema";
+import { getEmbeds } from "../database";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
 
 export function formatText(
@@ -31,39 +39,44 @@ export function formatText(
 }
 
 export function formatEmbeds(
-  embeds: APIEmbed[],
+  embeds: CompleteEmbed[],
   member: GuildMember
-): APIEmbed[] {
-  embeds.forEach((embed) => {
-    embed.title = formatText(embed.title, member);
-    embed.description = formatText(embed.description, member);
-    if (embed.footer && embed.footer.text) {
-      embed.footer.text = formatText(embed.footer.text, member)!;
-    }
-    if (embed.author && embed.author.name) {
-      embed.author.name = formatText(embed.author.name, member)!;
-    }
-    embed.fields = embed.fields?.map((field) => {
-      return {
-        name: formatText(field.name, member) || "",
-        value: formatText(field.value, member) || "",
-        inline: field.inline || false,
-      };
-    });
-    return embed;
+): EmbedBuilder[] {
+  return embeds.map((embed) => {
+    return new EmbedBuilder()
+      .setTitle(formatText(embed.title, member))
+      .setDescription(formatText(embed.description, member))
+      .setColor(embed.color as ColorResolvable)
+      .setFooter(
+        embed.footer
+          ? {
+              text: formatText(embed.footer.text, member),
+              iconURL: embed.footer.iconUrl,
+            }
+          : undefined
+      )
+      .setAuthor(
+        embed.author
+          ? {
+              name: formatText(embed.author.name, member),
+              iconURL: embed.author.iconUrl,
+            }
+          : undefined
+      )
+      .setImage(embed.image?.url)
+      .setThumbnail(embed.thumbnail)
+      .setTimestamp(embed.timestampNow ? new Date() : embed.timestamp);
   });
-
-  return embeds;
 }
 
 export async function formatMessage(
-  options: BaseMessageOptions,
+  module: Welcomer | Leaver,
   member: GuildMember
 ) {
+  const embeds = await getEmbeds("welcomer", module.id);
   const message: BaseMessageOptions = {
-    content: formatText(options.content, member),
-    embeds: formatEmbeds(options.embeds as APIEmbed[], member),
-    files: options.files,
+    content: formatText(module.content, member),
+    embeds: formatEmbeds(embeds, member),
   };
 
   const messageValidated = MessageSchema.safeParse(message);

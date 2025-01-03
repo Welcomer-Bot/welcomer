@@ -10,6 +10,7 @@ export default class GuildDelete implements EventType {
     client: WelcomerClient
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
     try {
+      if(!guild.available) return;
       await deleteGuild(guild.id);
       const removeEmbed = new EmbedBuilder()
         .setColor("#ff0000")

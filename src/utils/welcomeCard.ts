@@ -8,8 +8,7 @@ import {
 import WelcomerClient from "src/structure/WelcomerClient";
 import { parseDiscordMessage } from "./functions";
 import { sendChannelMessage } from "./messages";
-import { getEmbeds } from "./database";
-import { formatEmbeds } from "./embeds";
+import { formatMessage } from "./welcomeModules/message";
 
 export const welcomeCard = async (
   member: GuildMember,
@@ -27,7 +26,6 @@ export const welcomeCard = async (
         ) || null;
     }
     if (!channel) return;
-    const content = parseDiscordMessage(module.content, member);
     if (
       client.user &&
       channel.isTextBased() &&
@@ -39,11 +37,7 @@ export const welcomeCard = async (
           PermissionFlagsBits.ViewChannel,
         ])
     ) {
-      const embeds = await getEmbeds("welcomer", module.id);
-      const message = {
-        content,
-        embeds: formatEmbeds(embeds, member),
-      };
+      const message = await formatMessage(module, member);
       sendChannelMessage(channel, message);
     }
   } catch (err) {
