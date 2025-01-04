@@ -7,11 +7,8 @@ export class ErrorEmbed extends EmbedBuilder {
     interaction?: CommandInteraction
   ) {
     super();
-    this.setTitle(
-      `Error
-          \n ${message}`
-    )
-      .setDescription(`**${stack || "No description provided"}**`)
+      this.setDescription( `Error
+          \n ${message} \n\n\n` + `**${stack || "No description provided"}**`)
       .setColor("#ff0000")
       .setTimestamp();
     if (interaction) {

@@ -12,10 +12,10 @@ import { MessageEmbedSchema, MessageSchema } from "./validator";
 export function formatText(
   message: string | undefined,
   member: GuildMember
-): string | undefined {
-  if (!message) return undefined;
+): string | null {
+  if (!message) return null;
   return message
-    .replaceAll(/{member}/g, member.toString())
+    .replaceAll(/{user}/g, member.toString())
     .replaceAll(/{tag}/g, member.user.tag)
     .replaceAll(/{username}/g, member.user.username)
     .replaceAll(/{id}/g, member.id)
@@ -26,13 +26,13 @@ export function formatText(
       member.roles.cache.map((role) => role.toString()).join(", ")
     )
     .replaceAll(/{permissions}/g, member.permissions.toArray().join(", "))
-    .replaceAll(/{server}/g, member.guild.name)
+    .replaceAll(/{guild}/g, member.guild.name)
     .replaceAll(/{membercount}/g, member.guild.memberCount.toString())
     .replaceAll(/{createdAt}/g, member.user.createdAt.toDateString())
     .replaceAll(/{joinedAt}/g, member.joinedAt!.toString())
     .replaceAll(/{joinedTimestamp}/g, member.joinedTimestamp!.toString())
     .replaceAll(
-      /{joinedTimestampFormated}/g,
+      /{joined}/g,
       `<t:${Math.floor(member.joinedTimestamp! / 1000)}:R>`
     )
     .replaceAll(/{time}/g, new Date().toDateString());
@@ -43,29 +43,42 @@ export function formatEmbeds(
   member: GuildMember
 ): EmbedBuilder[] {
   return embeds.map((embed) => {
-    return new EmbedBuilder()
-      .setTitle(formatText(embed.title, member))
-      .setDescription(formatText(embed.description, member))
-      .setColor(embed.color as ColorResolvable)
-      .setFooter(
-        embed.footer
-          ? {
-              text: formatText(embed.footer.text, member),
-              iconURL: embed.footer.iconUrl,
-            }
-          : undefined
-      )
-      .setAuthor(
-        embed.author
-          ? {
-              name: formatText(embed.author.name, member),
-              iconURL: embed.author.iconUrl,
-            }
-          : undefined
-      )
-      .setImage(embed.image?.url)
-      .setThumbnail(embed.thumbnail)
-      .setTimestamp(embed.timestampNow ? new Date() : embed.timestamp);
+    try {
+      return new EmbedBuilder()
+        .setTitle(formatText(embed.title, member))
+        .setDescription(formatText(embed.description, member))
+        .setColor(embed.color as ColorResolvable)
+        .setFields(
+          embed.fields?.map((field) => ({
+            name: formatText(field.name, member),
+            value: formatText(field.value, member),
+            inline: field.inline ?? false,
+          }))
+        )
+        .setFooter(
+          embed.footer && embed.footer.text
+            ? {
+                text: formatText(embed.footer.text, member),
+                iconURL: embed.footer.iconUrl,
+              }
+            : null
+        )
+        .setAuthor(
+          embed.author && embed.author.name
+            ? {
+                name: formatText(embed.author.name, member),
+                iconURL: embed.author.iconUrl ?? "",
+                url: embed.author.url ?? "",
+              }
+            : null
+        )
+        .setImage(embed.image?.url)
+        .setThumbnail(embed.thumbnail)
+        .setTimestamp(embed.timestampNow ? new Date() : embed.timestamp)  
+    } catch (error) {
+      console.log("err", error);
+      return;
+    }
   });
 }
 
@@ -81,6 +94,9 @@ export async function formatMessage(
   };
 
   const messageValidated = MessageSchema.safeParse(message);
+  console.log(message);
+  console.log("messageValidated", messageValidated);
+
   if (!messageValidated.success) {
     throw new Error(
       `Message validation failed: ${messageValidated.error.errors.join(", ")}`

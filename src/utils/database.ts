@@ -19,6 +19,18 @@ export async function createGuild(guild: Guild): Promise<GuildDb> {
     });
 }
 
+export async function createOrUpdateGuild(guild: Guild): Promise<GuildDb> { 
+    return await prisma.guild.upsert({
+        where: {
+        id: guild.id,
+        },
+        update: {},
+        create: {
+        id: guild.id,
+        },
+    });
+}
+
 export async function updateGuild(guild: Guild): Promise<GuildDb> {
     return await prisma.guild.update({
         where: {

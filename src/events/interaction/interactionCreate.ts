@@ -4,10 +4,10 @@ import {
   InteractionResponse,
   Message,
 } from "discord.js";
+import { createOrUpdateGuild } from "src/utils/database";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { EventType } from "../../types";
 import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
-import { createOrUpdateGuild } from "src/utils/guild";
 
 export default class InteractionCreateEvent implements EventType {
   name = "interactionCreate";
@@ -22,13 +22,13 @@ export default class InteractionCreateEvent implements EventType {
         "This command can only be used in a server."
       );
     try {
+      await createOrUpdateGuild(interaction.guild);
       switch (true) {
         case interaction.isAutocomplete(): {
           return;
         }
         case interaction.isChatInputCommand(): {
           // interaction = interaction as ChatInputCommandInteraction;
-          await createOrUpdateGuild(interaction.guild);
           const command = client.commands.get(interaction.commandName);
           if (!command) return;
           try {
