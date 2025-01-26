@@ -5,7 +5,7 @@ import {
   Message,
   SlashCommandBuilder,
 } from "discord.js";
-import WelcomerClient from "../../structure/WelcomerClient";
+import WelcomerClient from "../../models/Client";
 import { CommandType } from "../../types";
 import { sendInteractionMessage } from "../../utils/messages";
 import { formatNumber } from "./../../utils/functions";
@@ -44,7 +44,7 @@ export default class StatusCommand implements CommandType {
     .setDescription(this.description);
   async execute(
     interaction: ChatInputCommandInteraction,
-    client: WelcomerClient,
+    client: WelcomerClient
   ): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
     if (!client.isReady()) {
       return sendInteractionMessage(interaction, {

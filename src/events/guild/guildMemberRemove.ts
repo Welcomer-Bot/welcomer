@@ -1,9 +1,9 @@
 import { GuildMember, InteractionResponse, Message } from "discord.js";
-import WelcomerClient from "../../structure/WelcomerClient";
+import WelcomerClient from "../../models/Client";
 
 import { generateCard } from "./../../utils/welcomeCard";
 
-import { getLeaver } from "src/utils/database";
+import { getLeaver } from "../../utils/database";
 import { EventType } from "./../../types/index";
 
 export default class GuildMemberRemove implements EventType {

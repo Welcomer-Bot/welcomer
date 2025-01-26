@@ -18,6 +18,7 @@ import {
 } from "../types";
 import { loadFiles } from "../utils/loader";
 import Logger from "./Logger";
+import StatusServer from "./StatusServer";
 
 export default class WelcomerClient extends Client {
   public commands = new Collection<string, CommandType>();
@@ -31,6 +32,7 @@ export default class WelcomerClient extends Client {
   public images = new Map<string, AttachmentBuilder>();
   public managerReady: boolean = false;
   public logger: Logger;
+  public server: StatusServer
 
   emit(event: string, ...args: unknown[]): boolean {
     return super.emit(event, ...args);
@@ -97,6 +99,7 @@ export default class WelcomerClient extends Client {
     // this.loadModals();
     this.loadSelectMenus();
     this.loadButtons();
+    this.server = new StatusServer(this, Number.parseInt(process.env.PORT!));
 
     this.login(process.env.TOKEN)
       .then(() => {

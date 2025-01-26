@@ -11,7 +11,7 @@ import {
   Message,
   MessageCreateOptions,
 } from "discord.js";
-import WelcomerClient from "../structure/WelcomerClient";
+import WelcomerClient from "../models/Client";
 import { helpButton } from "./buttons";
 
 const baseMessage: BaseMessageOptions = {
@@ -51,8 +51,8 @@ export const sendDmMessage = async (
   try {
     if (
       !message.content &&
-      message.embeds.length === 0 &&
-      message.files.length === 0
+      message.embeds?.length === 0 &&
+      message.files?.length === 0
     )
       return;
     const fetchedUser = await client.users.fetch(user);
@@ -69,8 +69,8 @@ export const sendChannelMessage = async (
   try {
     if (
       !message.content &&
-      message.embeds.length === 0 &&
-      message.files.length === 0
+      message.embeds?.length === 0 &&
+      message.files?.length === 0
     )
       return;
 

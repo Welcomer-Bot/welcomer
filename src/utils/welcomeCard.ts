@@ -5,7 +5,7 @@ import {
   GuildMember,
   PermissionFlagsBits,
 } from "discord.js";
-import WelcomerClient from "src/structure/WelcomerClient";
+import WelcomerClient from "../models/Client";
 import { sendChannelMessage } from "./messages";
 import { formatMessage } from "./welcomeModules/message";
 

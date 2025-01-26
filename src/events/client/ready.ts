@@ -1,5 +1,5 @@
 import { ActivityType, ApplicationCommandType } from "discord.js";
-import WelcomerClient from "../../structure/WelcomerClient";
+import WelcomerClient from "../../models/Client";
 import { EventType } from "../../types";
 import { waitForManager } from "../../utils/functions";
 
@@ -28,6 +28,7 @@ export default class ReadyEvent implements EventType {
       client.user?.setActivity(message, { type: ActivityType.Watching });
     }
     if (client.cluster.id === 0) {
+      client.server.startServer();
       await waitForManager(client);
       for (const command of client.commands.values()) {
         if (command.type !== ApplicationCommandType.ChatInput) continue;

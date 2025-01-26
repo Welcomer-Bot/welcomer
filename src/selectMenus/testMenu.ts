@@ -8,8 +8,8 @@ import {
   StringSelectMenuInteraction,
   TextChannel,
 } from "discord.js";
-import { getLeaver, getWelcomer } from "src/utils/database";
-import WelcomerClient from "../structure/WelcomerClient";
+import WelcomerClient from "../models/Client";
+import { getLeaver, getWelcomer } from "../utils/database";
 import { checkPermsForChannel } from "../utils/functions";
 import { sendInteractionMessage } from "../utils/messages";
 import { generateCard } from "../utils/welcomeCard";
@@ -57,7 +57,9 @@ export default class TestMenu implements SelectMenuType {
       const currentChannelPermissionErrors: string[] = [];
       const realChannelPermissionErrors: string[] = [];
 
-      const realChannel = interaction.guild!.channels.cache.get(realChannelId);
+      const realChannel = interaction.guild!.channels.cache.get(
+        realChannelId ?? ""
+      );
       let currentChannel = interaction.channel;
 
       if (!realChannel) {

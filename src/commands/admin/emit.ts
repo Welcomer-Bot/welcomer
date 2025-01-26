@@ -8,7 +8,7 @@ import {
   SlashCommandBuilder,
   StringSelectMenuBuilder,
 } from "discord.js";
-import WelcomerClient from "../../structure/WelcomerClient";
+import WelcomerClient from "../../models/Client";
 import { CommandType } from "../../types";
 import { sendInteractionMessage } from "../../utils/messages";
 

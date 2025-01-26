@@ -10,4 +10,3 @@ Sentry.init({
   release: require("./package.json").version,
   tracesSampleRate: 1.0, //  Capture 100% of the transactions
 });
-

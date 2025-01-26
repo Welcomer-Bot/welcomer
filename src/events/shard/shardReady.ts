@@ -1,4 +1,4 @@
-import WelcomerClient from "src/structure/WelcomerClient";
+import WelcomerClient from "../../models/Client";
 import { EventType } from "../../types";
 
 export default class ShardReady implements EventType {

@@ -4,9 +4,9 @@ import {
   InteractionResponse,
   Message,
 } from "discord.js";
-import { createOrUpdateGuild } from "src/utils/database";
-import WelcomerClient from "../../structure/WelcomerClient";
+import WelcomerClient from "../../models/Client";
 import { EventType } from "../../types";
+import { createOrUpdateGuild } from "../../utils/database";
 import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
 
 export default class InteractionCreateEvent implements EventType {
@@ -16,7 +16,7 @@ export default class InteractionCreateEvent implements EventType {
     interaction: Exclude<Interaction, AutocompleteInteraction>,
     client: WelcomerClient
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
-    if (!interaction.inGuild())
+    if (!interaction.inGuild() || !interaction.guild)
       return sendErrorMessage(
         interaction,
         "This command can only be used in a server."

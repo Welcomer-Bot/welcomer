@@ -1,5 +1,5 @@
 import { GuildTextBasedChannel } from "discord.js";
-import WelcomerClient from "../structure/WelcomerClient";
+import WelcomerClient from "../models/Client";
 
 export const fetchTextChannel = (
   channelId: string,

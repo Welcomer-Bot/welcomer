@@ -1,5 +1,5 @@
 import { GuildMember, PermissionResolvable, TextChannel } from "discord.js";
-import WelcomerClient from "../structure/WelcomerClient";
+import WelcomerClient from "../models/Client";
 
 export const formatNumber = (num: number) => {
   return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");

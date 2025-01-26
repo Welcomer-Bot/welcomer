@@ -1,5 +1,5 @@
 import { ButtonInteraction, InteractionResponse, Message } from "discord.js";
-import WelcomerClient from "../structure/WelcomerClient";
+import WelcomerClient from "../models/Client";
 import { ButtonType } from "../types";
 
 export default class AutoConfigButton implements ButtonType {

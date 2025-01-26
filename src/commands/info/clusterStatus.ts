@@ -3,9 +3,9 @@ import {
   EmbedBuilder,
   InteractionResponse,
   Message,
-  SlashCommandBuilder
+  SlashCommandBuilder,
 } from "discord.js";
-import WelcomerClient from "../../structure/WelcomerClient";
+import WelcomerClient from "../../models/Client";
 import { CommandType } from "../../types";
 import { sendInteractionMessage } from "../../utils/messages";
 
@@ -42,11 +42,7 @@ export default class ClusterStatusCommand implements CommandType {
     console.log(res);
 
     return sendInteractionMessage(interaction, {
-      embeds: [
-        new EmbedBuilder()
-          .setTitle("Cluster Status")
-      ],
+      embeds: [new EmbedBuilder().setTitle("Cluster Status")],
     });
-
   }
 }

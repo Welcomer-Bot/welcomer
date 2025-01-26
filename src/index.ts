@@ -1,80 +1,99 @@
-import { ClusterManager, ClusterManagerOptions, fetchRecommendedShards, HeartbeatManager, keepAliveOptions, ReClusterManager, ReClusterOptions } from "discord-hybrid-sharding";
+import {
+  ClusterManager,
+  ClusterManagerOptions,
+  fetchRecommendedShards,
+  HeartbeatManager,
+  keepAliveOptions,
+  ReClusterManager,
+  ReClusterOptions,
+} from "discord-hybrid-sharding";
 import "dotenv/config";
-import Logger from "./structure/Logger";
+import Logger from "./models/Logger";
 
-if (!process.env.LOG_WEBHOOK || !process.env.STATUS_WEBHOOK || !process.env.ADD_REMOVE_WEBHOOK) {
+if (
+  !process.env.LOG_WEBHOOK ||
+  !process.env.STATUS_WEBHOOK ||
+  !process.env.ADD_REMOVE_WEBHOOK
+) {
   throw new Error("Missing webhook urls in .env");
 }
-const logger = new Logger(process.env.LOG_WEBHOOK, process.env.STATUS_WEBHOOK, process.env.ADD_REMOVE_WEBHOOK);
+const logger = new Logger(
+  process.env.LOG_WEBHOOK,
+  process.env.STATUS_WEBHOOK,
+  process.env.ADD_REMOVE_WEBHOOK
+);
 
-
-const shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10")
+const shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10");
 
 const managerConfig: ClusterManagerOptions = {
-    shardsPerClusters,
-    mode: "process",
-    token: process.env.TOKEN,
+  shardsPerClusters,
+  mode: "process",
+  token: process.env.TOKEN,
   execArgv: [...process.execArgv],
-        restarts: {
-        max: 5, // Maximum amount of restarts per cluster
-        interval: 60000 * 60, // Interval to reset restarts
-    },
-}
+  restarts: {
+    max: 5, // Maximum amount of restarts per cluster
+    interval: 60000 * 60, // Interval to reset restarts
+  },
+};
 
 const hearthbeatConfig: keepAliveOptions = {
-    interval: 2000,
-    maxMissedHeartbeats: 5,
-}
+  interval: 2000,
+  maxMissedHeartbeats: 5,
+};
 
-const clientPath = `./src/client.ts`
+const clientPath = `${__dirname}/client.js`;
 const manager = new ClusterManager(clientPath, managerConfig);
-manager.extend(new HeartbeatManager(hearthbeatConfig))
+manager.extend(new HeartbeatManager(hearthbeatConfig));
 manager.extend(new ReClusterManager());
 
-manager.on("clusterCreate", (cluster) => { 
+manager.on("clusterCreate", (cluster) => {
   logger.status(cluster, "starting");
   cluster.on("death", (cluster) => {
     logger.status(cluster, "death");
-  })
-  cluster.on('error', (error) => {
-    console.error("Cluster error", error)
-  })
-  cluster.on('disconnect', (warn) => {
-    console.warn("Cluster disconnect", warn)
-  })
-  cluster.on('reconnecting', () => {
+  });
+  cluster.on("error", (error) => {
+    console.error("Cluster error", error);
+  });
+  cluster.on("disconnect", (warn) => {
+    console.warn("Cluster disconnect", warn);
+  });
+  cluster.on("reconnecting", () => {
     logger.status(cluster, "reconnecting");
-  })
-  cluster.on('resumed', () => {
+  });
+  cluster.on("resumed", () => {
     logger.status(cluster, "resumed");
-  })
+  });
 });
 
 manager.on("clusterReady", (cluster) => {
   logger.status(cluster, "ready");
 });
 
-
 async function spawnClusters() {
   try {
-    await manager.spawn({timeout: -1}).then(() => {
-      setInterval(async () => {
-        await manager.broadcastEval(
-          `this.ws.status && this.isReady() ? this.ws.reconnect() : 0`,
-        );
-      }, 60000);
-    }).catch((error) => {
-      console.error(error)
-    });
+    await manager
+      .spawn({ timeout: -1 })
+      .then(() => {
+        setInterval(async () => {
+          await manager.broadcastEval(
+            `this.ws.status && this.isReady() ? this.ws.reconnect() : 0`
+          );
+        }, 60000);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     setInterval(reclusterShards, 24 * 60 * 60 * 1000);
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
 
 async function reclusterShards() {
   try {
-    const recommendedShards = await fetchRecommendedShards(managerConfig.token!);
+    const recommendedShards = await fetchRecommendedShards(
+      managerConfig.token!
+    );
     if (recommendedShards !== manager.totalShards) {
       const reclusterConfig: ReClusterOptions = {
         restartMode: "gracefulSwitch",
@@ -86,17 +105,15 @@ async function reclusterShards() {
       (manager.recluster as ReClusterManager).start(reclusterConfig);
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
 }
 spawnClusters();
 
 process.on("unhandledRejection", (error) => {
-  console.error(error)
+  console.error(error);
 });
 
 process.on("uncaughtException", (error) => {
   console.error(error);
 });
-
-

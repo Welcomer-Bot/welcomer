@@ -10,10 +10,9 @@ import { getEmbeds } from "../database";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
 
 export function formatText(
-  message: string | undefined,
+  message: string,
   member: GuildMember
-): string | null {
-  if (!message) return null;
+): string {
   return message
     .replaceAll(/{user}/g, member.toString())
     .replaceAll(/{tag}/g, member.user.tag)
@@ -42,44 +41,50 @@ export function formatEmbeds(
   embeds: CompleteEmbed[],
   member: GuildMember
 ): EmbedBuilder[] {
-  return embeds.map((embed) => {
-    try {
-      return new EmbedBuilder()
-        .setTitle(formatText(embed.title, member))
-        .setDescription(formatText(embed.description, member))
-        .setColor(embed.color as ColorResolvable)
-        .setFields(
-          embed.fields?.map((field) => ({
-            name: formatText(field.name, member),
-            value: formatText(field.value, member),
-            inline: field.inline ?? false,
-          }))
-        )
-        .setFooter(
-          embed.footer && embed.footer.text
-            ? {
-                text: formatText(embed.footer.text, member),
-                iconURL: embed.footer.iconUrl,
-              }
-            : null
-        )
-        .setAuthor(
-          embed.author && embed.author.name
-            ? {
-                name: formatText(embed.author.name, member),
-                iconURL: embed.author.iconUrl ?? "",
-                url: embed.author.url ?? "",
-              }
-            : null
-        )
-        .setImage(embed.image?.url)
-        .setThumbnail(embed.thumbnail)
-        .setTimestamp(embed.timestampNow ? new Date() : embed.timestamp)  
-    } catch (error) {
-      console.log("err", error);
-      return;
-    }
-  });
+  return embeds
+    .map((embed) => {
+      try {
+        return new EmbedBuilder()
+          .setTitle(embed.title ? formatText(embed.title, member) : null)
+          .setDescription(
+            embed.description ? formatText(embed.description, member) : null
+          )
+          .setColor(embed.color as ColorResolvable)
+          .setFields(
+            embed.fields ? embed.fields
+              .filter((field) => field.name && field.value) // Vérifie que name et value sont définis
+              .map((field) => ({
+                name: formatText(field.name, member),
+                value: formatText(field.value, member),
+              }))
+              .slice(0, 25)
+              : [])
+          .setFooter(
+            embed.footer && embed.footer.text
+              ? {
+                  text: formatText(embed.footer.text, member),
+                  iconURL: embed.footer.iconUrl ?? undefined,
+                }
+              : null
+          )
+          .setAuthor(
+            embed.author && embed.author.name
+              ? {
+                  name: formatText(embed.author.name, member),
+                  iconURL: embed.author.iconUrl ?? undefined,
+                  url: embed.author.url ?? "",
+                }
+              : null
+          )
+          .setImage(embed.image?.url ?? null)
+          .setThumbnail(embed.thumbnail)
+          .setTimestamp(embed.timestampNow ? new Date() : embed.timestamp);
+      } catch (error) {
+        console.log("err", error);
+        return null;
+      }
+    })
+    .filter((embed): embed is EmbedBuilder => embed !== null);
 }
 
 export async function formatMessage(
@@ -89,7 +94,7 @@ export async function formatMessage(
 ) {
   const embeds = await getEmbeds(moduleName, module.id);
   const message: BaseMessageOptions = {
-    content: formatText(module.content, member),
+    content: module.content ? formatText(module.content, member): undefined,
     embeds: formatEmbeds(embeds, member),
   };
 

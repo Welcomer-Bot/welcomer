@@ -1,7 +1,7 @@
 import { GuildMember, InteractionResponse, Message } from "discord.js";
-import WelcomerClient from "../../structure/WelcomerClient";
+import WelcomerClient from "../../models/Client";
 
-import { getWelcomer } from "src/utils/database";
+import { getWelcomer } from "../../utils/database";
 import { generateCard } from "../../utils/welcomeCard";
 import { EventType } from "./../../types/index";
 
