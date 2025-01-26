@@ -8,7 +8,7 @@ export default class ReadyEvent implements EventType {
   once = true;
   async execute(client: WelcomerClient) {
     console.log(
-      `${client.user?.username} is ready (Cluster: ${client.cluster.id})!`
+      `${client.user?.username} is ready (Cluster ${client.cluster.id})!`
     );
     await setStatus();
     setInterval(async () => {
@@ -39,7 +39,6 @@ export default class ReadyEvent implements EventType {
         .set([...client.commands.values()])
         .then(() => {
           console.log("Commands registered!");
-          // console.log(commandsData);
         });
     }
   }

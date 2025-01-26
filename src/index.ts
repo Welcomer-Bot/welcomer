@@ -9,6 +9,7 @@ import {
 } from "discord-hybrid-sharding";
 import "dotenv/config";
 import Logger from "./models/Logger";
+import { init } from "@sentry/node";
 
 if (
   !process.env.LOG_WEBHOOK ||
@@ -17,6 +18,14 @@ if (
 ) {
   throw new Error("Missing webhook urls in .env");
 }
+
+
+if (process.env.SENTRY_DSN) {
+  init({
+    dsn: process.env.SENTRY_DSN,
+  });
+}
+
 const logger = new Logger(
   process.env.LOG_WEBHOOK,
   process.env.STATUS_WEBHOOK,
