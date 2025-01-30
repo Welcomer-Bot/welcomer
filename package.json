@@ -29,7 +29,7 @@
     "@discordjs/builders": "^1.10.0",
     "@prisma/client": "6.1.0",
     "@sentry/cli": "^2.39.1",
-    "@sentry/node": "^8.47.0",
+    "@sentry/node": "^8.49.0",
     "@sentry/profiling-node": "^8.47.0",
     "@welcomer-bot/card-canvas": "^0.1.6",
     "canvas": "^3.0.0",
