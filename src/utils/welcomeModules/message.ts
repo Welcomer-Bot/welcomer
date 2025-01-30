@@ -6,8 +6,9 @@ import {
   GuildMember,
 } from "discord.js";
 import { CompleteEmbed } from "../../types";
-import { getEmbeds } from "../database";
+import { getEmbeds, getWelcomerCard } from "../database";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
+import { Color, DefaultCard } from "@welcomer-bot/card-canvas";
 
 export function formatText(
   message: string,
@@ -93,16 +94,18 @@ export async function formatMessage(
   member: GuildMember
 ) {
   const embeds = await getEmbeds(moduleName, module.id);
+  const cardParams = await getWelcomerCard(module.id);
+  const card = cardParams ? await (new DefaultCard({ ...cardParams, backgroundColor: { background: cardParams.backgroundColor as Color ?? null }, avatarBorderColor: cardParams.avatarBorderColor as Color, backgroundImgURL: cardParams.backgroundUrl })).build().then(built => built.toBuffer()) : null;
   const message: BaseMessageOptions = {
     content: module.content ? formatText(module.content, member): undefined,
     embeds: formatEmbeds(embeds, member),
+    files: card ? [{ attachment: card, name: "card.png" }] : undefined,
   };
 
   const messageValidated = MessageSchema.safeParse(message);
-  console.log(message);
-  console.log("messageValidated", messageValidated);
 
   if (!messageValidated.success) {
+    console.log(messageValidated.error.errors);
     throw new Error(
       `Message validation failed: ${messageValidated.error.errors.join(", ")}`
     );

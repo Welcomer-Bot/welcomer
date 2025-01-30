@@ -15,7 +15,7 @@ export const generateCard = async (
   module: Welcomer | Leaver,
   client: WelcomerClient,
   testchannel: GuildBasedChannel | null = null,
-  type: "welcomer" | "leaver" = "welcomer"
+  type: "welcomer" | "leaver"
 ) => {
   try {
     let channel = testchannel;

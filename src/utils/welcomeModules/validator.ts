@@ -234,7 +234,7 @@ export const MessageSchema = z
     files: z
       .array(
         z.object({
-          attachment: z.string(),
+          attachment: z.any(),
           name: z.string(),
         })
       )

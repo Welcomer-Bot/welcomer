@@ -2,7 +2,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -17,43 +16,52 @@ model Guild {
 }
 
 model Welcomer {
-  id        Int       @id @default(autoincrement())  /// @zod.optional()
-  guildId   String?    @unique
-  channelId String?
-  content   String?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt 
-  DM        DM?
-  embeds    Embed[] /// @zod.optional()
-  guild     Guild?     @relation(fields: [guildId], references: [id]) /// @zod.optional()
+  /// @zod.optional()
+  id                                         Int         @id @default(autoincrement())
+  guildId                                    String?     @unique
+  channelId                                  String?
+  content                                    String?
+  createdAt                                  DateTime?   @default(now())
+  updatedAt                                  DateTime?   @updatedAt
+  activeCardId                               Int?        @unique
+  DM                                         DM?
+  embeds                                     Embed[]
+  images                                     ImageCard[] @relation("WelcomerImagesRelation")
+  ImageCard_Welcomer_activeCardIdToImageCard ImageCard?  @relation("Welcomer_activeCardIdToImageCard", fields: [activeCardId], references: [id])
+  guild                                      Guild?      @relation(fields: [guildId], references: [id])
 }
 
 model Leaver {
-  id        Int       @id @default(autoincrement())  /// @zod.optional()
-  guildId   String    @unique
-  channelId String?
-  content   String?
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
-  embeds    Embed[] /// @zod.optional()
-  guild     Guild    @relation(fields: [guildId], references: [id])
+  /// @zod.optional()
+  id                                       Int         @id @default(autoincrement())
+  guildId                                  String?     @unique
+  channelId                                String?
+  content                                  String?
+  createdAt                                DateTime?   @default(now())
+  updatedAt                                DateTime?   @updatedAt
+  activeCardId                             Int?        @unique
+  embeds                                   Embed[]
+  images                                   ImageCard[] @relation("LeaverImagesRelation")
+  ImageCard_Leaver_activeCardIdToImageCard ImageCard?  @relation("Leaver_activeCardIdToImageCard", fields: [activeCardId], references: [id])
+  guild                                    Guild?      @relation(fields: [guildId], references: [id])
 }
 
 model DM {
-  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  /// @zod.optional()
+  id        Int       @id @default(autoincrement())
   moduleId  Int       @unique
   message   String
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  module    Welcomer  @relation(fields: [moduleId], references: [id]) /// @zod.optional()
+  module    Welcomer  @relation(fields: [moduleId], references: [id])
   embeds    Embed[]
 }
 
 model Embed {
-  id           Int          @id @default(autoincrement())  /// @zod.optional()
+  /// @zod.optional()
+  id           Int          @id @default(autoincrement())
   title        String?      @db.VarChar(256)
   description  String?      @db.VarChar(4096)
-  color        String?
   timestamp    DateTime?
   timestampNow Boolean?
   thumbnail    String?
@@ -63,9 +71,10 @@ model Embed {
   welcomerId   Int?
   leaverId     Int?
   DMId         Int?
-  DM           DM?          @relation(fields: [DMId], references: [id]) /// @zod.optional()
-  leaver       Leaver?      @relation(fields: [leaverId], references: [id]) /// @zod.optional()
-  welcomer     Welcomer?    @relation(fields: [welcomerId], references: [id]) /// @zod.optional()
+  color        String?
+  DM           DM?          @relation(fields: [DMId], references: [id])
+  leaver       Leaver?      @relation(fields: [leaverId], references: [id])
+  welcomer     Welcomer?    @relation(fields: [welcomerId], references: [id])
   author       EmbedAuthor?
   fields       EmbedField[]
   footer       EmbedFooter?
@@ -73,46 +82,84 @@ model Embed {
 }
 
 model EmbedImage {
-  id        Int       @id @default(autoincrement())  /// @zod.optional()
-  embedId   Int?       @unique
+  /// @zod.optional()
+  id        Int       @id @default(autoincrement())
+  embedId   Int?      @unique
   url       String
   width     Int?
   heigth    Int?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embed     Embed?   @relation(fields: [embedId], references: [id]) /// @zod.optional()
+  embed     Embed?    @relation(fields: [embedId], references: [id])
 }
 
 model EmbedAuthor {
-  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  /// @zod.optional()
+  id        Int       @id @default(autoincrement())
   embedId   Int?      @unique
   name      String
   iconUrl   String?
   url       String?   @db.VarChar(256)
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embed     Embed?    @relation(fields: [embedId], references: [id]) /// @zod.optional()
+  embed     Embed?    @relation(fields: [embedId], references: [id])
 }
 
 model EmbedField {
-  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  /// @zod.optional()
+  id        Int       @id @default(autoincrement())
   embedId   Int?
   name      String
   value     String
   inline    Boolean?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embed     Embed?    @relation(fields: [embedId], references: [id]) /// @zod.optional()
+  embed     Embed?    @relation(fields: [embedId], references: [id])
 }
 
 model EmbedFooter {
-  id        Int       @id @default(autoincrement())  /// @zod.optional()
+  /// @zod.optional()
+  id        Int       @id @default(autoincrement())
   embedId   Int?      @unique
-  text      String   @db.VarChar(2048)
+  text      String    @db.VarChar(2048)
   iconUrl   String?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  embed     Embed?    @relation(fields: [embedId], references: [id]) /// @zod.optional()
+  embed     Embed?    @relation(fields: [embedId], references: [id])
+}
+
+model ImageCard {
+  id                                        Int            @id @default(autoincrement())
+  backgroundUrl                             String?
+  backgroundColor                           String?
+  avatarBorderColor                         String?
+  textColor                                 String?
+  createdAt                                 DateTime       @default(now())
+  updatedAt                                 DateTime?      @updatedAt
+  welcomerId                                Int?
+  leaverId                                  Int?
+  mainTextId                                Int?           @unique
+  secondTextId                              Int?           @unique
+  nicknameTextId                            Int?           @unique
+  leaver                                    Leaver?        @relation("LeaverImagesRelation", fields: [leaverId], references: [id], map: "ImageCard_leaverId_fkey")
+  mainText                                  ImageCardText? @relation("MainTextRelation", fields: [mainTextId], references: [id])
+  nicknameText                              ImageCardText? @relation("NicknameRelation", fields: [nicknameTextId], references: [id])
+  secondText                                ImageCardText? @relation("SecondTextRelation", fields: [secondTextId], references: [id])
+  welcomer                                  Welcomer?      @relation("WelcomerImagesRelation", fields: [welcomerId], references: [id], map: "ImageCard_welcomerId_fkey")
+  Leaver_Leaver_activeCardIdToImageCard     Leaver?        @relation("Leaver_activeCardIdToImageCard")
+  Welcomer_Welcomer_activeCardIdToImageCard Welcomer?      @relation("Welcomer_activeCardIdToImageCard")
+}
+
+model ImageCardText {
+  id           Int        @id @default(autoincrement())
+  content      String
+  color        String?
+  font         String?
+  size         Int?
+  weight       String?
+  mainCard     ImageCard? @relation("MainTextRelation")
+  nicknameCard ImageCard? @relation("NicknameRelation")
+  secondCard   ImageCard? @relation("SecondTextRelation")
 }
 
 model User {
@@ -124,7 +171,7 @@ model User {
   refreshToken  String?
   createdAt     DateTime?   @default(now())
   updatedAt     DateTime?   @updatedAt
-  guilds        UserGuild[] /// @zod.nullable()
+  UserGuild     UserGuild[]
 }
 
 model UserGuild {
@@ -133,20 +180,19 @@ model UserGuild {
   icon        String?
   banner      String?
   permissions String?
-  userId      String?
   createdAt   DateTime?  @default(now())
   updatedAt   DateTime?  @updatedAt
   channels    Channels[]
-  user        User?      @relation(fields: [userId], references: [id])
+  User        User[]
 }
 
 model Channels {
-  id        String    @id
+  id        String     @id
   type      String
   name      String
   guildId   String?
   channelId String
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
-  guild     UserGuild? @relation(fields: [guildId], references: [id]) /// @zod.optional()
+  createdAt DateTime?  @default(now())
+  updatedAt DateTime?  @updatedAt
+  guild     UserGuild? @relation(fields: [guildId], references: [id])
 }
