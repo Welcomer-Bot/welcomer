@@ -35,7 +35,7 @@
     "canvas": "^3.0.0",
     "canvas-txt": "4.1.1",
     "discord-api-types": "^0.37.114",
-    "discord-hybrid-sharding": "^2.2.3",
+    "discord-hybrid-sharding": "^2.2.4",
     "discord.js": "^14.16.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
