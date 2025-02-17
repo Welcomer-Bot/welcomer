@@ -10,7 +10,7 @@ interface ShardStats {
   members: number;
 }
 
-export default class StatusServer {
+export default class Server {
   private client: WelcomerClient;
   private port: number;
   private app: express.Application;
@@ -43,7 +43,7 @@ export default class StatusServer {
   }
 
   private initializeRoutes(): void {
-    this.app.get("/api/status", async (req: Request, res: Response) => {
+    this.app.get("/status", async (req: Request, res: Response) => {
       if (req.headers.authorization !== process.env.SERVER_TOKEN)
         return res.status(401).json({ error: "Unauthorized" });
       try {
@@ -53,6 +53,17 @@ export default class StatusServer {
         res.status(500).json({ error: "Failed to fetch stats" });
       }
     });
+
+    this.app.get("/channels", async (req: Request, res: Response) => {
+      if (req.headers.authorization !== process.env.SERVER_TOKEN)
+        return res.status(401).json({ error: "Unauthorized" });
+      const guildId = req.query.guildId as string;
+      if (!guildId) return res.status(400).json({ error: "Guild ID is required" });
+      const guild = this.client.guilds.cache.get(guildId);
+      if (!guild) return res.status(404).json({ error: "Guild not found" });
+      const channels = guild.channels.cache
+      return res.json(channels);
+    })
   }
 
   public startServer(): void {

@@ -1,4 +1,5 @@
-import { Leaver, Welcomer } from "@prisma/client";
+import { EmbedImage, Leaver, Welcomer } from "@prisma/client";
+import { Color, DefaultCard } from "@welcomer-bot/card-canvas";
 import {
   BaseMessageOptions,
   ColorResolvable,
@@ -8,12 +9,8 @@ import {
 import { CompleteEmbed } from "../../types";
 import { getEmbeds, getWelcomerCard } from "../database";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
-import { Color, DefaultCard } from "@welcomer-bot/card-canvas";
 
-export function formatText(
-  message: string,
-  member: GuildMember
-): string {
+export function formatText(message: string, member: GuildMember): string {
   return message
     .replaceAll(/{user}/g, member.toString())
     .replaceAll(/{tag}/g, member.user.tag)
@@ -52,14 +49,16 @@ export function formatEmbeds(
           )
           .setColor(embed.color as ColorResolvable)
           .setFields(
-            embed.fields ? embed.fields
-              .filter((field) => field.name && field.value) // Vérifie que name et value sont définis
-              .map((field) => ({
-                name: formatText(field.name, member),
-                value: formatText(field.value, member),
-              }))
-              .slice(0, 25)
-              : [])
+            embed.fields
+              ? embed.fields
+                  .filter((field) => field.name && field.value) // Vérifie que name et value sont définis
+                  .map((field) => ({
+                    name: formatText(field.name, member),
+                    value: formatText(field.value, member),
+                  }))
+                  .slice(0, 25)
+              : []
+          )
           .setFooter(
             embed.footer && embed.footer.text
               ? {
@@ -95,9 +94,24 @@ export async function formatMessage(
 ) {
   const embeds = await getEmbeds(moduleName, module.id);
   const cardParams = await getWelcomerCard(module.id);
-  const card = cardParams ? await (new DefaultCard({ ...cardParams, backgroundColor: { background: cardParams.backgroundColor as Color ?? null }, avatarBorderColor: cardParams.avatarBorderColor as Color, backgroundImgURL: cardParams.backgroundUrl })).build().then(built => built.toBuffer()) : null;
+  const card = cardParams
+    ? await new DefaultCard({
+        ...cardParams,
+        backgroundColor: cardParams.backgroundColor as Color,
+        avatarBorderColor: cardParams.avatarBorderColor as Color,
+        colorTextDefault: cardParams.colorTextDefault as Color,
+      })
+        .build()
+        .then((built) => built.toBuffer())
+    : null;
+  const embed = embeds.find((embed) => embed.id === module.activeCardToEmbedId);
+  if (embed) {
+    embed.image = {
+      url: "attachment://card.png",
+    } as EmbedImage;
+  }
   const message: BaseMessageOptions = {
-    content: module.content ? formatText(module.content, member): undefined,
+    content: module.content ? formatText(module.content, member) : undefined,
     embeds: formatEmbeds(embeds, member),
     files: card ? [{ attachment: card, name: "card.png" }] : undefined,
   };
