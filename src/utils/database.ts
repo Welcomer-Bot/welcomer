@@ -3,6 +3,7 @@ import {
   Guild as GuildDb,
   ImageCard,
   Leaver,
+  Period,
   PrismaClient,
   Welcomer,
 } from "@prisma/client";
@@ -65,7 +66,9 @@ export async function createOrUpdateChannel(
   });
 }
 
-export async function createOrUpdateManyChannels(channels: GuildChannelManager) {
+export async function createOrUpdateManyChannels(
+  channels: GuildChannelManager
+) {
   const channelData = channels.cache.map((channel) => ({
     id: channel.id,
     name: channel.name,
@@ -91,7 +94,6 @@ export async function createOrUpdateManyChannels(channels: GuildChannelManager) 
 
   return await Promise.all(upsertPromises);
 }
-
 
 export async function createChannels(channels: GuildChannelManager) {
   return await prisma.channels.createMany({
@@ -186,5 +188,130 @@ export async function getLeaver(guildId: string): Promise<Leaver | null> {
     where: {
       guildId,
     },
+  });
+}
+
+export async function getLatestGuildStatsOfAllPeriods(
+  guildId: string,
+  module: "welcomer" | "leaver") {
+  const getPromises = (Object.keys(Period) as Array<keyof typeof Period>).map(async (period) => {
+    return await prisma.guildStats.findFirst({
+      where: {
+        guildId,
+        module,
+        period,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  });
+  return await Promise.all(getPromises);
+  }
+
+
+export async function addMemberWelcomed(guildId: string) {
+  const toUpdate = await getLatestGuildStatsOfAllPeriods(guildId, "welcomer");
+  toUpdate.forEach(async (stats) => {
+    if (stats) {
+      await prisma.guildStats.update({
+        where: {
+          guildId_period_module_createdAt: {
+            guildId: stats.guildId,
+            period: stats.period,
+            module: stats.module,
+            createdAt: stats.createdAt,
+          }
+        },
+        data: {
+          membersEvent: {
+            increment: 1,
+          },
+        },
+      });
+    }
+  });
+ 
+}
+
+export async function updateGuildStatsGeneratedImages(
+  guildId: string,
+  module: "welcomer" | "leaver",
+  nbImages: number = 1
+) {
+  const toUpdate = await getLatestGuildStatsOfAllPeriods(guildId, module);
+  toUpdate.forEach(async (stats) => {
+    if (stats) {
+      await prisma.guildStats.update({
+        where: {
+          guildId_period_module_createdAt: {
+            guildId: stats.guildId,
+            period: stats.period,
+            module: stats.module,
+            createdAt: stats.createdAt,
+          }
+        },
+        data: {
+          generatedImages: {
+            increment: nbImages,
+          },
+        },
+      });
+    }
+  }
+  );
+}
+
+export async function updateGuildStatsGeneratedMessages(
+  guildId: string,
+  module: "welcomer" | "leaver",
+  nbMessages: number = 1
+) {
+  const toUpdate = await getLatestGuildStatsOfAllPeriods(guildId, module);
+  toUpdate.forEach(async (stats) => {
+    if (stats) {
+      await prisma.guildStats.update({
+        where: {
+          guildId_period_module_createdAt: {
+            guildId: stats.guildId,
+            period: stats.period,
+            module: stats.module,
+            createdAt: stats.createdAt,
+          }
+        },
+        data: {
+          generatedMessages: {
+            increment: nbMessages,
+          },
+        },
+      });
+    }
+  });
+}
+
+export async function updateGuildStatsGeneratedEmbeds(
+  guildId: string,
+  module: "welcomer" | "leaver",
+  nbEmbeds: number = 1
+) {
+  const toUpdate = await getLatestGuildStatsOfAllPeriods(guildId, module);
+  toUpdate.forEach(async (stats) => {
+    if (stats) {
+      await prisma.guildStats.update({
+        where: {
+          guildId_period_module_createdAt: {
+            guildId: stats.guildId,
+            period: stats.period,
+            module: stats.module,
+            createdAt: stats.createdAt,
+          }
+        },
+        data: {
+          generatedEmbeds: {
+            increment: nbEmbeds,
+          },
+        },
+      });
+    }
   });
 }

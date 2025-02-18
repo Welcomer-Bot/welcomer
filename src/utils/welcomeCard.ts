@@ -15,7 +15,8 @@ export const generateCard = async (
   module: Welcomer | Leaver,
   client: WelcomerClient,
   testchannel: GuildBasedChannel | null = null,
-  type: "welcomer" | "leaver"
+  type: "welcomer" | "leaver",
+  test: boolean = false
 ) => {
   try {
     let channel = testchannel;
@@ -37,7 +38,7 @@ export const generateCard = async (
           PermissionFlagsBits.ViewChannel,
         ])
     ) {
-      const message = await formatMessage(module, type, member);
+      const message = await formatMessage(module, type, member, test);
       sendChannelMessage(channel, message);
     }
   } catch (err) {

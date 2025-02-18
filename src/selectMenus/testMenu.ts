@@ -139,7 +139,7 @@ export default class TestMenu implements SelectMenuType {
       await sendInteractionMessage(
         interaction,
         { embeds: [InfoEmbed], ephemeral: true },
-        true
+        true,
       );
       generateCard(
         interaction.member as GuildMember,
@@ -147,7 +147,8 @@ export default class TestMenu implements SelectMenuType {
         guildModule,
         client,
         currentChannel,
-        arg
+        arg,
+        true
       );
     } catch (error) {
       client.logger.error(error as Error);

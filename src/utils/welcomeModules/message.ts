@@ -7,7 +7,7 @@ import {
   GuildMember,
 } from "discord.js";
 import { CompleteEmbed } from "../../types";
-import { getEmbeds, getWelcomerCard } from "../database";
+import { getEmbeds, getWelcomerCard, updateGuildStatsGeneratedEmbeds, updateGuildStatsGeneratedImages, updateGuildStatsGeneratedMessages } from "../database";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
 
 export function formatText(message: string, member: GuildMember): string {
@@ -90,7 +90,8 @@ export function formatEmbeds(
 export async function formatMessage(
   module: Welcomer | Leaver,
   moduleName: "welcomer" | "leaver",
-  member: GuildMember
+  member: GuildMember,
+  test: boolean = false,
 ) {
   const embeds = await getEmbeds(moduleName, module.id);
   const cardParams = await getWelcomerCard(module.id);
@@ -134,6 +135,10 @@ export async function formatMessage(
       }
     });
   }
-
+  if (module.guildId && !test) {
+    updateGuildStatsGeneratedEmbeds(module.guildId,moduleName,  message.embeds?.length ?? 0);
+    updateGuildStatsGeneratedImages(module.guildId,moduleName,  card ? 1 : 0);
+    updateGuildStatsGeneratedMessages(module.guildId, moduleName, 1);
+  }
   return message;
 }

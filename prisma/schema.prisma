@@ -215,8 +215,9 @@ model GuildStats {
   membersEvent      Int    @default(0)
   guildId           String
   Guild             Guild  @relation(fields: [guildId], references: [id])
+  createdAt         DateTime @default(now())
 
-  @@id([guildId, period, module])
+  @@id([guildId, period, module, createdAt])
 }
 
 enum Module {
