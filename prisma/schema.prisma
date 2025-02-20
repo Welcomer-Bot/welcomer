@@ -209,13 +209,13 @@ model Channels {
 model GuildStats {
   period            Period
   module            Module
-  generatedImages   Int    @default(0)
-  generatedEmbeds   Int    @default(0)
-  generatedMessages Int    @default(0)
-  membersEvent      Int    @default(0)
+  generatedImages   Int      @default(0)
+  generatedEmbeds   Int      @default(0)
+  generatedMessages Int      @default(0)
+  membersEvent      Int      @default(0)
   guildId           String
-  Guild             Guild  @relation(fields: [guildId], references: [id])
   createdAt         DateTime @default(now())
+  Guild             Guild    @relation(fields: [guildId], references: [id])
 
   @@id([guildId, period, module, createdAt])
 }
