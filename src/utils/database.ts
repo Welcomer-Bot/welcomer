@@ -315,3 +315,12 @@ export async function updateGuildStatsGeneratedEmbeds(
     }
   });
 }
+
+export async function isGuildInBeta(guildId: string): Promise<boolean> {
+  const guild = await prisma.betaGuild.findFirst({
+    where: {
+      id: guildId,
+    },
+  });
+  return !!guild;
+}

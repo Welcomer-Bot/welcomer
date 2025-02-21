@@ -193,6 +193,7 @@ model UserGuild {
   createdAt   DateTime?  @default(now())
   updatedAt   DateTime?  @updatedAt
   channels    Channels[]
+  betaGuild   betaGuild?
   User        User[]     @relation("UserToUserGuild")
 }
 
@@ -218,6 +219,13 @@ model GuildStats {
   Guild             Guild    @relation(fields: [guildId], references: [id])
 
   @@id([guildId, period, module, createdAt])
+}
+
+model betaGuild {
+  id        String    @id
+  createdAt DateTime? @default(now())
+  updatedAt DateTime?
+  UserGuild UserGuild @relation(fields: [id], references: [id])
 }
 
 enum Module {
