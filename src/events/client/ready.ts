@@ -18,7 +18,7 @@ export default class ReadyEvent implements EventType {
     async function setStatus() {
       const messages = [
         `/config`,
-        `welcomer.app`,
+        `beta.welcomer.app`,
         `${(
           await client.cluster.broadcastEval(`this.guilds.cache.size`)
         ).reduce((prev, val) => prev + val, 0)} guilds`,

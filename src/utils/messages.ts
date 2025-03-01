@@ -25,10 +25,15 @@ export const sendInteractionMessage = async (
   interaction: Exclude<Interaction, AutocompleteInteraction>,
   message: InteractionReplyOptions = baseMessage,
   follow: boolean = false
-): Promise<Message<boolean> | InteractionResponse> => {
+): Promise<Message<boolean> | InteractionResponse | null> => {
   if (!interaction || !message)
     throw new Error("Missing parameters for sendInteractionMessage");
   try {
+    if (!interaction.isRepliable()) { 
+      console.log("Interaction is not repliable");
+      console.log(interaction)
+      // await sendChannelMessage(interaction.channel, message as BaseMessageOptions);
+    };
     if (follow) {
       return await interaction.followUp({ ...message, fetchReply: true });
     } else if (interaction.deferred || interaction.replied) {
@@ -77,7 +82,7 @@ export const sendChannelMessage = async (
     return await channel.send(message);
   } catch (error) {
     console.log("An error occured in sendChannelMessage function !", error);
-    return error;
+    return false;
   }
 };
 
@@ -86,12 +91,15 @@ export const sendErrorMessage = async (
   error: string
 ) => {
   try {
-    (await interaction.fetchReply()).removeAttachments();
+    if (interaction.deferred || interaction.replied) {
+      (await interaction.fetchReply()).removeAttachments();
+    }
     await sendInteractionMessage(
       interaction,
       {
         content: error,
-        ephemeral: true,
+        flags: "Ephemeral",
+
         embeds: [],
         components: [
           new ActionRowBuilder<ButtonBuilder>().addComponents(helpButton),
@@ -100,7 +108,8 @@ export const sendErrorMessage = async (
       },
       true
     );
-  } catch {
+  } catch (err) {
+    console.log("An error occured in sendErrorMessage function !", err);
     return;
   }
 };
@@ -117,6 +126,7 @@ export const sendTempMessage = async (
       message,
       follow
     );
+    if (!sentMessage) return;
     setTimeout(async () => {
       sentMessage.delete();
     }, time);

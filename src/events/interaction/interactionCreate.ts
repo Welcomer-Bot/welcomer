@@ -1,8 +1,6 @@
 import {
   AutocompleteInteraction,
-  Interaction,
-  InteractionResponse,
-  Message,
+  Interaction
 } from "discord.js";
 import WelcomerClient from "../../models/Client";
 import { EventType } from "../../types";
@@ -15,7 +13,7 @@ export default class InteractionCreateEvent implements EventType {
   async execute(
     interaction: Exclude<Interaction, AutocompleteInteraction>,
     client: WelcomerClient
-  ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
+  ) {
     if (!interaction.inGuild() || !interaction.guild)
       return sendErrorMessage(
         interaction,
@@ -33,7 +31,7 @@ export default class InteractionCreateEvent implements EventType {
           if (!command) return;
           try {
             if (command?.noDefer) return command.execute(interaction, client);
-            await interaction.deferReply({ ephemeral: command?.ephemeral });
+            await interaction.deferReply(command?.ephemeral ? { flags: "Ephemeral" } : undefined);
             await command.execute(interaction, client);
             client.logger.info(
               `Interaction command called: /${interaction.commandName}`,
@@ -43,8 +41,7 @@ export default class InteractionCreateEvent implements EventType {
             console.error("There was an error on interactionCreate: ", error);
             await sendErrorMessage(
               interaction,
-              `:warning: There was an error while executing this command!\n Please try again. ${
-                error ? "```" + error + "```" : ""
+              `:warning: There was an error while executing this command!\n Please try again. ${error ? "```" + error + "```" : ""
               }`
             );
           }
@@ -64,7 +61,7 @@ export default class InteractionCreateEvent implements EventType {
                 interaction,
                 {
                   content: "You are not allowed to use this command",
-                  ephemeral: true,
+                  flags: "Ephemeral",
                 },
                 true
               );
@@ -74,8 +71,7 @@ export default class InteractionCreateEvent implements EventType {
             console.error("There was an error on interactionCreate: ", error);
             await sendErrorMessage(
               interaction,
-              `:warning: There was an error while executing this select menu!\n Please try again. ${
-                error ? "```" + error + "```" : ""
+              `:warning: There was an error while executing this select menu!\n Please try again. ${error ? "```" + error + "```" : ""
               }`
             );
           }
@@ -95,7 +91,8 @@ export default class InteractionCreateEvent implements EventType {
                 interaction,
                 {
                   content: "You are not allowed to use this command",
-                  ephemeral: true,
+                  flags: "Ephemeral",
+
                 },
                 true
               );
@@ -105,8 +102,7 @@ export default class InteractionCreateEvent implements EventType {
             console.error("There was an error on interactionCreate: ", error);
             await sendErrorMessage(
               interaction,
-              `:warning: There was an error while executing this button!\n Please try again. ${
-                error ? "```" + error + "```" : ""
+              `:warning: There was an error while executing this button!\n Please try again. ${error ? "```" + error + "```" : ""
               }`
             );
           }
@@ -122,14 +118,12 @@ export default class InteractionCreateEvent implements EventType {
       }
     } catch (error) {
       console.error("There was an error on interactionCreate: ", error);
-      if (!interaction.isAutocomplete()) {
-        sendErrorMessage(
-          interaction,
-          `:warning: There was an error while executing this command! \n Please try again. ${
-            error ? "```" + error + "```" : ""
-          }`
-        );
-      }
+      await interaction.deferReply({flags: "Ephemeral"});
+      await sendErrorMessage(
+        interaction,
+        `:warning: There was an error while executing this command! \n Please try again. ${error ? "```" + error + "```" : ""
+        }`
+      );
     }
   }
 }

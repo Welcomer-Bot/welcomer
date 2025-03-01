@@ -21,7 +21,7 @@ export default class TestMenu implements SelectMenuType {
   async execute(
     interaction: StringSelectMenuInteraction,
     client: WelcomerClient
-  ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
+  ): Promise<void |null| InteractionResponse<boolean> | Message<boolean>> {
     const InfoEmbed = new EmbedBuilder();
     try {
       interaction.editReply({
@@ -32,7 +32,9 @@ export default class TestMenu implements SelectMenuType {
       if (!value)
         return sendInteractionMessage(
           interaction,
-          { content: "Unknown value", ephemeral: true },
+          {
+            content: "Unknown value", flags: "Ephemeral",
+},
           true
         );
       const arg = value === "Welcome" ? "welcomer" : "leaver";
@@ -48,7 +50,8 @@ export default class TestMenu implements SelectMenuType {
           interaction,
           {
             content: `No ${arg} module found. Please enable it first with the [dashboard](<https://welcomer.app>)`,
-            ephemeral: true,
+            flags: "Ephemeral",
+
           },
           true
         );
@@ -68,7 +71,9 @@ export default class TestMenu implements SelectMenuType {
         );
         return sendInteractionMessage(
           interaction,
-          { embeds: [InfoEmbed], ephemeral: true },
+          {
+            embeds: [InfoEmbed], flags: "Ephemeral",
+},
           true
         );
       }
@@ -138,7 +143,12 @@ export default class TestMenu implements SelectMenuType {
 
       await sendInteractionMessage(
         interaction,
-        { embeds: [InfoEmbed], ephemeral: true },
+        {
+          embeds: [InfoEmbed], 
+          flags: "Ephemeral",
+
+
+        },
         true,
       );
       generateCard(

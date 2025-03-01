@@ -1,9 +1,7 @@
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
-  InteractionResponse,
-  Message,
-  SlashCommandBuilder,
+  SlashCommandBuilder
 } from "discord.js";
 import WelcomerClient from "../../models/Client";
 import { CommandType } from "../../types";
@@ -45,7 +43,7 @@ export default class StatusCommand implements CommandType {
   async execute(
     interaction: ChatInputCommandInteraction,
     client: WelcomerClient
-  ): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
+  ) {
     if (!client.isReady()) {
       return sendInteractionMessage(interaction, {
         content: "The client is not ready yet",

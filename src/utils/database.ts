@@ -38,7 +38,7 @@ export async function createOrUpdateGuild(guild: Guild): Promise<GuildDb> {
     },
   });
 
-  await createOrUpdateManyChannels(guild.channels);
+  // await createOrUpdateManyChannels(guild.channels);
   return res;
 }
 
@@ -86,7 +86,11 @@ export async function createOrUpdateManyChannels(
       create: {
         id: channel.id,
         name: channel.name,
-        guildId: channel.guildId,
+        guild: {
+          connect: {
+            id: channel.guildId,
+          },
+        },
         type: channel.type,
       },
     })
@@ -130,11 +134,22 @@ export async function updateGuild(guild: Guild): Promise<GuildDb> {
 }
 
 export async function deleteGuild(guildId: string) {
-  return await prisma.guild.delete({
+  const deleteGuild = prisma.guild.delete({
     where: {
       id: guildId,
     },
   });
+  const disconnectStats = prisma.guildStats.updateMany({
+    where: {
+      guildId
+    },
+    data: {
+      guildId: null
+    },
+  })
+  return await prisma.$transaction([deleteGuild,
+    disconnectStats
+  ]);
 }
 
 export async function getWelcomer(guildId: string): Promise<Welcomer | null> {
@@ -207,21 +222,19 @@ export async function getLatestGuildStatsOfAllPeriods(
     });
   });
   return await Promise.all(getPromises);
-  }
+}
 
 
 export async function addMemberWelcomed(guildId: string) {
   const toUpdate = await getLatestGuildStatsOfAllPeriods(guildId, "welcomer");
   toUpdate.forEach(async (stats) => {
     if (stats) {
-      await prisma.guildStats.update({
+      await prisma.guildStats.updateMany({
         where: {
-          guildId_period_module_createdAt: {
-            guildId: stats.guildId,
-            period: stats.period,
-            module: stats.module,
-            createdAt: stats.createdAt,
-          }
+          guildId: stats.guildId,
+          period: stats.period,
+          module: stats.module,
+          createdAt: stats.createdAt,
         },
         data: {
           membersEvent: {
@@ -231,7 +244,7 @@ export async function addMemberWelcomed(guildId: string) {
       });
     }
   });
- 
+
 }
 
 export async function updateGuildStatsGeneratedImages(
@@ -242,14 +255,12 @@ export async function updateGuildStatsGeneratedImages(
   const toUpdate = await getLatestGuildStatsOfAllPeriods(guildId, module);
   toUpdate.forEach(async (stats) => {
     if (stats) {
-      await prisma.guildStats.update({
+      await prisma.guildStats.updateMany({
         where: {
-          guildId_period_module_createdAt: {
-            guildId: stats.guildId,
-            period: stats.period,
-            module: stats.module,
-            createdAt: stats.createdAt,
-          }
+          guildId: stats.guildId,
+          period: stats.period,
+          module: stats.module,
+          createdAt: stats.createdAt,
         },
         data: {
           generatedImages: {
@@ -270,14 +281,12 @@ export async function updateGuildStatsGeneratedMessages(
   const toUpdate = await getLatestGuildStatsOfAllPeriods(guildId, module);
   toUpdate.forEach(async (stats) => {
     if (stats) {
-      await prisma.guildStats.update({
+      await prisma.guildStats.updateMany({
         where: {
-          guildId_period_module_createdAt: {
-            guildId: stats.guildId,
-            period: stats.period,
-            module: stats.module,
-            createdAt: stats.createdAt,
-          }
+          guildId: stats.guildId,
+          period: stats.period,
+          module: stats.module,
+          createdAt: stats.createdAt,
         },
         data: {
           generatedMessages: {
@@ -297,14 +306,12 @@ export async function updateGuildStatsGeneratedEmbeds(
   const toUpdate = await getLatestGuildStatsOfAllPeriods(guildId, module);
   toUpdate.forEach(async (stats) => {
     if (stats) {
-      await prisma.guildStats.update({
+      await prisma.guildStats.updateMany({
         where: {
-          guildId_period_module_createdAt: {
-            guildId: stats.guildId,
-            period: stats.period,
-            module: stats.module,
-            createdAt: stats.createdAt,
-          }
+          guildId: stats.guildId,
+          period: stats.period,
+          module: stats.module,
+          createdAt: stats.createdAt,
         },
         data: {
           generatedEmbeds: {
@@ -323,4 +330,34 @@ export async function isGuildInBeta(guildId: string): Promise<boolean> {
     },
   });
   return !!guild;
+}
+
+async function getStats(module: "welcomer" | "leaver", period: Period) {
+  return await prisma.guildStats.groupBy({
+    by: ["guildId", "module", "period"],
+    where: {
+      module: module,
+      period: period,
+      guild: {
+        NOT: undefined,
+      }
+    }
+
+  })
+}
+
+export async function createStats(period: Period) {
+  for (const module of ["welcomer", "leaver"]) {
+    const currentStats = await getStats(module as "welcomer" | "leaver", period);
+    for (const currentStat of currentStats) {
+      console.log(currentStat)
+      await prisma.guildStats.create({
+        data: {
+          guildId: currentStat.guildId,
+          module: currentStat.module,
+          period: currentStat.period,
+        }
+      })
+    }
+  }
 }

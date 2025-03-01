@@ -23,11 +23,11 @@ export default class Emit implements CommandType {
   async execute(
     interaction: ChatInputCommandInteraction,
     client: WelcomerClient
-  ): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
+  ): Promise<void | null | Message<boolean> | InteractionResponse<boolean>> {
     if (!client.admins.includes(interaction.user.id))
       return sendInteractionMessage(interaction, {
         content: "You are not allowed to use this command.",
-        ephemeral: true,
+        flags: "Ephemeral",
       });
     const emitMenu = new StringSelectMenuBuilder()
       .setCustomId("emitMenu")

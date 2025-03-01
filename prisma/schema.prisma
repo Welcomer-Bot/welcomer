@@ -12,7 +12,7 @@ model Guild {
   createdAt  DateTime?    @default(now())
   updatedAt  DateTime?    @updatedAt
   premium    Boolean      @default(false)
-  GuildStats GuildStats[]
+  guildStats GuildStats[] 
   leaver     Leaver?
   welcomer   Welcomer?
 }
@@ -208,17 +208,18 @@ model Channels {
 }
 
 model GuildStats {
+  id                Int  @default(autoincrement())
   period            Period
   module            Module
   generatedImages   Int      @default(0)
   generatedEmbeds   Int      @default(0)
   generatedMessages Int      @default(0)
   membersEvent      Int      @default(0)
-  guildId           String
+  guildId           String?
   createdAt         DateTime @default(now())
-  Guild             Guild    @relation(fields: [guildId], references: [id])
+  guild             Guild?    @relation(fields: [guildId], references: [id])
 
-  @@id([guildId, period, module, createdAt])
+  @@id([id, period, module, createdAt])
 }
 
 model betaGuild {

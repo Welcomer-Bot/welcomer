@@ -14,7 +14,7 @@ export default class AutoConfigButton implements ButtonType {
       // If the command does not exist, send an error message
       return interaction.followUp({
         content: "Autoconfig command not found.",
-        ephemeral: true,
+        flags: "Ephemeral",
       });
     }
     await autoconfigCommand.execute(interaction, client);

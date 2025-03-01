@@ -39,7 +39,7 @@ export interface CommandType extends ChatInputApplicationCommandData {
     interaction: ChatInputCommandInteraction | ButtonInteraction,
     client: WelcomerClient,
     ...options: unknown[]
-  ): Promise<void | Message<boolean> | InteractionResponse<boolean>>;
+  ): Promise<void | null | Message<boolean> | InteractionResponse<boolean>>;
 }
 
 export interface EventType {
@@ -49,7 +49,7 @@ export interface EventType {
   once?: boolean;
   execute(
     ...args: unknown[]
-  ): Promise<void | InteractionResponse<boolean> | Message<boolean>>;
+  ): Promise<void | null | InteractionResponse<boolean> | Message<boolean>>;
 }
 
 export interface ButtonType {
@@ -68,7 +68,7 @@ export interface SelectMenuType {
     interaction: AnySelectMenuInteraction,
     client: WelcomerClient,
     ...options: unknown[]
-  ): Promise<void | InteractionResponse<boolean> | Message<boolean>>;
+  ): Promise<void | null | InteractionResponse<boolean> | Message<boolean>>;
 }
 
 export type PartialGuild = {

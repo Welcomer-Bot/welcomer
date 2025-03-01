@@ -14,14 +14,15 @@ export default class EmitMenu implements SelectMenuType {
   async execute(
     interaction: StringSelectMenuInteraction,
     client: WelcomerClient
-  ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
+  ): Promise<void |null| InteractionResponse<boolean> | Message<boolean>> {
     const event = interaction.values[0];
     if (!client.admins.includes(interaction.user.id))
       return sendInteractionMessage(
         interaction,
         {
           content: "You are not allowed to use this command.",
-          ephemeral: true,
+          flags: "Ephemeral",
+
         },
         true
       );

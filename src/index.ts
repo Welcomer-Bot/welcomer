@@ -1,3 +1,4 @@
+import { init } from "@sentry/node";
 import {
   ClusterManager,
   ClusterManagerOptions,
@@ -8,8 +9,8 @@ import {
   ReClusterOptions,
 } from "discord-hybrid-sharding";
 import "dotenv/config";
+import { CronHandler } from "./models/Cron";
 import Logger from "./models/Logger";
-import { init } from "@sentry/node";
 
 if (
   !process.env.LOG_WEBHOOK ||
@@ -31,6 +32,8 @@ const logger = new Logger(
   process.env.STATUS_WEBHOOK,
   process.env.ADD_REMOVE_WEBHOOK
 );
+
+new CronHandler();
 
 const shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10");
 

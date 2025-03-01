@@ -25,7 +25,7 @@ export default class LeaveGuild implements CommandType {
   async execute(
     interaction: ChatInputCommandInteraction,
     client: WelcomerClient
-  ): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
+  ): Promise<void | null | Message<boolean> | InteractionResponse<boolean>> {
     const guildId = interaction.options.getString("guild_id");
     if (!guildId || typeof guildId != "string") {
       return await sendInteractionMessage(interaction, {
