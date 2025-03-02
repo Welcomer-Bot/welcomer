@@ -124,8 +124,12 @@ export async function createOrUpdateManyChannels(
       create: {
         id: channel.id,
         name: channel.name,
-        guildId: channel.guildId,
         type: channel.type,
+        Guild: {
+          connect: {
+            id: channel.guildId,
+          },
+        }
       },
     })
   );
