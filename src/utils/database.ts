@@ -42,7 +42,6 @@ export async function createGuild(guild: Guild): Promise<GuildDb> {
 }
 
 export async function createOrUpdateGuild(guild: Guild): Promise<GuildDb> {
-  console.log(guild);
   const res = await prisma.guild.upsert({
     where: {
       id: guild.id,
