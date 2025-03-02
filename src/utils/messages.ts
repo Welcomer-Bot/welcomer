@@ -29,13 +29,13 @@ export const sendInteractionMessage = async (
   if (!interaction || !message)
     throw new Error("Missing parameters for sendInteractionMessage");
   try {
-    if (!interaction.isRepliable()) { 
+    if (!interaction.isRepliable() || interaction.fetchReply() === undefined) { 
       console.log("Interaction is not repliable");
       console.log(interaction)
       // await sendChannelMessage(interaction.channel, message as BaseMessageOptions);
     };
-    if (follow) {
-      return await interaction.followUp({ ...message, fetchReply: true });
+    if (follow || interaction.ephemeral) {
+      return await interaction.followUp({ ...message});
     } else if (interaction.deferred || interaction.replied) {
       return await interaction.editReply(message);
     } else {
@@ -78,7 +78,6 @@ export const sendChannelMessage = async (
       message.files?.length === 0
     )
       return;
-
     return await channel.send(message);
   } catch (error) {
     console.log("An error occured in sendChannelMessage function !", error);
@@ -91,8 +90,10 @@ export const sendErrorMessage = async (
   error: string
 ) => {
   try {
-    if (interaction.deferred || interaction.replied) {
-      (await interaction.fetchReply()).removeAttachments();
+    if (interaction.replied) {
+      await interaction.fetchReply().then((msg) => {
+        msg.removeAttachments();
+      }).catch();
     }
     await sendInteractionMessage(
       interaction,
@@ -128,7 +129,12 @@ export const sendTempMessage = async (
     );
     if (!sentMessage) return;
     setTimeout(async () => {
-      sentMessage.delete();
+      sentMessage.fetch().then((msg) => {
+        msg.delete();
+      }).catch((error) => {
+        console.log("An error occured in sendTempMessage function !", error);
+      }
+      );
     }, time);
   } catch (error) {
     throw `An error occured in sendTempMessage function: ${error}`;

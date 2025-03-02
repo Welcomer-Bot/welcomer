@@ -10,21 +10,12 @@ export class CronHandler {
         this.daily = this.scheduleRolloutDailyStats();
         this.weekly = this.scheduleRolloutWeeklyStats();
         this.monthly = this.scheduleRolloutMonthlyStats();
-        this.scheduleRolloutSecondlyStats();
     }
 
     private scheduleRolloutDailyStats() {
         return cron.schedule("00 00 00 * * *", () => {
             console.log("Running daily stats");
             createStats("DAILY");
-        }
-        )
-    }
-
-    private scheduleRolloutSecondlyStats() {
-        return cron.schedule("*/5 * * * * *", async () => {
-            console.log("Running secondly stats");
-            await createStats('WEEKLY');
         }
         )
     }

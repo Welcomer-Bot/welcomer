@@ -23,6 +23,20 @@ export async function createGuild(guild: Guild): Promise<GuildDb> {
   return await prisma.guild.create({
     data: {
       id: guild.id,
+      name: guild.name,
+      description: guild.description,
+      icon: guild.icon,
+      banner: guild.banner,
+      memberCount: guild.memberCount,
+      BotGuild: {
+        connectOrCreate: {
+          where: {
+            id: guild.id,
+          },
+          create: {
+          },
+        }
+      },
     },
   });
 }
@@ -32,13 +46,42 @@ export async function createOrUpdateGuild(guild: Guild): Promise<GuildDb> {
     where: {
       id: guild.id,
     },
-    update: {},
+    update: {
+      name: guild.name,
+      description: guild.description,
+      icon: guild.icon,
+      banner: guild.banner,
+      memberCount: guild.memberCount,
+      BotGuild: {
+        connectOrCreate: {
+          where: {
+            id: guild.id,
+          },
+          create: {
+          },
+        }
+      },
+    },
     create: {
       id: guild.id,
+      name: guild.name,
+      description: guild.description,
+      icon: guild.icon,
+      banner: guild.banner,
+      memberCount: guild.memberCount,
+      BotGuild: {
+        connectOrCreate: {
+          where: {
+            id: guild.id,
+          },
+          create: {
+          },
+        }
+      },
     },
   });
 
-  // await createOrUpdateManyChannels(guild.channels);
+  await createOrUpdateManyChannels(guild.channels);
   return res;
 }
 
@@ -56,11 +99,7 @@ export async function createOrUpdateChannel(
     create: {
       id: channel.id,
       name: channel.name,
-      guild: {
-        connect: {
-          id: channel.guild.id,
-        },
-      },
+      guildId: channel.guild.id,
       type: channel.type,
     },
   });
@@ -75,7 +114,6 @@ export async function createOrUpdateManyChannels(
     guildId: channel.guild.id,
     type: channel.type,
   }));
-
   const upsertPromises = channelData.map((channel) =>
     prisma.channels.upsert({
       where: { id: channel.id },
@@ -86,11 +124,7 @@ export async function createOrUpdateManyChannels(
       create: {
         id: channel.id,
         name: channel.name,
-        guild: {
-          connect: {
-            id: channel.guildId,
-          },
-        },
+        guildId: channel.guildId,
         type: channel.type,
       },
     })
@@ -128,15 +162,25 @@ export async function updateGuild(guild: Guild): Promise<GuildDb> {
       id: guild.id,
     },
     data: {
-      ...guild,
+      id: guild.id,
+      name: guild.name,
+      description: guild.description,
+      icon: guild.icon,
+      banner: guild.banner,
+      memberCount: guild.memberCount,
     },
   });
 }
 
 export async function deleteGuild(guildId: string) {
-  const deleteGuild = prisma.guild.delete({
+  const deleteGuild = prisma.guild.update({
     where: {
       id: guildId,
+    },
+    data: {
+      BotGuild: {
+        delete: true,
+      },
     },
   });
   const disconnectStats = prisma.guildStats.updateMany({

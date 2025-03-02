@@ -52,6 +52,14 @@ export default class EmitMenu implements SelectMenuType {
         );
         client.emit("guildCreate", interaction.guild as Guild);
         break;
+      case "guildDelete":
+        await sendTempMessage(
+          interaction,
+          { content: "Emitted guildDelete event" },
+          true
+        );
+        client.emit("guildDelete", interaction.guild as Guild);
+        break;
       case "restartCluster":
         await sendInteractionMessage(
           interaction,
@@ -64,6 +72,13 @@ export default class EmitMenu implements SelectMenuType {
           timeout: 30000,
         });
 
+        break;
+      default:
+        await sendInteractionMessage(
+          interaction,
+          { content: "Invalid event" },
+          true
+        );
         break;
     }
   }
