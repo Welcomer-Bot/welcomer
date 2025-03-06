@@ -28,24 +28,24 @@ export const sendInteractionMessage = async (
 ): Promise<Message<boolean> | InteractionResponse | null> => {
   if (!interaction || !message)
     throw new Error("Missing parameters for sendInteractionMessage");
-  try {
-    if (!interaction.isRepliable() || interaction.fetchReply() === undefined) { 
+  // try {
+    if (!interaction.isRepliable() || interaction.replied && interaction.fetchReply() === undefined) { 
       console.log("Interaction is not repliable");
       console.log(interaction)
       // await sendChannelMessage(interaction.channel, message as BaseMessageOptions);
-    };
+  };
+  await interaction.deferReply();
     if (follow || interaction.ephemeral) {
       return await interaction.followUp({ ...message});
-    } else if (interaction.deferred || interaction.replied) {
+    } else if (interaction.replied) {
       return await interaction.editReply(message);
-    } else {
-      return await interaction.reply(message);
     }
-  } catch (error) {
-    throw new Error(
-      "An error occured in sendInteractionMessage function ! " + error
-    );
-  }
+      return await interaction.reply(message);
+  // } catch (error) {
+  //   throw new Error(
+  //     "An error occured in sendInteractionMessage function ! " + error
+  //   );
+  // }
 };
 
 export const sendDmMessage = async (

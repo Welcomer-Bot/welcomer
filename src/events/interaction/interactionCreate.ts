@@ -14,12 +14,13 @@ export default class InteractionCreateEvent implements EventType {
     interaction: Exclude<Interaction, AutocompleteInteraction>,
     client: WelcomerClient
   ) {
-    if (!interaction.inGuild() || !interaction.guild)
-      return sendErrorMessage(
-        interaction,
-        "This command can only be used in a server."
-      );
+    // if (!interaction.inGuild() || !interaction.guild)
+    //   return sendErrorMessage(
+    //     interaction,
+    //     "This command can only be used in a server."
+    //   );
     try {
+      if(interaction.guild)
       await createOrUpdateGuild(interaction.guild);
       switch (true) {
         case interaction.isAutocomplete(): {

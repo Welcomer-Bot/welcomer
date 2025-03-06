@@ -33,6 +33,7 @@ export interface CommandType extends ChatInputApplicationCommandData {
   admin?: boolean;
   noDefer?: boolean;
   ephemeral?: boolean;
+
   data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
 
   execute(

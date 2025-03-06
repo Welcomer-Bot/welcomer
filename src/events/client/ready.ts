@@ -31,6 +31,10 @@ export default class ReadyEvent implements EventType {
     if (client.cluster.id === 0) {
       client.server.startServer();
       await waitForManager(client);
+      client.commands.forEach((command) => {
+        if (!command.data.contexts) command.data.setContexts([0]);
+      }
+      );
       const globalCommands = client.commands.filter(command => !command.admin).map((command) => command.data.toJSON()) as RESTPostAPIApplicationCommandsJSONBody[];
       const guildCommands = client.commands.filter(command => command.admin).map((command) => command.data.toJSON()) as RESTPostAPIApplicationCommandsJSONBody[];
       const rest = new REST({ version: "10" }).setToken(process.env.TOKEN as string);
