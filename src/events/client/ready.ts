@@ -1,4 +1,5 @@
-import { ActivityType, ApplicationCommandType } from "discord.js";
+import { REST } from "@discordjs/rest";
+import { ActivityType, RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord.js";
 import WelcomerClient from "../../models/Client";
 import { EventType } from "../../types";
 import { waitForManager } from "../../utils/functions";
@@ -30,16 +31,22 @@ export default class ReadyEvent implements EventType {
     if (client.cluster.id === 0) {
       client.server.startServer();
       await waitForManager(client);
-      for (const command of client.commands.values()) {
-        if (command.type !== ApplicationCommandType.ChatInput) continue;
-        command.contexts = [0];
-        command.dmPermission = false;
+      const globalCommands = client.commands.filter(command => !command.admin).map((command) => command.data.toJSON()) as RESTPostAPIApplicationCommandsJSONBody[];
+      const guildCommands = client.commands.filter(command => command.admin).map((command) => command.data.toJSON()) as RESTPostAPIApplicationCommandsJSONBody[];
+      const rest = new REST({ version: "10" }).setToken(process.env.TOKEN as string);
+
+      try {
+        console.log("Started refreshing application (/) commands.");
+        if (client.user?.id) {
+          await rest.put(Routes.applicationCommands(client.user.id), { body: globalCommands });
+          if (process.env.ADMIN_GUILD_ID)
+            await rest.put(Routes.applicationGuildCommands(client.user.id, process.env.ADMIN_GUILD_ID as string), { body: guildCommands });
+        }
+
+        console.log("Successfully reloaded application (/) commands.");
+      } catch (error) {
+        console.error(error);
       }
-      await client.application?.commands
-        .set([...client.commands.values()])
-        .then(() => {
-          console.log("Commands registered!");
-        });
     }
   }
 }

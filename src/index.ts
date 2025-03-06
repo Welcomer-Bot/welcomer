@@ -68,6 +68,7 @@ manager.on("clusterCreate", (cluster) => {
   });
   cluster.on("disconnect", (warn) => {
     console.warn("Cluster disconnect", warn);
+    cluster.respawn();
   });
   cluster.on("reconnecting", () => {
     logger.status(cluster, "reconnecting");
