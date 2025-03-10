@@ -50,11 +50,19 @@ export function errorEmbedBuilder(
 
 
 export const betaInfoEmbedBuilder = new EmbedBuilder()
-    .setTitle("Beta Access Required")
-    .setDescription(
-      `It looks like you've added the **Beta Bot**, but you are not enrolled in the **Beta Program**. To gain access, please join our [support server](https://discord.gg/7TGc5ZZ7aM) and open a ticket to request beta access.`
-    )
-    .setColor("#ff0000")
-    .setFooter({ text: "Thank you for your interest in our beta program!" })
+  .setTitle("Beta Access Required")
+  .setDescription(
+    `You have added the **Beta Bot**, but you are not currently enrolled in the **Beta Program**.
+
+**How to gain access:**
+- Join our [support server](https://discord.gg/7TGc5ZZ7aM).
+- Open a ticket to request beta access.
+
+If you intended to add the stable version, you can invite the bot from **[this link](https://welcomer.app/invite)**.
+`
+  )
+  .setColor("#ff0000")
+  .setFooter({ text: "Thank you for your interest in our beta program!" })
+  .setImage("attachment://banner.png")
   .setTimestamp();
 

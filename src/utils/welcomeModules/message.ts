@@ -7,8 +7,8 @@ import {
   GuildMember,
 } from "discord.js";
 import { CompleteEmbed } from "../../types";
-import { getEmbeds, getWelcomerCard, updateGuildStatsGeneratedEmbeds, updateGuildStatsGeneratedImages, updateGuildStatsGeneratedMessages } from "../database";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
+import WelcomerClient from "../../models/Client";
 
 export function formatText(message: string, member: GuildMember): string {
   return message
@@ -51,29 +51,29 @@ export function formatEmbeds(
           .setFields(
             embed.fields
               ? embed.fields
-                  .filter((field) => field.name && field.value) // Vérifie que name et value sont définis
-                  .map((field) => ({
-                    name: formatText(field.name, member),
-                    value: formatText(field.value, member),
-                  }))
-                  .slice(0, 25)
+                .filter((field) => field.name && field.value) // Vérifie que name et value sont définis
+                .map((field) => ({
+                  name: formatText(field.name, member),
+                  value: formatText(field.value, member),
+                }))
+                .slice(0, 25)
               : []
           )
           .setFooter(
             embed.footer && embed.footer.text
               ? {
-                  text: formatText(embed.footer.text, member),
-                  iconURL: embed.footer.iconUrl ?? undefined,
-                }
+                text: formatText(embed.footer.text, member),
+                iconURL: embed.footer.iconUrl ?? undefined,
+              }
               : null
           )
           .setAuthor(
             embed.author && embed.author.name
               ? {
-                  name: formatText(embed.author.name, member),
-                  iconURL: embed.author.iconUrl ?? undefined,
-                  url: embed.author.url ?? "",
-                }
+                name: formatText(embed.author.name, member),
+                iconURL: embed.author.iconUrl ?? undefined,
+                url: embed.author.url ?? "",
+              }
               : null
           )
           .setImage(embed.image?.url ?? null)
@@ -91,19 +91,20 @@ export async function formatMessage(
   module: Welcomer | Leaver,
   moduleName: "welcomer" | "leaver",
   member: GuildMember,
+  client: WelcomerClient,
   test: boolean = false,
 ) {
-  const embeds = await getEmbeds(moduleName, module.id);
-  const cardParams = await getWelcomerCard(module.id);
+  const embeds = await client.db.getEmbeds(moduleName, module.id);
+  const cardParams = await client.db.getWelcomerCard(module.id);
   const card = cardParams
     ? await new DefaultCard({
-        ...cardParams,
-        backgroundColor: cardParams.backgroundColor as Color,
-        avatarBorderColor: cardParams.avatarBorderColor as Color,
-        colorTextDefault: cardParams.colorTextDefault as Color,
-      })
-        .build()
-        .then((built) => built.toBuffer())
+      ...cardParams,
+      backgroundColor: cardParams.backgroundColor as Color,
+      avatarBorderColor: cardParams.avatarBorderColor as Color,
+      colorTextDefault: cardParams.colorTextDefault as Color,
+    })
+      .build()
+      .then((built) => built.toBuffer())
     : null;
   const embed = embeds.find((embed) => embed.id === module.activeCardToEmbedId);
   if (embed) {
@@ -136,9 +137,9 @@ export async function formatMessage(
     });
   }
   if (module.guildId && !test) {
-    updateGuildStatsGeneratedEmbeds(module.guildId,moduleName,  message.embeds?.length ?? 0);
-    updateGuildStatsGeneratedImages(module.guildId,moduleName,  card ? 1 : 0);
-    updateGuildStatsGeneratedMessages(module.guildId, moduleName, 1);
+    client.db.updateGuildStatsGeneratedEmbeds(module.guildId, moduleName, message.embeds?.length ?? 0);
+    client.db.updateGuildStatsGeneratedImages(module.guildId, moduleName, card ? 1 : 0);
+    client.db.updateGuildStatsGeneratedMessages(module.guildId, moduleName, 1);
   }
   return message;
 }

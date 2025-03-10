@@ -34,13 +34,12 @@ export const sendInteractionMessage = async (
       console.log(interaction)
       // await sendChannelMessage(interaction.channel, message as BaseMessageOptions);
   };
+  if(!interaction.deferred)
   await interaction.deferReply();
     if (follow || interaction.ephemeral) {
       return await interaction.followUp({ ...message});
-    } else if (interaction.replied) {
-      return await interaction.editReply(message);
     }
-      return await interaction.reply(message);
+      return await interaction.editReply(message);
   // } catch (error) {
   //   throw new Error(
   //     "An error occured in sendInteractionMessage function ! " + error

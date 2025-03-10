@@ -4,7 +4,7 @@ import {
 } from "discord.js";
 import WelcomerClient from "../../models/Client";
 import { EventType } from "../../types";
-import { createOrUpdateGuild } from "../../utils/database";
+import { handleBetaGuild } from "../../utils/handler";
 import { sendErrorMessage, sendInteractionMessage } from "../../utils/messages";
 
 export default class InteractionCreateEvent implements EventType {
@@ -20,8 +20,13 @@ export default class InteractionCreateEvent implements EventType {
     //     "This command can only be used in a server."
     //   );
     try {
-      if(interaction.guild)
-      await createOrUpdateGuild(interaction.guild);
+
+      if (interaction.guild) {
+
+        await handleBetaGuild(interaction.guild, client);
+        await client.db.createOrUpdateGuild(interaction.guild);
+      }
+
       switch (true) {
         case interaction.isAutocomplete(): {
           return;
@@ -119,7 +124,7 @@ export default class InteractionCreateEvent implements EventType {
       }
     } catch (error) {
       console.error("There was an error on interactionCreate: ", error);
-      await interaction.deferReply({flags: "Ephemeral"});
+      await interaction.deferReply({ flags: "Ephemeral" });
       await sendErrorMessage(
         interaction,
         `:warning: There was an error while executing this command! \n Please try again. ${error ? "```" + error + "```" : ""

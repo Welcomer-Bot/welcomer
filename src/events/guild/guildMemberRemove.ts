@@ -3,7 +3,6 @@ import WelcomerClient from "../../models/Client";
 
 import { generateCard } from "./../../utils/welcomeCard";
 
-import { getLeaver } from "../../utils/database";
 import { EventType } from "./../../types/index";
 
 export default class GuildMemberRemove implements EventType {
@@ -14,7 +13,7 @@ export default class GuildMemberRemove implements EventType {
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
     try {
       const guild = member.guild;
-      const module = await getLeaver(guild.id);
+      const module = await client.db.getLeaver(guild.id);
       if (!module) return;
       generateCard(member, guild, module, client, null, "leaver");
       // addMemberGoodbye(guild);

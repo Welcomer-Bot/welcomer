@@ -1,21 +1,22 @@
 import cron from 'node-cron';
-import { createStats } from '../utils/database';
+import Database from './Database';
 
 export class CronHandler {
     private daily: cron.ScheduledTask
     private weekly: cron.ScheduledTask
     private monthly: cron.ScheduledTask
-
-    constructor() {
+    private db: Database;
+    constructor(db: Database) {
         this.daily = this.scheduleRolloutDailyStats();
         this.weekly = this.scheduleRolloutWeeklyStats();
         this.monthly = this.scheduleRolloutMonthlyStats();
+        this.db = db;
     }
 
     private scheduleRolloutDailyStats() {
         return cron.schedule("00 00 00 * * *", () => {
             console.log("Running daily stats");
-            createStats("DAILY");
+            this.db.createStats("DAILY");
         }
         )
     }
@@ -23,7 +24,7 @@ export class CronHandler {
     private scheduleRolloutWeeklyStats() {
         return cron.schedule("00 00 00 * * 0", () => {
             console.log("Running weekly stats");
-            createStats("WEEKLY");
+            this.db.createStats("WEEKLY");
         }
         )
     }
@@ -31,7 +32,7 @@ export class CronHandler {
     private scheduleRolloutMonthlyStats() {
         return cron.schedule("00 00 00 1 * *", () => {
             console.log("Running monthly stats");
-            createStats("MONTHLY");
+            this.db.createStats("MONTHLY");
         }
         )
     }

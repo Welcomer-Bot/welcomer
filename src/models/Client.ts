@@ -19,6 +19,7 @@ import {
 import { loadFiles } from "../utils/loader";
 import Logger from "./Logger";
 import Server from "./Server";
+import Database from "./Database";
 
 export default class WelcomerClient extends Client {
   public commands = new Collection<string, CommandType>();
@@ -33,6 +34,7 @@ export default class WelcomerClient extends Client {
   public managerReady: boolean = false;
   public logger: Logger;
   public server: Server;
+  public db: Database;
 
   emit(event: string, ...args: unknown[]): boolean {
     return super.emit(event, ...args);
@@ -99,6 +101,7 @@ export default class WelcomerClient extends Client {
     // this.loadModals();
     this.loadSelectMenus();
     this.loadButtons();
+    this.db = new Database(this.logger);
     this.server = new Server(this, Number.parseInt(process.env.PORT!));
 
     this.login(process.env.TOKEN)

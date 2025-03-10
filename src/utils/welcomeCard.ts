@@ -38,7 +38,7 @@ export const generateCard = async (
           PermissionFlagsBits.ViewChannel,
         ])
     ) {
-      const message = await formatMessage(module, type, member, test);
+      const message = await formatMessage(module, type, member, client, test);
       sendChannelMessage(channel, message);
     }
   } catch (err) {

@@ -1,4 +1,5 @@
 import {
+    BaseMessageOptions,
     ChatInputCommandInteraction,
     SlashCommandBuilder
 } from "discord.js";
@@ -9,46 +10,94 @@ import { sendInteractionMessage } from "../../utils/messages";
 export default class implements CommandType {
     name = "help";
     description: string = "Get help with the bot";
+    ephemeral?: boolean | undefined = true;
     data = new SlashCommandBuilder()
         .setName(this.name)
         .setDescription("Get help with the bot")
         .setContexts([0, 1])
-        .addSubcommandGroup((command) =>
-            command
-                .setName("config")
-                .setDescription("How to configure the bot")
-                .addSubcommand((command) =>
-                    command
-                        .setName("message")
-                        .setDescription("How to configure the bot's message"))
-                .addSubcommand((command) =>
-                    command
-                        .setName("embeds")
-                        .setDescription("How to configure embeds in the message"))
-                .addSubcommand((command) =>
-                    command
-                        .setName("channel")
-                        .setDescription("How to configure where the bot sends messages"))
-                .addSubcommand((command) =>
-                    command
-                        .setName("image")
-                        .setDescription("How to configure the bot's image"))
-        .addSubcommand((command) =>
-            command
-                .setName("test")
-                .setDescription("How to test the bot")
-        )) as SlashCommandBuilder;
+        .addSubcommand((subcommand) =>
+            subcommand
+                .setName("setup")
+                .setDescription("Quick start & setup guide for Welcomer")
+        ) as SlashCommandBuilder;
     async execute(interaction: ChatInputCommandInteraction): Promise<void> {
         const subcommand = interaction.options.getSubcommand();
-        if (subcommand === "config") {
-            await sendInteractionMessage(interaction, {
-                content: "To configure the bot, use the `/config` command. This will open a menu where you can configure the bot's settings."
-            });
-        } else if (subcommand === "test") {
-            await sendInteractionMessage(interaction, {
-                content: "To test the",
-            });
-
+        let selectedMessage = setupMessage;
+        switch (subcommand) {
+            case "setup":
+                selectedMessage = setupMessage;
+                break;
+            default:
+                selectedMessage = setupMessage
+                break;
         }
+
+        await sendInteractionMessage(interaction, selectedMessage);
     }
+}
+
+const setupMessage: BaseMessageOptions = {
+    content: "",
+    embeds: [{
+        "url": "https://beta.welcomer.app/dashboard",
+        "title": "📌 How to setup Welcomer",
+        "description": `
+## Getting Started  
+Welcomer makes it easy to set up automated welcome and leave messages through a user-friendly dashboard. Everything is configurable in just a few clicks!  
+
+Head over to [our dashboard](https://beta.welcomer.app/dashboard) and select your server to begin.  
+
+
+## Customizing Your Welcome Message  
+Once inside the dashboard:  
+
+🛠️ **Choose a Channel** – This is where your welcome messages will appear.  
+💬 **Write a Message** – Use **Markdown** and **dynamic placeholders** like \`{ user }\` for personalization.  
+📌 **Enhance with Embeds** – Add up to 10 embeds for a more structured and stylish message.  
+🎨 **Generate an Image** – Use the **Active Card** feature to create a custom welcome image.  
+
+
+## Finalizing Your Setup  
+After configuring everything, don't forget to **save your changes**!  
+
+Want to test it? Run \`/ test\` in Discord to preview your welcome message. If something is wrong, the bot will notify you with an error message.  
+
+
+## Need Assistance?  
+For additional help, check out our [support server](https://beta.welcomer.app/support)
+`,
+        "color": 3447003,
+        "footer": {
+            "text": "🎉 Congratulations! You've successfully configured Welcomer."
+        },
+
+    }
+
+    ],
+    "components": [
+        {
+            "type": 1,
+            "components": [
+                {
+                    "type": 2,
+                    "label": "Support server",
+                    "style": 5,
+                    "url": "https://beta.welcomer.app/support"
+                },
+
+                {
+                    "type": 2,
+                    "label": "Docs",
+                    "style": 5,
+                    "url": "https://beta.welcomer.app/docs"
+                },
+                {
+                    "type": 2,
+                    "label": "Dashboard",
+                    "style": 5,
+                    "url": "https://beta.welcomer.app/dahboard"
+                }
+            ]
+        }
+    ]
 }

@@ -11,6 +11,7 @@ import {
 import "dotenv/config";
 import { CronHandler } from "./models/Cron";
 import Logger from "./models/Logger";
+import Database from "./models/Database";
 
 if (
   !process.env.LOG_WEBHOOK ||
@@ -33,7 +34,7 @@ const logger = new Logger(
   process.env.ADD_REMOVE_WEBHOOK
 );
 
-new CronHandler();
+new CronHandler(new Database(logger));
 
 const shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10");
 

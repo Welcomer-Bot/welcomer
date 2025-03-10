@@ -9,7 +9,6 @@ import {
   TextChannel,
 } from "discord.js";
 import WelcomerClient from "../models/Client";
-import { getLeaver, getWelcomer } from "../utils/database";
 import { checkPermsForChannel } from "../utils/functions";
 import { sendInteractionMessage } from "../utils/messages";
 import { generateCard } from "../utils/welcomeCard";
@@ -41,9 +40,9 @@ export default class TestMenu implements SelectMenuType {
       InfoEmbed.setTitle(`Testing ${value} message`);
       let guildModule: Welcomer | Leaver | null;
       if (arg === "welcomer") {
-        guildModule = await getWelcomer(interaction.guild!.id);
+        guildModule = await client.db.getWelcomer(interaction.guild!.id);
       } else {
-        guildModule = await getLeaver(interaction.guild!.id);
+        guildModule = await client.db.getLeaver(interaction.guild!.id);
       }
       if (!guildModule)
         return sendInteractionMessage(

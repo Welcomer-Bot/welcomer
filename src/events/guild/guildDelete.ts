@@ -2,7 +2,6 @@ import { EmbedBuilder, Guild, InteractionResponse, Message } from "discord.js";
 import WelcomerClient from "../../models/Client";
 
 import { EventType } from "../../types";
-import { deleteGuild } from "../../utils/database";
 
 export default class GuildDelete implements EventType {
   name = "guildDelete";
@@ -12,7 +11,7 @@ export default class GuildDelete implements EventType {
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
     try {
       if (!guild.available) return;
-      await deleteGuild(guild.id);
+      await client.db.deleteGuild(guild.id);
       const removeEmbed = new EmbedBuilder()
         .setColor("#ff0000")
         .setTitle("Guild Removed")
