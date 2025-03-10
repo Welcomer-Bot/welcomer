@@ -22,7 +22,7 @@
     "pkgroll": "^2.6.1",
     "ts-node": "^10.9.2",
     "tsc-watch": "^6.2.1",
-    "tsx": "^4.19.2",
+    "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.24.1"
   },
