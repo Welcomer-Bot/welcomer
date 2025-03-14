@@ -7,30 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Guild {
-  id          String       @id @unique
-  createdAt   DateTime?    @default(now())
-  updatedAt   DateTime?    @updatedAt
-  premium     Boolean      @default(false)
-  banner      String?
-  description String?
-  icon        String?
-  memberCount Int          @default(0)
-  name        String
-  permissions String?
-  BotGuild    BotGuild?
-  channels    Channels[]   @relation("GuildToChannels")
-  guildStats  GuildStats[]
-  leaver      Leaver?
-  welcomer    Welcomer?
-  betaGuild   betaGuild?
-  User        User[]       @relation("UserToGuild")
-}
-
 model Welcomer {
-  /// @zod.optional()
-  id                                         Int         @id @default(autoincrement())
-  guildId                                    String?     @unique
+  guildId                                    String      @id
   channelId                                  String?
   content                                    String?
   createdAt                                  DateTime?   @default(now())
@@ -42,13 +20,10 @@ model Welcomer {
   images                                     ImageCard[] @relation("WelcomerImagesRelation")
   ImageCard_Welcomer_activeCardIdToImageCard ImageCard?  @relation("Welcomer_activeCardIdToImageCard", fields: [activeCardId], references: [id], onDelete: Cascade)
   Embed_Welcomer_activeCardToEmbedIdToEmbed  Embed?      @relation("Welcomer_activeCardToEmbedIdToEmbed", fields: [activeCardToEmbedId], references: [id], onDelete: Cascade)
-  guild                                      Guild?      @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model Leaver {
-  /// @zod.optional()
-  id                                       Int         @id @default(autoincrement())
-  guildId                                  String?     @unique
+  guildId                                  String      @id
   channelId                                String?
   content                                  String?
   createdAt                                DateTime?   @default(now())
@@ -59,17 +34,15 @@ model Leaver {
   images                                   ImageCard[] @relation("LeaverImagesRelation")
   ImageCard_Leaver_activeCardIdToImageCard ImageCard?  @relation("Leaver_activeCardIdToImageCard", fields: [activeCardId], references: [id], onDelete: Cascade)
   Embed_Leaver_activeCardToEmbedIdToEmbed  Embed?      @relation("Leaver_activeCardToEmbedIdToEmbed", fields: [activeCardToEmbedId], references: [id], onDelete: Cascade)
-  guild                                    Guild?      @relation(fields: [guildId], references: [id], onDelete: Cascade)
 }
 
 model DM {
   /// @zod.optional()
-  id        Int       @id @default(autoincrement())
-  moduleId  Int       @unique
+  id        String    @id
   message   String
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  module    Welcomer  @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  Welcomer  Welcomer  @relation(fields: [id], references: [guildId], onDelete: Cascade)
   embeds    Embed?
 }
 
@@ -84,13 +57,13 @@ model Embed {
   url                                          String?
   created                                      DateTime?    @default(now())
   updated                                      DateTime?    @default(now())
-  welcomerId                                   Int?
-  leaverId                                     Int?
-  DMId                                         Int?         @unique
+  welcomerId                                   String?
+  leaverId                                     String?
+  DMId                                         String?      @unique
   color                                        String?
   DM                                           DM?          @relation(fields: [DMId], references: [id], onDelete: Cascade)
-  leaver                                       Leaver?      @relation(fields: [leaverId], references: [id], onDelete: Cascade)
-  welcomer                                     Welcomer?    @relation(fields: [welcomerId], references: [id], onDelete: Cascade)
+  leaver                                       Leaver?      @relation(fields: [leaverId], references: [guildId], onDelete: Cascade)
+  welcomer                                     Welcomer?    @relation(fields: [welcomerId], references: [guildId], onDelete: Cascade)
   author                                       EmbedAuthor?
   fields                                       EmbedField[]
   footer                                       EmbedFooter?
@@ -154,16 +127,16 @@ model ImageCard {
   colorTextDefault                          String?
   createdAt                                 DateTime       @default(now())
   updatedAt                                 DateTime?      @updatedAt
-  welcomerId                                Int?
-  leaverId                                  Int?
+  welcomerId                                String?
+  leaverId                                  String?
   mainTextId                                Int?           @unique
   secondTextId                              Int?           @unique
   nicknameTextId                            Int?           @unique
-  leaver                                    Leaver?        @relation("LeaverImagesRelation", fields: [leaverId], references: [id], onDelete: Cascade, map: "ImageCard_leaverId_fkey")
+  leaver                                    Leaver?        @relation("LeaverImagesRelation", fields: [leaverId], references: [guildId], onDelete: Cascade, map: "ImageCard_leaverId_fkey")
   mainText                                  ImageCardText? @relation("MainTextRelation", fields: [mainTextId], references: [id], onDelete: Cascade)
   nicknameText                              ImageCardText? @relation("NicknameRelation", fields: [nicknameTextId], references: [id], onDelete: Cascade)
   secondText                                ImageCardText? @relation("SecondTextRelation", fields: [secondTextId], references: [id], onDelete: Cascade)
-  welcomer                                  Welcomer?      @relation("WelcomerImagesRelation", fields: [welcomerId], references: [id], onDelete: Cascade, map: "ImageCard_welcomerId_fkey")
+  welcomer                                  Welcomer?      @relation("WelcomerImagesRelation", fields: [welcomerId], references: [guildId], onDelete: Cascade, map: "ImageCard_welcomerId_fkey")
   Leaver_Leaver_activeCardIdToImageCard     Leaver?        @relation("Leaver_activeCardIdToImageCard")
   Welcomer_Welcomer_activeCardIdToImageCard Welcomer?      @relation("Welcomer_activeCardIdToImageCard")
 }
@@ -181,28 +154,15 @@ model ImageCardText {
 }
 
 model User {
-  id            String    @id
-  username      String?
-  discriminator String?
-  avatar        String?
-  accessToken   String?
-  refreshToken  String?
-  createdAt     DateTime? @default(now())
-  updatedAt     DateTime? @updatedAt
-  Guild         Guild[]   @relation("UserToGuild")
-}
-
-model Channels {
   id        String    @id
-  name      String
-  guildId   String?
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
-  type      Int
-  Guild     Guild?    @relation("GuildToChannels", fields: [guildId], references: [id], onDelete: Cascade)
+  username  String?
+  Session   Session[]
 }
 
 model GuildStats {
+  id                Int      @default(autoincrement())
   period            Period
   module            Module
   generatedImages   Int      @default(0)
@@ -211,8 +171,6 @@ model GuildStats {
   membersEvent      Int      @default(0)
   guildId           String?
   createdAt         DateTime @default(now())
-  id                Int      @default(autoincrement())
-  guild             Guild?   @relation(fields: [guildId], references: [id])
 
   @@id([id, period, module, createdAt])
 }
@@ -221,14 +179,16 @@ model betaGuild {
   id        String    @id
   createdAt DateTime? @default(now())
   updatedAt DateTime?
-  Guild     Guild     @relation(fields: [id], references: [id])
 }
 
-model BotGuild {
-  id        String    @id
-  createdAt DateTime? @default(now())
-  updatedAt DateTime?
-  Guild     Guild     @relation(fields: [id], references: [id])
+model Session {
+  id          String    @id
+  accessToken String
+  expiresAt   DateTime
+  createdAt   DateTime? @default(now())
+  updatedAt   DateTime?
+  userId      String
+  User        User      @relation(fields: [userId], references: [id])
 }
 
 enum Module {

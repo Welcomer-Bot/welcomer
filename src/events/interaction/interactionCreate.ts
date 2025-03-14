@@ -24,7 +24,6 @@ export default class InteractionCreateEvent implements EventType {
       if (interaction.guild) {
 
         await handleBetaGuild(interaction.guild, client);
-        await client.db.createOrUpdateGuild(interaction.guild);
       }
 
       switch (true) {

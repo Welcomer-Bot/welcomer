@@ -94,8 +94,8 @@ export async function formatMessage(
   client: WelcomerClient,
   test: boolean = false,
 ) {
-  const embeds = await client.db.getEmbeds(moduleName, module.id);
-  const cardParams = await client.db.getWelcomerCard(module.id);
+  const embeds = await client.db.getEmbeds(moduleName, module.guildId);
+  const cardParams = await client.db.getWelcomerCard(module.guildId);
   const card = cardParams
     ? await new DefaultCard({
       ...cardParams,

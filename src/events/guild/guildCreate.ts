@@ -11,7 +11,6 @@ export default class GuildCreate implements EventType {
   name = "guildCreate";
   async execute(guild: Guild, client: WelcomerClient): Promise<void> {
     await handleBetaGuild(guild, client);
-    await client.db.createOrUpdateGuild(guild);
     if (!guild.systemChannelId) return;
     const systemChannel = fetchTextChannel(guild.systemChannelId, client);
 

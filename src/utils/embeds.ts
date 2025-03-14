@@ -9,7 +9,7 @@ export const embedHelperOnGuildCreate = new EmbedBuilder()
   )
   .setColor("#161f2f")
   .setImage("attachment://banner.png")
-  .setFooter({ text: "Powered by Welcomer" });
+  .setFooter({ text: "-# Powered by Welcomer" });
 
 export const autoConfigEmbed = function () {
   return new EmbedBuilder().setTitle(

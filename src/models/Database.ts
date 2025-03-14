@@ -1,11 +1,8 @@
 import {
-    Channels,
-    Guild as GuildDb,
     ImageCard,
     Leaver,
     Period, PrismaClient, Welcomer
 } from "@prisma/client";
-import { Guild, GuildChannel, GuildChannelManager } from "discord.js";
 import { CompleteEmbed } from "../types";
 import Logger from "./Logger";
 
@@ -23,167 +20,9 @@ export default class Database extends PrismaClient {
         console.log("Connected to the database");
     }
 
-    public async getGuild(guildId: string): Promise<GuildDb | null> {
-        return await this.guild.findFirst({
-            where: {
-                id: guildId,
-            },
-        });
-    }
-
-    public async createGuild(guild: Guild): Promise<GuildDb> {
-        return await this.guild.create({
-            data: {
-                id: guild.id,
-                name: guild.name,
-                description: guild.description,
-                icon: guild.icon,
-                banner: guild.banner,
-                memberCount: guild.memberCount,
-                BotGuild: {
-                    connectOrCreate: {
-                        where: {
-                            id: guild.id,
-                        },
-                        create: {},
-                    },
-                },
-            },
-        });
-    }
-
-    public async createOrUpdateGuild(guild: Guild): Promise<GuildDb> {
-        const res = await this.guild.upsert({
-            where: {
-                id: guild.id,
-            },
-            update: {
-                name: guild.name,
-                description: guild.description,
-                icon: guild.icon,
-                banner: guild.banner,
-                memberCount: guild.memberCount,
-                BotGuild: {
-                    connectOrCreate: {
-                        where: {
-                            id: guild.id,
-                        },
-                        create: {},
-                    },
-                },
-            },
-            create: {
-                id: guild.id,
-                name: guild.name,
-                description: guild.description,
-                icon: guild.icon,
-                banner: guild.banner,
-                memberCount: guild.memberCount,
-                BotGuild: {
-                    connectOrCreate: {
-                        where: {
-                            id: guild.id,
-                        },
-                        create: {},
-                    },
-                },
-            },
-        });
-
-        await this.createOrUpdateManyChannels(guild.channels);
-        return res;
-    }
-
-    public async createOrUpdateChannel(channel: GuildChannel): Promise<Channels> {
-        return await this.channels.upsert({
-            where: {
-                id: channel.id,
-            },
-            update: {
-                name: channel.name,
-                type: channel.type,
-            },
-            create: {
-                id: channel.id,
-                name: channel.name,
-                guildId: channel.guild.id,
-                type: channel.type,
-            },
-        });
-    }
-
-    public async createOrUpdateManyChannels(channels: GuildChannelManager) {
-        const channelData = channels.cache.map((channel) => ({
-            id: channel.id,
-            name: channel.name,
-            guildId: channel.guild.id,
-            type: channel.type,
-        }));
-        const upsertPromises = channelData.map((channel) =>
-            this.channels.upsert({
-                where: { id: channel.id },
-                update: {
-                    name: channel.name,
-                    type: channel.type,
-                },
-                create: {
-                    id: channel.id,
-                    name: channel.name,
-                    type: channel.type,
-                    Guild: {
-                        connect: {
-                            id: channel.guildId,
-                        },
-                    },
-                },
-            })
-        );
-
-        return await Promise.all(upsertPromises);
-    }
-
-    public async createChannels(channels: GuildChannelManager) {
-        return await this.channels.createMany({
-            data: channels.cache.map((channel) => ({
-                id: channel.id,
-                name: channel.name,
-                guildId: channel.guild.id,
-                type: channel.type,
-            })),
-        });
-    }
-
-    public async deleteChannel(channelId: string) {
-        return await this.channels.delete({
-            where: {
-                id: channelId,
-            },
-        });
-    }
-
-    public async updateGuild(guild: Guild): Promise<GuildDb> {
-        return await this.guild.update({
-            where: {
-                id: guild.id,
-            },
-            data: {
-                id: guild.id,
-                name: guild.name,
-                description: guild.description,
-                icon: guild.icon,
-                banner: guild.banner,
-                memberCount: guild.memberCount,
-            },
-        });
-    }
 
     public async deleteGuild(guildId: string) {
-        const deleteGuild = this.botGuild.deleteMany({
-            where: {
-                id: guildId,
-            },
-        });
-        const disconnectStats = this.guildStats.updateMany({
+        return await this.guildStats.updateMany({
             where: {
                 guildId,
             },
@@ -191,7 +30,6 @@ export default class Database extends PrismaClient {
                 guildId: null,
             },
         });
-        return await this.$transaction([deleteGuild, disconnectStats]);
     }
 
     public async getWelcomer(guildId: string): Promise<Welcomer | null> {
@@ -202,10 +40,10 @@ export default class Database extends PrismaClient {
         });
     }
 
-    public async getWelcomerCard(moduleId: number): Promise<ImageCard | null> {
+    public async getWelcomerCard(guildId: string): Promise<ImageCard | null> {
         const res = await this.welcomer.findFirst({
             where: {
-                id: moduleId,
+                guildId: guildId,
             },
             include: {
                 ImageCard_Welcomer_activeCardIdToImageCard: {
@@ -222,11 +60,11 @@ export default class Database extends PrismaClient {
 
     public async getEmbeds(
         module: "welcomer" | "leaver",
-        moduleId: number
+        guildId: string
     ): Promise<CompleteEmbed[]> {
         return await this.embed.findMany({
             where: {
-                [`${module}Id`]: moduleId,
+                [`${module}Id`]: guildId,
             },
             include: {
                 fields: true,
@@ -375,8 +213,8 @@ export default class Database extends PrismaClient {
             where: {
                 module: module,
                 period: period,
-                guild: {
-                    NOT: undefined,
+                guildId: {
+                    not: null,
                 },
             },
         });
