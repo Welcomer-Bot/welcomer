@@ -54,21 +54,6 @@
     tslib "^2.6.3"
     undici "6.19.8"
 
-"@discordjs/rest@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@discordjs/rest/-/rest-2.4.3.tgz#44cf066113f5ad6e7cee3f827d0815a6b1e0f843"
-  integrity sha512-+SO4RKvWsM+y8uFHgYQrcTl/3+cY02uQOH7/7bKbVZsTfrfpoE62o5p+mmV+s7FVhTX82/kQUGGbu4YlV60RtA==
-  dependencies:
-    "@discordjs/collection" "^2.1.1"
-    "@discordjs/util" "^1.1.1"
-    "@sapphire/async-queue" "^1.5.3"
-    "@sapphire/snowflake" "^3.5.3"
-    "@vladfrangu/async_event_emitter" "^2.4.6"
-    discord-api-types "^0.37.119"
-    magic-bytes.js "^1.10.0"
-    tslib "^2.6.3"
-    undici "6.21.1"
-
 "@discordjs/util@^1.1.0", "@discordjs/util@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@discordjs/util/-/util-1.1.1.tgz#bafcde0faa116c834da1258d78ec237080bbab29"
@@ -377,10 +362,15 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@eslint/js@9.21.0", "@eslint/js@^9.19.0":
+"@eslint/js@9.21.0":
   version "9.21.0"
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.21.0.tgz#4303ef4e07226d87c395b8fad5278763e9c15c08"
   integrity sha512-BqStZ3HX8Yz6LvsF5ByXYrtigrV5AXADWLAGc7PH/1SxOb7/FIYYMszZZWiUou/GB9P2lXWk2SV4d+Z8h0nknw==
+
+"@eslint/js@^9.23.0":
+  version "9.23.0"
+  resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.23.0.tgz#c09ded4f3dc63b40b933bcaeb853fceddb64da30"
+  integrity sha512-35MJ8vCPU0ZMxo7zfev2pypqTwWTofFZO6m4KAtdoFhRpLJUpHTZZ+KB3C7Hb1d7bULYwO4lJXGCi5Se+8OMbw==
 
 "@eslint/object-schema@^2.1.6":
   version "2.1.6"
@@ -3543,11 +3533,6 @@ undici@6.19.8:
   version "6.19.8"
   resolved "https://registry.yarnpkg.com/undici/-/undici-6.19.8.tgz#002d7c8a28f8cc3a44ff33c3d4be4d85e15d40e1"
   integrity sha512-U8uCCl2x9TK3WANvmBavymRzxbfFYG+tAu+fgx3zxQy3qdagQqBLwJVrdyO1TBfUXvfKveMKJZhpvUYoOjM+4g==
-
-undici@6.21.1:
-  version "6.21.1"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-6.21.1.tgz#336025a14162e6837e44ad7b819b35b6c6af0e05"
-  integrity sha512-q/1rj5D0/zayJB2FraXdaWxbhWiNKDvu8naDT2dl1yTlvJp4BLtOcp2a5BvgGNQpYYJzau7tf1WgKv3b+7mqpQ==
 
 unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"
