@@ -54,21 +54,6 @@
     tslib "^2.6.3"
     undici "6.19.8"
 
-"@discordjs/rest@^2.4.3":
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/@discordjs/rest/-/rest-2.4.3.tgz#44cf066113f5ad6e7cee3f827d0815a6b1e0f843"
-  integrity sha512-+SO4RKvWsM+y8uFHgYQrcTl/3+cY02uQOH7/7bKbVZsTfrfpoE62o5p+mmV+s7FVhTX82/kQUGGbu4YlV60RtA==
-  dependencies:
-    "@discordjs/collection" "^2.1.1"
-    "@discordjs/util" "^1.1.1"
-    "@sapphire/async-queue" "^1.5.3"
-    "@sapphire/snowflake" "^3.5.3"
-    "@vladfrangu/async_event_emitter" "^2.4.6"
-    discord-api-types "^0.37.119"
-    magic-bytes.js "^1.10.0"
-    tslib "^2.6.3"
-    undici "6.21.1"
-
 "@discordjs/util@^1.1.0", "@discordjs/util@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@discordjs/util/-/util-1.1.1.tgz#bafcde0faa116c834da1258d78ec237080bbab29"
@@ -802,10 +787,10 @@
   dependencies:
     "@prisma/debug" "6.3.1"
 
-"@prisma/instrumentation@6.4.1":
-  version "6.4.1"
-  resolved "https://registry.yarnpkg.com/@prisma/instrumentation/-/instrumentation-6.4.1.tgz#3a0fb65bfb3e3a6712c41f9334599fa281c451d5"
-  integrity sha512-1SeN0IvMp5zm3RLJnEr+Zn67WDqUIPP1lF/PkLbi/X64vsnFyItcXNRBrYr0/sI2qLcH9iNzJUhyd3emdGizaQ==
+"@prisma/instrumentation@6.5.0":
+  version "6.5.0"
+  resolved "https://registry.yarnpkg.com/@prisma/instrumentation/-/instrumentation-6.5.0.tgz#ce6c160365dfccbe0f4e7c57a4afc4f946fee562"
+  integrity sha512-morJDtFRoAp5d/KENEm+K6Y3PQcn5bCvpJ5a9y3V3DNMrNy/ZSn2zulPGj+ld+Xj2UYVoaMJ8DpBX/o6iF6OiA==
   dependencies:
     "@opentelemetry/instrumentation" "^0.52.0 || ^0.53.0 || ^0.54.0 || ^0.55.0 || ^0.56.0 || ^0.57.0"
 
@@ -1062,15 +1047,15 @@
     "@sentry/cli-win32-i686" "2.42.1"
     "@sentry/cli-win32-x64" "2.42.1"
 
-"@sentry/core@9.3.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-9.3.0.tgz#d5a1ab7deecd95f86316e658129d3874557cbfd9"
-  integrity sha512-SxQ4z7wTkfguvYb2ctNEMU9kVAbhl9ymfjhLnrvtygTwL5soLqAKdco/lX/4P9K9Osgb2Dl6urQWRl+AhzKVbQ==
+"@sentry/core@9.8.0":
+  version "9.8.0"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-9.8.0.tgz#31f04746cff67ba004eb478f2dd144eadfa2d9cf"
+  integrity sha512-EnN2yLWCbWjooWBPzwlXdZoJG/Bqn3ymbuXX++DUJuBGjSmtixQeTf/hKeVzj4zbib3BbbYsNBasRVjq8Rk5ng==
 
-"@sentry/node@9.3.0", "@sentry/node@^9.1.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@sentry/node/-/node-9.3.0.tgz#fe262a72c6dff0166673ee92247bfdcd0f8598be"
-  integrity sha512-XzphoVImlKh+wjeKYSaZlH4aQVuw8I63RH6juCktMBKnjTfR9aZkHWeiFc4YghHU2jPXjKTKvGFRkU45xIGr1g==
+"@sentry/node@9.8.0", "@sentry/node@^9.1.0":
+  version "9.8.0"
+  resolved "https://registry.yarnpkg.com/@sentry/node/-/node-9.8.0.tgz#0398e491a49008fefef86af587272d6810be29f6"
+  integrity sha512-whkz/TBkEhwqdm/onukqMLEVjFW0j9OqEx5GkaqqRPpiX8Q3nZV80C1KV6J7phV0asMduHftBXQLKMmJs5ZODw==
   dependencies:
     "@opentelemetry/api" "^1.9.0"
     "@opentelemetry/context-async-hooks" "^1.30.1"
@@ -1102,26 +1087,26 @@
     "@opentelemetry/resources" "^1.30.1"
     "@opentelemetry/sdk-trace-base" "^1.30.1"
     "@opentelemetry/semantic-conventions" "^1.30.0"
-    "@prisma/instrumentation" "6.4.1"
-    "@sentry/core" "9.3.0"
-    "@sentry/opentelemetry" "9.3.0"
+    "@prisma/instrumentation" "6.5.0"
+    "@sentry/core" "9.8.0"
+    "@sentry/opentelemetry" "9.8.0"
     import-in-the-middle "^1.13.0"
 
-"@sentry/opentelemetry@9.3.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@sentry/opentelemetry/-/opentelemetry-9.3.0.tgz#cfc87ab74b76215db9d1c99c227b7f31f289618f"
-  integrity sha512-kvHj0n0Gk5H482dU6UH+UrccMBPqbjYadwNdb61kMNy5H/xkFcCDKZ8wm3TawlnuiPxzzf4orofiR6Pn/IW6uA==
+"@sentry/opentelemetry@9.8.0":
+  version "9.8.0"
+  resolved "https://registry.yarnpkg.com/@sentry/opentelemetry/-/opentelemetry-9.8.0.tgz#a02e91c2e6bf668c47babe4ab0a2fa2f6d86d644"
+  integrity sha512-7EWfLC5HOBYH23FxZJNK8BuQ3MCWTf/1cfH3UH773653Z/z4V49N4Xo4Zcx+y7BNVt9g6Hy23Jn0AsFAk2oisQ==
   dependencies:
-    "@sentry/core" "9.3.0"
+    "@sentry/core" "9.8.0"
 
-"@sentry/profiling-node@^9.3.0":
-  version "9.3.0"
-  resolved "https://registry.yarnpkg.com/@sentry/profiling-node/-/profiling-node-9.3.0.tgz#c7c8854a07c4e9abd2bd261856780e4177b0bc36"
-  integrity sha512-pwuJFP/yFXskJgrDGqaBEnrskQwEA75SurJ47ezp2pda2lR7cyQb7Lr7y8AaJx/jnv0tFIoWxgPqj6DVT+1rVw==
+"@sentry/profiling-node@^9.8.0":
+  version "9.8.0"
+  resolved "https://registry.yarnpkg.com/@sentry/profiling-node/-/profiling-node-9.8.0.tgz#67c19de3a8ec11f36654fcbbf798a09381ac17bb"
+  integrity sha512-J1CfJ33IKMzsR0J2Jyfegl1d/Ghwq+MhYXrL/GBOmOaet5wXU1hr85hQGfmfkFiy0gTfSZb5sZOjJfHhK0goUA==
   dependencies:
     "@sentry-internal/node-cpu-profiler" "^2.0.0"
-    "@sentry/core" "9.3.0"
-    "@sentry/node" "9.3.0"
+    "@sentry/core" "9.8.0"
+    "@sentry/node" "9.8.0"
 
 "@sideway/address@^4.1.5":
   version "4.1.5"
@@ -3543,11 +3528,6 @@ undici@6.19.8:
   version "6.19.8"
   resolved "https://registry.yarnpkg.com/undici/-/undici-6.19.8.tgz#002d7c8a28f8cc3a44ff33c3d4be4d85e15d40e1"
   integrity sha512-U8uCCl2x9TK3WANvmBavymRzxbfFYG+tAu+fgx3zxQy3qdagQqBLwJVrdyO1TBfUXvfKveMKJZhpvUYoOjM+4g==
-
-undici@6.21.1:
-  version "6.21.1"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-6.21.1.tgz#336025a14162e6837e44ad7b819b35b6c6af0e05"
-  integrity sha512-q/1rj5D0/zayJB2FraXdaWxbhWiNKDvu8naDT2dl1yTlvJp4BLtOcp2a5BvgGNQpYYJzau7tf1WgKv3b+7mqpQ==
 
 unpipe@1.0.0, unpipe@~1.0.0:
   version "1.0.0"
