@@ -132,6 +132,5 @@ dist
 .pnp.*
 
 # test folder
-test
 /prisma/schema/*
 /prisma/ERD.md

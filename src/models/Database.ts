@@ -1,5 +1,4 @@
 import {
-    ImageCard,
     Leaver,
     Period, PrismaClient, Welcomer
 } from "@prisma/client";
@@ -40,7 +39,7 @@ export default class Database extends PrismaClient {
         });
     }
 
-    public async getWelcomerCard(guildId: string): Promise<ImageCard | null> {
+    public async getWelcomerCard(guildId: string) {
         const res = await this.welcomer.findFirst({
             where: {
                 guildId: guildId,
@@ -58,6 +57,24 @@ export default class Database extends PrismaClient {
         return res ? res.ImageCard_Welcomer_activeCardIdToImageCard : null;
     }
 
+
+    public async getLeaverCard(guildId: string) {
+        const res = await this.leaver.findFirst({
+            where: {
+                guildId: guildId,
+            },
+            include: {
+                ImageCard_Leaver_activeCardIdToImageCard: {
+                    include: {
+                        mainText: true,
+                        secondText: true,
+                        nicknameText: true,
+                    },
+                },
+            },
+        });
+        return res ? res.ImageCard_Leaver_activeCardIdToImageCard : null;
+    }
     public async getEmbeds(
         module: "welcomer" | "leaver",
         guildId: string
