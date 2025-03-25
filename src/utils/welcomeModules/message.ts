@@ -1,18 +1,18 @@
 import { EmbedImage, Leaver, Welcomer } from "@prisma/client";
-import { Color, DefaultCard } from "@welcomer-bot/card-canvas";
+import { BaseCardParams, Color, DefaultCard } from "@welcomer-bot/card-canvas";
 import {
   BaseMessageOptions,
   ColorResolvable,
   EmbedBuilder,
   GuildMember,
 } from "discord.js";
+import WelcomerClient from "../../models/Client";
 import { CompleteEmbed } from "../../types";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
-import WelcomerClient from "../../models/Client";
 
-export function formatText(message: string, member: GuildMember): string {
+export function formatText(message: string, member: GuildMember, image: boolean = false): string {
   return message
-    .replaceAll(/{user}/g, member.toString())
+    .replaceAll(/{user}/g, image ? member.user.username : member.toString())
     .replaceAll(/{tag}/g, member.user.tag)
     .replaceAll(/{username}/g, member.user.username)
     .replaceAll(/{id}/g, member.id)
@@ -24,6 +24,8 @@ export function formatText(message: string, member: GuildMember): string {
     )
     .replaceAll(/{permissions}/g, member.permissions.toArray().join(", "))
     .replaceAll(/{guild}/g, member.guild.name)
+    .replaceAll(/{server}/g, member.guild.name)
+
     .replaceAll(/{membercount}/g, member.guild.memberCount.toString())
     .replaceAll(/{createdAt}/g, member.user.createdAt.toDateString())
     .replaceAll(/{joinedAt}/g, member.joinedAt!.toString())
@@ -95,7 +97,17 @@ export async function formatMessage(
   test: boolean = false,
 ) {
   const embeds = await client.db.getEmbeds(moduleName, module.guildId);
-  const cardParams = await client.db.getWelcomerCard(module.guildId);
+  const cardParams = await (moduleName == "welcomer" ? client.db.getWelcomerCard(module.guildId) : client.db.getLeaverCard(module.guildId)) as BaseCardParams | null;
+  if (cardParams?.mainText) {
+    cardParams.mainText.content = formatText(cardParams.mainText.content, member, true);
+  }
+  if (cardParams?.nicknameText) {
+    cardParams.nicknameText.content = formatText(cardParams.nicknameText.content, member, true);
+  }
+  if (cardParams?.secondText) {
+    cardParams.secondText.content = formatText(cardParams.secondText.content, member, true);
+  }
+
   const card = cardParams
     ? await new DefaultCard({
       ...cardParams,

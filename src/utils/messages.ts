@@ -6,6 +6,7 @@ import {
   GuildMember,
   GuildTextBasedChannel,
   Interaction,
+  InteractionEditReplyOptions,
   InteractionReplyOptions,
   InteractionResponse,
   Message,
@@ -39,7 +40,7 @@ export const sendInteractionMessage = async (
     if (follow || interaction.ephemeral) {
       return await interaction.followUp({ ...message});
     }
-      return await interaction.editReply(message);
+      return await interaction.editReply(message as InteractionEditReplyOptions);
   // } catch (error) {
   //   throw new Error(
   //     "An error occured in sendInteractionMessage function ! " + error
