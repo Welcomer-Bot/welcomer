@@ -152,6 +152,8 @@ export async function formatMessage(
     client.db.updateGuildStatsGeneratedEmbeds(module.guildId, moduleName, message.embeds?.length ?? 0);
     client.db.updateGuildStatsGeneratedImages(module.guildId, moduleName, card ? 1 : 0);
     client.db.updateGuildStatsGeneratedMessages(module.guildId, moduleName, 1);
+    client.db.addMemberWelcomed(member.guild.id);
+    
   }
   return message;
 }

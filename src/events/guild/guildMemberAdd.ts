@@ -14,9 +14,8 @@ export default class GuildMemberAdd implements EventType {
       const module = await client.db.getWelcomer(member.guild.id);
       if (!module) return;
       generateCard(member, member.guild, module, client, null, "welcomer");
-      client.db.addMemberWelcomed(member.guild.id);
-    } catch {
-      // error(err);
+    } catch (error) {
+      console.error(error);
     }
   }
 }
