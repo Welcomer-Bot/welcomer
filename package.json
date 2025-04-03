@@ -33,7 +33,7 @@
     "@sentry/cli": "^2.42.1",
     "@sentry/node": "^9.1.0",
     "@sentry/profiling-node": "^9.8.0",
-    "@welcomer-bot/card-canvas": "^0.2.2",
+    "@welcomer-bot/card-canvas": "^0.2.3",
     "canvas": "^3.1.0",
     "canvas-txt": "4.1.1",
     "discord-api-types": "^0.37.119",
