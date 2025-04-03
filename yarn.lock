@@ -1443,10 +1443,10 @@
   resolved "https://registry.yarnpkg.com/@vladfrangu/async_event_emitter/-/async_event_emitter-2.4.6.tgz#508b6c45b03f917112a9008180b308ba0e4d1805"
   integrity sha512-RaI5qZo6D2CVS6sTHFKg1v5Ohq/+Bo2LZ5gzUEwZ/WkHhwtGTCB/sVLw8ijOkAUxasZ+WshN/Rzj4ywsABJ5ZA==
 
-"@welcomer-bot/card-canvas@^0.2.3":
-  version "0.2.3"
-  resolved "https://npm.pkg.github.com/download/@welcomer-bot/card-canvas/0.2.3/ef1bc961419d6f56e6f8ee82d0763b33cded8cec#ef1bc961419d6f56e6f8ee82d0763b33cded8cec"
-  integrity sha512-ZjHzhRadnNhP0IdHBIpGLRDHJD+EXFtHnD8We32t90vHbbS/pKTWbE1G3FEJoEokwcuc2xBZNz9sgiZxoZb1NA==
+"@welcomer-bot/card-canvas@^0.2.4":
+  version "0.2.4"
+  resolved "https://npm.pkg.github.com/download/@welcomer-bot/card-canvas/0.2.4/5fe5f1d68321e8cd23b088e43106a11857ccd03f#5fe5f1d68321e8cd23b088e43106a11857ccd03f"
+  integrity sha512-vGoLIqLMcuUj7kc7GLx9nr9hqqOsKcWub9DJHqIN2f0GIWNlaRc65ajtNqw2vBHrDtWwGqzeAcxvIiOEELT5jg==
   dependencies:
     canvas "^3.0.1"
 
