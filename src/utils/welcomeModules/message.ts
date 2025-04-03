@@ -114,6 +114,12 @@ export async function formatMessage(
       backgroundColor: cardParams.backgroundColor as Color,
       avatarBorderColor: cardParams.avatarBorderColor as Color,
       colorTextDefault: cardParams.colorTextDefault as Color,
+      avatarImgURL: member.user.displayAvatarURL({
+        extension: "png",
+        forceStatic: true,
+        size: 512,
+      }),
+      avatarBorderStyle: cardParams.avatarBorderStyle,
     })
       .build()
       .then((built) => built.toBuffer())
