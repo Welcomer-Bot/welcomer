@@ -10,7 +10,11 @@ import WelcomerClient from "../../models/Client";
 import { CompleteEmbed } from "../../types";
 import { MessageEmbedSchema, MessageSchema } from "./validator";
 
-export function formatText(message: string, member: GuildMember, image: boolean = false): string {
+export function formatText(
+  message: string,
+  member: GuildMember,
+  image: boolean = false
+): string {
   return message
     .replaceAll(/{user}/g, image ? member.user.username : member.toString())
     .replaceAll(/{tag}/g, member.user.tag)
@@ -53,29 +57,29 @@ export function formatEmbeds(
           .setFields(
             embed.fields
               ? embed.fields
-                .filter((field) => field.name && field.value) // Vérifie que name et value sont définis
-                .map((field) => ({
-                  name: formatText(field.name, member),
-                  value: formatText(field.value, member),
-                }))
-                .slice(0, 25)
+                  .filter((field) => field.name && field.value) // Vérifie que name et value sont définis
+                  .map((field) => ({
+                    name: formatText(field.name, member),
+                    value: formatText(field.value, member),
+                  }))
+                  .slice(0, 25)
               : []
           )
           .setFooter(
             embed.footer && embed.footer.text
               ? {
-                text: formatText(embed.footer.text, member),
-                iconURL: embed.footer.iconUrl ?? undefined,
-              }
+                  text: formatText(embed.footer.text, member),
+                  iconURL: embed.footer.iconUrl ?? undefined,
+                }
               : null
           )
           .setAuthor(
             embed.author && embed.author.name
               ? {
-                name: formatText(embed.author.name, member),
-                iconURL: embed.author.iconUrl ?? undefined,
-                url: embed.author.url ?? "",
-              }
+                  name: formatText(embed.author.name, member),
+                  iconURL: embed.author.iconUrl ?? undefined,
+                  url: embed.author.url ?? "",
+                }
               : null
           )
           .setImage(embed.image?.url ?? null)
@@ -94,35 +98,48 @@ export async function formatMessage(
   moduleName: "welcomer" | "leaver",
   member: GuildMember,
   client: WelcomerClient,
-  test: boolean = false,
+  test: boolean = false
 ) {
   const embeds = await client.db.getEmbeds(moduleName, module.guildId);
-  const cardParams = await (moduleName == "welcomer" ? client.db.getWelcomerCard(module.guildId) : client.db.getLeaverCard(module.guildId)) as BaseCardParams | null;
+  const cardParams = (await (moduleName == "welcomer"
+    ? client.db.getWelcomerCard(module.guildId)
+    : client.db.getLeaverCard(module.guildId))) as BaseCardParams | null;
   if (cardParams?.mainText) {
-    cardParams.mainText.content = formatText(cardParams.mainText.content, member, true);
+    cardParams.mainText.content = formatText(
+      cardParams.mainText.content,
+      member,
+      true
+    );
   }
   if (cardParams?.nicknameText) {
-    cardParams.nicknameText.content = formatText(cardParams.nicknameText.content, member, true);
+    cardParams.nicknameText.content = formatText(
+      cardParams.nicknameText.content,
+      member,
+      true
+    );
   }
   if (cardParams?.secondText) {
-    cardParams.secondText.content = formatText(cardParams.secondText.content, member, true);
+    cardParams.secondText.content = formatText(
+      cardParams.secondText.content,
+      member,
+      true
+    );
   }
 
   const card = cardParams
     ? await new DefaultCard({
-      ...cardParams,
-      backgroundColor: cardParams.backgroundColor as Color,
-      avatarBorderColor: cardParams.avatarBorderColor as Color,
-      colorTextDefault: cardParams.colorTextDefault as Color,
-      avatarImgURL: member.user.displayAvatarURL({
-        extension: "png",
-        forceStatic: true,
-        size: 512,
-      }),
-      avatarBorderStyle: cardParams.avatarBorderStyle,
-    })
-      .build()
-      .then((built) => built.toBuffer())
+        ...cardParams,
+        backgroundColor: cardParams.backgroundColor as Color,
+        avatarBorderColor: cardParams.avatarBorderColor as Color,
+        colorTextDefault: cardParams.colorTextDefault as Color,
+        avatarImgURL: member.user.displayAvatarURL({
+          extension: "png",
+          forceStatic: true,
+          size: 512,
+        }),
+      })
+        .build()
+        .then((built) => built.toBuffer())
     : null;
   const embed = embeds.find((embed) => embed.id === module.activeCardToEmbedId);
   if (embed) {
@@ -155,11 +172,18 @@ export async function formatMessage(
     });
   }
   if (module.guildId && !test) {
-    client.db.updateGuildStatsGeneratedEmbeds(module.guildId, moduleName, message.embeds?.length ?? 0);
-    client.db.updateGuildStatsGeneratedImages(module.guildId, moduleName, card ? 1 : 0);
+    client.db.updateGuildStatsGeneratedEmbeds(
+      module.guildId,
+      moduleName,
+      message.embeds?.length ?? 0
+    );
+    client.db.updateGuildStatsGeneratedImages(
+      module.guildId,
+      moduleName,
+      card ? 1 : 0
+    );
     client.db.updateGuildStatsGeneratedMessages(module.guildId, moduleName, 1);
     client.db.addMemberWelcomed(member.guild.id);
-    
   }
   return message;
 }
