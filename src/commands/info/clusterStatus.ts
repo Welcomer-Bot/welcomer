@@ -1,7 +1,7 @@
 import {
   ChatInputCommandInteraction,
   EmbedBuilder,
-  SlashCommandBuilder
+  SlashCommandBuilder,
 } from "discord.js";
 import WelcomerClient from "../../models/Client";
 import { CommandType } from "../../types";
@@ -15,7 +15,7 @@ export default class ClusterStatusCommand implements CommandType {
     .setDescription(this.description);
   async execute(
     interaction: ChatInputCommandInteraction,
-    client: WelcomerClient,
+    client: WelcomerClient
   ) {
     if (!client.isReady()) {
       return sendInteractionMessage(interaction, {
@@ -36,22 +36,10 @@ export default class ClusterStatusCommand implements CommandType {
         memoryUsage: Number(
           Number(process.memoryUsage().rss / 1024 / 1024).toFixed(0)
         ),
-        // if you need specific cluster of all guilds, you don't really need totalGuilds
-        // cause then you can do allGuildscluster.length
-        allGuildscluster: c.guilds.cache.map((guild) => {
-          return {
-            id: guild.id,
-            name: guild.name,
-            ownerId: guild.ownerId,
-            memberCount: guild.memberCount,
-            channels: guild.channels.cache.map((c) => {
-              return { id: c.id, name: c.name }; // It's important not to return the entire CLASS
-            }),
-          };
-        }),
         perShardcluster: [...c.cluster.shardList].map((shardId) => {
           return {
             shardId: shardId,
+            status: c.ws.status,
             ping: c.ws.shards.get(shardId)?.ping,
             uptime: c.uptime,
             guilds: c.guilds.cache.filter((x) => x.shardId === shardId).size,
@@ -102,18 +90,27 @@ export default class ClusterStatusCommand implements CommandType {
           },
           {
             name: ":arrows_counterclockwise: Guilds in this cluster",
-            value: cluster.allGuildscluster.length.toString(),
+            value: cluster.perShardcluster
+              .reduce((a, b) => a + b.guilds, 0)
+              .toString(),
             inline: true,
           }
         );
       for (const shard of cluster.perShardcluster) {
         embed.addFields({
           name: `:id: Shard ${shard.shardId}`,
-          value: `:ping_pong: Ping: ${shard.ping
-            }ms\n:hourglass_flowing_sand: Uptime: <t:${Math.round(
-              (Date.now() - shard.uptime) / 1000
-            )}:R>\n:chart_with_upwards_trend: Guilds: ${shard.guilds
-            }\n:chart_with_upwards_trend: Members: ${shard.members}`,
+          value: `:ping_pong: Ping: ${
+            shard.ping
+          }ms\n:hourglass_flowing_sand: Uptime: <t:${Math.round(
+            (Date.now() - shard.uptime) / 1000
+          )}:R>\n:chart_with_upwards_trend: Guilds: ${
+            shard.guilds
+          }\n:chart_with_upwards_trend: Members: ${shard.members}
+            :desktop: Memory Usage: ${Number(
+              process.memoryUsage().rss / 1024 / 1024
+            ).toFixed(0)}MB
+            :desktop: Status: ${shard.status.toString()}
+              `,
           inline: false,
         });
       }

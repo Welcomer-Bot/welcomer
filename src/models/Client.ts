@@ -17,10 +17,16 @@ import {
   SelectMenuType,
 } from "../types";
 import { loadFiles } from "../utils/loader";
+import Database from "./Database";
 import Logger from "./Logger";
 import Server from "./Server";
-import Database from "./Database";
 
+export const LOG_WEBHOOK = process.env.LOG_WEBHOOK;
+export const STATUS_WEBHOOK = process.env.STATUS_WEBHOOK;
+export const ADD_REMOVE_WEBHOOK = process.env.ADD_REMOVE_WEBHOOK;
+export const TOKEN = process.env.TOKEN;
+export const API_URL = process.env.API_URL;
+export const SERVER_TOKEN = process.env.SERVER_TOKEN;
 export default class WelcomerClient extends Client {
   public commands = new Collection<string, CommandType>();
   public modals = new Collection<string, ModalType>();
@@ -71,17 +77,11 @@ export default class WelcomerClient extends Client {
         },
       },
     });
-    if (
-      !process.env.LOG_WEBHOOK ||
-      !process.env.STATUS_WEBHOOK ||
-      !process.env.ADD_REMOVE_WEBHOOK
-    ) {
-      throw new Error("Missing webhook urls in .env");
-    }
+    validateEnvironmentVariables();
     this.logger = new Logger(
-      process.env.LOG_WEBHOOK,
-      process.env.STATUS_WEBHOOK,
-      process.env.ADD_REMOVE_WEBHOOK
+      LOG_WEBHOOK!,
+      STATUS_WEBHOOK!,
+      ADD_REMOVE_WEBHOOK!
     );
 
     this.images.set(
@@ -89,20 +89,10 @@ export default class WelcomerClient extends Client {
       new AttachmentBuilder("banner.png").setFile("assets/banner.png")
     );
 
-    this.cluster.on("ready", () => {
+    this.cluster.on("ready", async () => {
       this.managerReady = true;
-      this.init();
+      await this.init();
     });
-  }
-
-  public async init(): Promise<void> {
-    this.loadCommands();
-    this.loadEvents();
-    // this.loadModals();
-    this.loadSelectMenus();
-    this.loadButtons();
-    this.db = new Database(this.logger);
-    this.server = new Server(this, Number.parseInt(process.env.PORT!));
 
     this.login(process.env.TOKEN)
       .then(() => {
@@ -111,6 +101,33 @@ export default class WelcomerClient extends Client {
       .catch((err) => {
         console.error("An error occured while starting the bot", err);
       });
+
+    function validateEnvironmentVariables() {
+      if (!LOG_WEBHOOK || !STATUS_WEBHOOK || !ADD_REMOVE_WEBHOOK) {
+        throw new Error("Missing webhook urls in .env");
+      }
+
+      if (!TOKEN) {
+        throw new Error("Missing token in .env");
+      }
+      if (!API_URL) {
+        throw new Error("Missing API_URL in .env");
+      }
+
+      if (!SERVER_TOKEN) {
+        throw new Error("Missing SERVER_TOKEN in .env");
+      }
+    }
+  }
+
+  public async init(): Promise<void> {
+    // await this.loadCommands();
+    await this.loadEvents();
+    // this.loadModals();
+    // await this.loadSelectMenus();
+    // await this.loadButtons();
+    this.db = new Database(this.logger);
+    this.server = new Server(this, Number.parseInt(process.env.PORT!));
   }
 
   public async loadCommands(): Promise<void> {
@@ -143,6 +160,9 @@ export default class WelcomerClient extends Client {
     const events = [];
     const files = await loadFiles("events");
     for (const file of files) {
+      // console.log(file)
+      if (file !== "/home/clement/code/welcomer/dist/events/client/ready.js")
+        continue;
       try {
         const { default: eventFile } = await import(file);
         const event: EventType = new eventFile();
@@ -219,6 +239,22 @@ export default class WelcomerClient extends Client {
       } catch (e) {
         console.error("An error occured on loadButtons!" + e);
       }
+    }
+  }
+
+  public async getClusterShardData(): Promise<void> {
+    try {
+      const shardData = await this.cluster.broadcastEval((client) => {
+        return {
+          clusterId: client.cluster.id, // Current cluster ID
+          shardId: client.shard?.ids[0] ?? null, // Current shard ID
+          guildCount: client.guilds.cache.size, // Number of guilds in this shard
+        };
+      });
+
+      console.log("Shard Data Across Clusters:", shardData);
+    } catch (error) {
+      console.error("Failed to fetch shard data across clusters:", error);
     }
   }
 }

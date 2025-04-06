@@ -58,12 +58,25 @@ export default class Server {
       if (req.headers.authorization !== process.env.SERVER_TOKEN)
         return res.status(401).json({ error: "Unauthorized" });
       const guildId = req.query.guildId as string;
-      if (!guildId) return res.status(400).json({ error: "Guild ID is required" });
+      if (!guildId)
+        return res.status(400).json({ error: "Guild ID is required" });
       const guild = this.client.guilds.cache.get(guildId);
       if (!guild) return res.status(404).json({ error: "Guild not found" });
-      const channels = guild.channels.cache
+      const channels = guild.channels.cache;
       return res.json(channels);
-    })
+    });
+
+    this.app.get("/status/:id", async (req: Request, res: Response) => {
+      //get shard by guild id
+      const guildId = req.params.id;
+      const shard = this.client.guilds.cache.get(guildId)?.shardId;
+      if (shard == null)
+        return res.status(404).json({ error: "Shard not found" });
+      return res.json({
+        id: shard,
+        status: this.client.ws.shards.get(shard)?.status,
+      });
+    });
   }
 
   public startServer(): void {
