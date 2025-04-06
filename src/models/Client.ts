@@ -121,11 +121,11 @@ export default class WelcomerClient extends Client {
   }
 
   public async init(): Promise<void> {
-    // await this.loadCommands();
+    await this.loadCommands();
     await this.loadEvents();
     // this.loadModals();
-    // await this.loadSelectMenus();
-    // await this.loadButtons();
+    await this.loadSelectMenus();
+    await this.loadButtons();
     this.db = new Database(this.logger);
     this.server = new Server(this, Number.parseInt(process.env.PORT!));
   }
@@ -161,8 +161,6 @@ export default class WelcomerClient extends Client {
     const files = await loadFiles("events");
     for (const file of files) {
       // console.log(file)
-      if (file !== "/home/clement/code/welcomer/dist/events/client/ready.js")
-        continue;
       try {
         const { default: eventFile } = await import(file);
         const event: EventType = new eventFile();

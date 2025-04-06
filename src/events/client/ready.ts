@@ -124,6 +124,9 @@ export default class ReadyEvent implements EventType {
 
         console.log("Successfully reloaded application (/) commands.");
       } catch (error) {
+        console.error(
+          "An error occurred while reloading application (/) commands."
+        );
         console.error(error);
       }
     }
