@@ -14,14 +14,19 @@ export const createOrUpdateGuild = async (guild: {
         guild: guild,
         channels: guild.channels.cache,
       }),
-    }).then((res) => {
-      if (res.ok) {
-        return res.json();
-      } else {
-        console.log(res.statusText);
-        return { error: 'Failed to update guild' };
-      }
-    });
+    })
+      .then((res) => {
+        if (res.ok) {
+          return res.json();
+        } else {
+          console.log("Failed to update guild", res);
+          return { error: "Failed to update guild" };
+        }
+      })
+      .catch((err) => {
+        console.log("Failed to update guild", err);
+        return { error: "Failed to update guild" };
+      });
   } catch (error) {
     console.log(error);
   }

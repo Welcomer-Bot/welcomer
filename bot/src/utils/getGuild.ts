@@ -18,6 +18,9 @@ export const getGuild = async (guildId: string) => {
       } else {
         return null;
       }
+    }).catch((err) => {
+      console.log("Failed to get guild", err);
+      return null;
     });
   } catch (error) {
     return null;
@@ -38,7 +41,11 @@ export const getGuildsStats = async () => {
       } else {
         return null;
       }
-    });
+    })
+      .catch((err) => {
+        console.log("Failed to get guilds stats", err);
+        return null;
+      });
   } catch (error) {
     return null;
   }
@@ -51,7 +58,10 @@ export const addMemberWelcomed = async (guild: Guild) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
     }),
-  }).then((res) => res.json());
+  }).then((res) => res.json()).catch((err) => {
+    console.log("Failed to add member welcomed", err);
+  }
+  );
 };
 
 export const addMemberGoodbye = async (guild: Guild) => {
@@ -61,7 +71,10 @@ export const addMemberGoodbye = async (guild: Guild) => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
     }),
-  }).then((res) => res.json());
+  }).then((res) => res.json()).catch((err) => {
+    console.log("Failed to add member goodbye", err);
+  }
+  );
 };
 
 export const deleteGuild = async function (id: string) {
@@ -77,5 +90,9 @@ export const deleteGuild = async function (id: string) {
     } else {
       return false;
     }
-  });
+  }).catch((err) => {
+    console.log("Failed to delete guild", err);
+    return false;
+  }
+  );
 };

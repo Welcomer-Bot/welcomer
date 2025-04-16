@@ -1,6 +1,5 @@
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
 import {
-  ActivityType,
   APIApplicationCommand,
   AttachmentBuilder,
   Client,
@@ -38,13 +37,7 @@ export default class WelcomerClient extends Client {
   constructor() {
     super({
       presence: {
-        status: "dnd",
-        activities: [
-          {
-            name: "gears booting up..",
-            type: ActivityType.Watching,
-          },
-        ],
+        status: "online",
       },
       shards: getInfo().SHARD_LIST,
       shardCount: getInfo().TOTAL_SHARDS,
@@ -75,6 +68,9 @@ export default class WelcomerClient extends Client {
         },
       },
     });
+    this.cluster.on("ready", () => {
+      this.managerReady = true;
+    });
     this.init();
     this.images.set(
       "banner",
@@ -89,9 +85,6 @@ export default class WelcomerClient extends Client {
     this.loadSelectMenus();
     this.loadButtons();
 
-    this.cluster.on("managerReady", () => {
-      this.managerReady = true;
-    });
     this.login(process.env.TOKEN)
       .then(() => {
         console.log("Client is starting");
