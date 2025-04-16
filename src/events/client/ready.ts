@@ -69,7 +69,7 @@ export default class ReadyEvent implements EventType {
     
     async function postShardStats() {
       const shardData = await fetchClusterShardData();
-      await fetch(API_URL + "/status/shard", {
+      await fetch(API_URL + "/api/status/shard", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
