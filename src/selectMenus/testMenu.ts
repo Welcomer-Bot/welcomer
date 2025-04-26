@@ -42,9 +42,8 @@ export default class TestMenu implements SelectMenuType {
         return sendInteractionMessage(
           interaction,
           {
-            content: `No ${value.toLowerCase()} module found. Please enable it first with the [dashboard](<https://welcomer.app>)`,
+            content: `No ${value.toLowerCase()} module found. Please enable it first with the [dashboard](<https://beta.welcomer.app?utm_source=discord&utm_medium=bot&utm_campaign=config>)`,
             flags: "Ephemeral",
-
           },
           true
         );
@@ -60,7 +59,7 @@ export default class TestMenu implements SelectMenuType {
 
       if (!realChannel) {
         InfoEmbed.setColor("#ff0000").setDescription(
-          `Channel is not set, please set it with the [dashboard](<https://welcomer.app>)`
+          `Channel is not set, please set it with the [dashboard](<https://beta.welcomer.app?utm_source=discord&utm_medium=bot&utm_campaign=config>)`
         );
         return sendInteractionMessage(
           interaction,
