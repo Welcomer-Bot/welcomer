@@ -11,9 +11,9 @@ export default class GuildMemberAdd implements EventType {
     client: WelcomerClient
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
     try {
-      const module = await client.db.getWelcomer(member.guild.id);
-      if (!module) return;
-      generateCard(member, member.guild, module, client, null, "welcomer");
+      const source = await client.db.getSource(member.guild.id, "Welcomer");
+      if (!source) return;
+      generateCard(member, member.guild, source, client, null, "Welcomer");
     } catch (error) {
       console.error(error);
     }

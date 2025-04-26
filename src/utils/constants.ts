@@ -14,7 +14,7 @@ export const testSelectMenu = new StringSelectMenuBuilder()
   .setOptions(
     new StringSelectMenuOptionBuilder({
       label: "Test User Joining",
-      value: "Welcome",
+      value: "Welcomer",
       emoji: {
         name: "join",
         id: "1011593313314410496",
@@ -22,7 +22,7 @@ export const testSelectMenu = new StringSelectMenuBuilder()
     }),
     new StringSelectMenuOptionBuilder({
       label: "Test User Leaving",
-      value: "Goodbye",
+      value: "Leaver",
       emoji: {
         name: "leave",
         id: "1011593334466297918",

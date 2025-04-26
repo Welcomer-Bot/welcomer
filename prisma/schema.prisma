@@ -7,69 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Welcomer {
-  guildId                                    String      @id
-  channelId                                  String?
-  content                                    String?
-  createdAt                                  DateTime?   @default(now())
-  updatedAt                                  DateTime?   @updatedAt
-  activeCardId                               Int?        @unique
-  activeCardToEmbedId                        Int?        @unique
-  DM                                         DM?
-  embeds                                     Embed[]
-  images                                     ImageCard[] @relation("WelcomerImagesRelation")
-  ImageCard_Welcomer_activeCardIdToImageCard ImageCard?  @relation("Welcomer_activeCardIdToImageCard", fields: [activeCardId], references: [id], onDelete: Cascade)
-  Embed_Welcomer_activeCardToEmbedIdToEmbed  Embed?      @relation("Welcomer_activeCardToEmbedIdToEmbed", fields: [activeCardToEmbedId], references: [id], onDelete: Cascade)
-}
-
-model Leaver {
-  guildId                                  String      @id
-  channelId                                String?
-  content                                  String?
-  createdAt                                DateTime?   @default(now())
-  updatedAt                                DateTime?   @updatedAt
-  activeCardToEmbedId                      Int?        @unique
-  activeCardId                             Int?        @unique
-  embeds                                   Embed[]
-  images                                   ImageCard[] @relation("LeaverImagesRelation")
-  ImageCard_Leaver_activeCardIdToImageCard ImageCard?  @relation("Leaver_activeCardIdToImageCard", fields: [activeCardId], references: [id], onDelete: Cascade)
-  Embed_Leaver_activeCardToEmbedIdToEmbed  Embed?      @relation("Leaver_activeCardToEmbedIdToEmbed", fields: [activeCardToEmbedId], references: [id], onDelete: Cascade)
-}
-
-model DM {
-  /// @zod.optional()
-  id        String    @id
-  message   String
-  createdAt DateTime? @default(now())
-  updatedAt DateTime? @updatedAt
-  Welcomer  Welcomer  @relation(fields: [id], references: [guildId], onDelete: Cascade)
-  embeds    Embed?
-}
-
 model Embed {
   /// @zod.optional()
-  id                                           Int          @id @default(autoincrement())
-  title                                        String?      @db.VarChar(256)
-  description                                  String?      @db.VarChar(4096)
-  timestamp                                    DateTime?
-  timestampNow                                 Boolean?
-  thumbnail                                    String?
-  url                                          String?
-  created                                      DateTime?    @default(now())
-  updated                                      DateTime?    @default(now())
-  welcomerId                                   String?
-  leaverId                                     String?
-  DMId                                         String?      @unique
-  color                                        String?
-  DM                                           DM?          @relation(fields: [DMId], references: [id], onDelete: Cascade)
-  leaver                                       Leaver?      @relation(fields: [leaverId], references: [guildId], onDelete: Cascade)
-  welcomer                                     Welcomer?    @relation(fields: [welcomerId], references: [guildId], onDelete: Cascade)
-  author                                       EmbedAuthor?
-  fields                                       EmbedField[]
-  footer                                       EmbedFooter?
-  image                                        EmbedImage?
-  Leaver_Leaver_activeCardToEmbedIdToEmbed     Leaver?      @relation("Leaver_activeCardToEmbedIdToEmbed")
-  Welcomer_Welcomer_activeCardToEmbedIdToEmbed Welcomer?    @relation("Welcomer_activeCardToEmbedIdToEmbed")
+  id                                       Int          @id @default(autoincrement())
+  Sourceid                                 Int
+  title                                    String?      @db.VarChar(256)
+  description                              String?      @db.VarChar(4096)
+  timestamp                                DateTime?
+  timestampNow                             Boolean?
+  thumbnail                                String?
+  url                                      String?
+  created                                  DateTime?    @default(now())
+  updated                                  DateTime?    @default(now())
+  color                                    String?
+  Source_Embed_SourceidToSource            Source       @relation("Embed_SourceidToSource", fields: [Sourceid], references: [id], onDelete: Cascade)
+  author                                   EmbedAuthor?
+  fields                                   EmbedField[]
+  footer                                   EmbedFooter?
+  image                                    EmbedImage?
+  Source_Source_activeCardToEmbedIdToEmbed Source?      @relation("Source_activeCardToEmbedIdToEmbed")
 }
 
 model EmbedImage {
@@ -120,25 +76,22 @@ model EmbedFooter {
 }
 
 model ImageCard {
-  id                                        Int            @id @default(autoincrement())
-  backgroundImgURL                          String?
-  backgroundColor                           String?
-  avatarBorderColor                         String?
-  colorTextDefault                          String?
-  createdAt                                 DateTime       @default(now())
-  updatedAt                                 DateTime?      @updatedAt
-  welcomerId                                String?
-  leaverId                                  String?
-  mainTextId                                Int?           @unique
-  secondTextId                              Int?           @unique
-  nicknameTextId                            Int?           @unique
-  leaver                                    Leaver?        @relation("LeaverImagesRelation", fields: [leaverId], references: [guildId], onDelete: Cascade, map: "ImageCard_leaverId_fkey")
-  mainText                                  ImageCardText? @relation("MainTextRelation", fields: [mainTextId], references: [id], onDelete: Cascade)
-  nicknameText                              ImageCardText? @relation("NicknameRelation", fields: [nicknameTextId], references: [id], onDelete: Cascade)
-  secondText                                ImageCardText? @relation("SecondTextRelation", fields: [secondTextId], references: [id], onDelete: Cascade)
-  welcomer                                  Welcomer?      @relation("WelcomerImagesRelation", fields: [welcomerId], references: [guildId], onDelete: Cascade, map: "ImageCard_welcomerId_fkey")
-  Leaver_Leaver_activeCardIdToImageCard     Leaver?        @relation("Leaver_activeCardIdToImageCard")
-  Welcomer_Welcomer_activeCardIdToImageCard Welcomer?      @relation("Welcomer_activeCardIdToImageCard")
+  id                                    Int            @id @default(autoincrement())
+  backgroundImgURL                      String?
+  backgroundColor                       String?
+  avatarBorderColor                     String?
+  colorTextDefault                      String?
+  createdAt                             DateTime       @default(now())
+  updatedAt                             DateTime?      @updatedAt
+  mainTextId                            Int?           @unique
+  secondTextId                          Int?           @unique
+  nicknameTextId                        Int?           @unique
+  sourceId                              Int
+  mainText                              ImageCardText? @relation("MainTextRelation", fields: [mainTextId], references: [id], onDelete: Cascade)
+  nicknameText                          ImageCardText? @relation("NicknameRelation", fields: [nicknameTextId], references: [id], onDelete: Cascade)
+  secondText                            ImageCardText? @relation("SecondTextRelation", fields: [secondTextId], references: [id], onDelete: Cascade)
+  Source_ImageCard_sourceIdToSource     Source         @relation("ImageCard_sourceIdToSource", fields: [sourceId], references: [id], onDelete: Cascade)
+  Source_Source_activeCardIdToImageCard Source?        @relation("Source_activeCardIdToImageCard")
 }
 
 model ImageCardText {
@@ -162,23 +115,25 @@ model User {
 }
 
 model GuildStats {
-  id                Int      @default(autoincrement())
+  id                Int        @default(autoincrement())
   period            Period
-  module            Module
-  generatedImages   Int      @default(0)
-  generatedEmbeds   Int      @default(0)
-  generatedMessages Int      @default(0)
-  membersEvent      Int      @default(0)
+  source            SourceType
+  generatedImages   Int        @default(0)
+  generatedEmbeds   Int        @default(0)
+  generatedMessages Int        @default(0)
+  membersEvent      Int        @default(0)
   guildId           String?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime   @default(now())
+  Guild             Guild?     @relation(fields: [guildId], references: [id])
 
-  @@id([id, period, module, createdAt])
+  @@id([id, period, source, createdAt])
 }
 
 model betaGuild {
   id        String    @id
   createdAt DateTime? @default(now())
   updatedAt DateTime?
+  Guild     Guild     @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model Session {
@@ -188,12 +143,41 @@ model Session {
   createdAt   DateTime? @default(now())
   updatedAt   DateTime?
   userId      String
-  User        User      @relation(fields: [userId], references: [id])
+  User        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-enum Module {
-  welcomer
-  leaver
+model Guild {
+  id           String        @id
+  createdAt    DateTime?     @default(now())
+  updatedAt    DateTime?
+  GuildStats   GuildStats[]
+  Source       Source[]
+  betaGuild    betaGuild?
+  premiumGuild premiumGuild?
+}
+
+model Source {
+  id                                       Int         @id @unique @default(autoincrement())
+  guildId                                  String
+  type                                     SourceType
+  channelId                                String?
+  content                                  String?
+  createdAt                                DateTime?   @default(now())
+  updatedAt                                DateTime?
+  activeCardId                             Int?        @unique
+  activeCardToEmbedId                      Int?        @unique
+  Embed_Embed_SourceidToSource             Embed[]     @relation("Embed_SourceidToSource")
+  ImageCard_ImageCard_sourceIdToSource     ImageCard[] @relation("ImageCard_sourceIdToSource")
+  Guild                                    Guild       @relation(fields: [guildId], references: [id], onDelete: Cascade, map: "Source_ActiveSources_guildId_fkey")
+  ImageCard_Source_activeCardIdToImageCard ImageCard?  @relation("Source_activeCardIdToImageCard", fields: [activeCardId], references: [id], onDelete: Cascade)
+  Embed_Source_activeCardToEmbedIdToEmbed  Embed?      @relation("Source_activeCardToEmbedIdToEmbed", fields: [activeCardToEmbedId], references: [id], onDelete: Cascade)
+}
+
+model premiumGuild {
+  id        String    @id
+  createdAt DateTime? @default(now())
+  updatedAt DateTime?
+  Guild     Guild     @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 enum Period {
@@ -201,4 +185,10 @@ enum Period {
   WEEKLY
   MONTHLY
   TOTAL
+}
+
+enum SourceType {
+  Welcomer
+  Leaver
+  DM
 }

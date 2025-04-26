@@ -13,9 +13,9 @@ export default class GuildMemberRemove implements EventType {
   ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
     try {
       const guild = member.guild;
-      const module = await client.db.getLeaver(guild.id);
+      const module = await client.db.getSource(guild.id, "Leaver");
       if (!module) return;
-      generateCard(member, guild, module, client, null, "leaver");
+      generateCard(member, guild, module, client, null, "Leaver");
       // addMemberGoodbye(guild);
     } catch (err: Error | unknown) {
       client.logger.error(err as Error);

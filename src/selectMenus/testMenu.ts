@@ -1,4 +1,3 @@
-import { Leaver, Welcomer } from "@prisma/client";
 import {
   EmbedBuilder,
   GuildMember,
@@ -13,6 +12,7 @@ import { checkPermsForChannel } from "../utils/functions";
 import { sendInteractionMessage } from "../utils/messages";
 import { generateCard } from "../utils/welcomeCard";
 import { SelectMenuType } from "./../types/index";
+import { SourceType } from "@prisma/client";
 
 export default class TestMenu implements SelectMenuType {
   customId: string = "test-menu";
@@ -27,7 +27,7 @@ export default class TestMenu implements SelectMenuType {
         components: interaction.message.components,
       });
       if (!interaction.inGuild()) return;
-      const value = interaction.values[0];
+      const value = interaction.values[0] as SourceType;
       if (!value)
         return sendInteractionMessage(
           interaction,
@@ -36,25 +36,19 @@ export default class TestMenu implements SelectMenuType {
 },
           true
         );
-      const arg = value === "Welcome" ? "welcomer" : "leaver";
       InfoEmbed.setTitle(`Testing ${value} message`);
-      let guildModule: Welcomer | Leaver | null;
-      if (arg === "welcomer") {
-        guildModule = await client.db.getWelcomer(interaction.guild!.id);
-      } else {
-        guildModule = await client.db.getLeaver(interaction.guild!.id);
-      }
-      if (!guildModule)
+      const source = await client.db.getSource(interaction.guild!.id, value);
+      if (!source)
         return sendInteractionMessage(
           interaction,
           {
-            content: `No ${arg} module found. Please enable it first with the [dashboard](<https://welcomer.app>)`,
+            content: `No ${value.toLowerCase()} module found. Please enable it first with the [dashboard](<https://welcomer.app>)`,
             flags: "Ephemeral",
 
           },
           true
         );
-      const realChannelId = guildModule.channelId;
+      const realChannelId = source.channelId;
 
       const currentChannelPermissionErrors: string[] = [];
       const realChannelPermissionErrors: string[] = [];
@@ -83,7 +77,7 @@ export default class TestMenu implements SelectMenuType {
         )
         .addFields({
           name: "<:channel:1011932902637977650> ``Channel:``",
-          value: "<#" + guildModule.channelId + ">",
+          value: "<#" + source.channelId + ">",
         });
 
       const permissionNames = {
@@ -153,10 +147,10 @@ export default class TestMenu implements SelectMenuType {
       generateCard(
         interaction.member as GuildMember,
         interaction.guild!,
-        guildModule,
+        source,
         client,
         currentChannel,
-        arg,
+        value,
         true
       );
     } catch (error) {

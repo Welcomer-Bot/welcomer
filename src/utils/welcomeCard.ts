@@ -1,4 +1,4 @@
-import { Leaver, Welcomer } from "@prisma/client";
+import { Source, SourceType } from "@prisma/client";
 import {
   Guild,
   GuildBasedChannel,
@@ -12,10 +12,10 @@ import { formatMessage } from "./welcomeModules/message";
 export const generateCard = async (
   member: GuildMember,
   guild: Guild,
-  module: Welcomer | Leaver,
+  source: Source,
   client: WelcomerClient,
   testchannel: GuildBasedChannel | null = null,
-  type: "welcomer" | "leaver",
+  type: SourceType, 
   test: boolean = false
 ) => {
   try {
@@ -23,7 +23,7 @@ export const generateCard = async (
     if (!channel) {
       channel =
         guild.channels.cache.find(
-          (channel) => channel.id === module?.channelId
+          (channel) => channel.id === source?.channelId
         ) || null;
     }
     if (!channel) return;
@@ -38,7 +38,7 @@ export const generateCard = async (
           PermissionFlagsBits.ViewChannel,
         ])
     ) {
-      const message = await formatMessage(module, type, member, client, test);
+      const message = await formatMessage(source, member, client, test);
       sendChannelMessage(channel, message);
     }
   } catch (err) {

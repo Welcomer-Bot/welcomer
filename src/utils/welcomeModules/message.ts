@@ -1,4 +1,4 @@
-import { EmbedImage, Leaver, Welcomer } from "@prisma/client";
+import { EmbedImage, Source } from "@prisma/client";
 import { BaseCardParams, Color, DefaultCard } from "@welcomer-bot/card-canvas";
 import {
   BaseMessageOptions,
@@ -94,16 +94,16 @@ export function formatEmbeds(
 }
 
 export async function formatMessage(
-  module: Welcomer | Leaver,
-  moduleName: "welcomer" | "leaver",
+  source: Source,
   member: GuildMember,
   client: WelcomerClient,
   test: boolean = false
 ) {
-  const embeds = await client.db.getEmbeds(moduleName, module.guildId);
-  const cardParams = (await (moduleName == "welcomer"
-    ? client.db.getWelcomerCard(module.guildId)
-    : client.db.getLeaverCard(module.guildId))) as BaseCardParams | null;
+  const embeds = await client.db.getEmbeds(source.type, source.guildId);
+  const cardParams = (await client.db.getSourceCard(
+    source.guildId,
+    source.type
+  )) as BaseCardParams | null;
   if (cardParams?.mainText) {
     cardParams.mainText.content = formatText(
       cardParams.mainText.content,
@@ -141,14 +141,14 @@ export async function formatMessage(
         .build()
         .then((built) => built.toBuffer())
     : null;
-  const embed = embeds.find((embed) => embed.id === module.activeCardToEmbedId);
+  const embed = embeds.find((embed) => embed.id === source.activeCardToEmbedId);
   if (embed) {
     embed.image = {
       url: "attachment://card.png",
     } as EmbedImage;
   }
   const message: BaseMessageOptions = {
-    content: module.content ? formatText(module.content, member) : undefined,
+    content: source.content ? formatText(source.content, member) : undefined,
     embeds: formatEmbeds(embeds, member),
     files: card ? [{ attachment: card, name: "card.png" }] : undefined,
   };
@@ -171,18 +171,18 @@ export async function formatMessage(
       }
     });
   }
-  if (module.guildId && !test) {
+  if (source.guildId && !test) {
     client.db.updateGuildStatsGeneratedEmbeds(
-      module.guildId,
-      moduleName,
+      source.guildId,
+      source.type,
       message.embeds?.length ?? 0
     );
     client.db.updateGuildStatsGeneratedImages(
-      module.guildId,
-      moduleName,
+      source.guildId,
+      source.type,
       card ? 1 : 0
     );
-    client.db.updateGuildStatsGeneratedMessages(module.guildId, moduleName, 1);
+    client.db.updateGuildStatsGeneratedMessages(source.guildId, source.type, 1);
     client.db.addMemberWelcomed(member.guild.id);
   }
   return message;
