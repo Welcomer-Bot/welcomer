@@ -37,15 +37,16 @@ export default class implements CommandType {
 }
 
 const setupMessage: BaseMessageOptions = {
-    content: "",
-    embeds: [{
-        "url": "https://beta.welcomer.app/dashboard",
-        "title": "📌 How to setup Welcomer",
-        "description": `
+  content: "",
+  embeds: [
+    {
+      url: "https://beta.welcomer.app/dashboard?utm_source=discord&utm_medium=bot&utm_campaign=help",
+      title: "📌 How to setup Welcomer",
+      description: `
 ## Getting Started  
 Welcomer makes it easy to set up automated welcome and leave messages through a user-friendly dashboard. Everything is configurable in just a few clicks!  
 
-Head over to [our dashboard](https://beta.welcomer.app/dashboard) and select your server to begin.  
+Head over to [our dashboard](https://beta.welcomer.app/dashboard?utm_source=discord&utm_medium=bot&utm_campaign=help) and select your server to begin.  
 
 
 ## Customizing Your Welcome Message  
@@ -64,40 +65,38 @@ Want to test it? Run \`/ test\` in Discord to preview your welcome message. If s
 
 
 ## Need Assistance?  
-For additional help, check out our [support server](https://beta.welcomer.app/support)
+For additional help, check out our [support server](https://beta.welcomer.app/support?utm_source=discord&utm_medium=bot&utm_campaign=help)
 `,
-        "color": 3447003,
-        "footer": {
-            "text": "🎉 Congratulations! You've successfully configured Welcomer."
+      color: 3447003,
+      footer: {
+        text: "🎉 Congratulations! You've successfully configured Welcomer.",
+      },
+    },
+  ],
+  components: [
+    {
+      type: 1,
+      components: [
+        {
+          type: 2,
+          label: "Support server",
+          style: 5,
+          url: "https://beta.welcomer.app/support?utm_source=discord&utm_medium=bot&utm_campaign=help",
         },
 
-    }
-
-    ],
-    "components": [
         {
-            "type": 1,
-            "components": [
-                {
-                    "type": 2,
-                    "label": "Support server",
-                    "style": 5,
-                    "url": "https://beta.welcomer.app/support"
-                },
-
-                {
-                    "type": 2,
-                    "label": "Docs",
-                    "style": 5,
-                    "url": "https://beta.welcomer.app/docs"
-                },
-                {
-                    "type": 2,
-                    "label": "Dashboard",
-                    "style": 5,
-                    "url": "https://beta.welcomer.app/dahboard"
-                }
-            ]
-        }
-    ]
-}
+          type: 2,
+          label: "Docs",
+          style: 5,
+          url: "https://beta.welcomer.app/docs?utm_source=discord&utm_medium=bot&utm_campaign=help",
+        },
+        {
+          type: 2,
+          label: "Dashboard",
+          style: 5,
+          url: "https://beta.welcomer.app/dahboard?utm_source=discord&utm_medium=bot&utm_campaign=help",
+        },
+      ],
+    },
+  ],
+};

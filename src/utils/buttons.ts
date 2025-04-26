@@ -12,4 +12,6 @@ export const helpButton = new ButtonBuilder()
 export const dashButton = new ButtonBuilder()
   .setLabel("Dashboard")
   .setStyle(ButtonStyle.Link)
-  .setURL("https://welcomer.app/dahsboard");
+  .setURL(
+    "https://welcomer.app/dahsboard?utm_source=discord&utm_medium=bot&utm_campaign=button"
+  );
