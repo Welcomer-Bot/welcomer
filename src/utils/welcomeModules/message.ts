@@ -78,7 +78,7 @@ export function formatEmbeds(
               ? {
                   name: formatText(embed.author.name, member),
                   iconURL: embed.author.iconUrl ?? undefined,
-                  url: embed.author.url ?? "",
+                  url: embed.author.url ?? undefined,
                 }
               : null
           )
@@ -100,6 +100,7 @@ export async function formatMessage(
   test: boolean = false
 ) {
   const embeds = await client.db.getEmbeds(source.type, source.guildId);
+  // console.log("embeds", embeds);
   const cardParams = (await client.db.getSourceCard(
     source.guildId,
     source.type
@@ -147,9 +148,12 @@ export async function formatMessage(
       url: "attachment://card.png",
     } as EmbedImage;
   }
+
+  const embedsFormatted = formatEmbeds(embeds, member);
+  // console.log("embedsFormatted", embedsFormatted);
   const message: BaseMessageOptions = {
     content: source.content ? formatText(source.content, member) : undefined,
-    embeds: formatEmbeds(embeds, member),
+    embeds: embedsFormatted,
     files: card ? [{ attachment: card, name: "card.png" }] : undefined,
   };
 
