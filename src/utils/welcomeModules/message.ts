@@ -32,11 +32,13 @@ export function formatText(
 
     .replaceAll(/{membercount}/g, member.guild.memberCount.toString())
     .replaceAll(/{createdAt}/g, member.user.createdAt.toDateString())
-    .replaceAll(/{joinedAt}/g, member.joinedAt!.toString())
-    .replaceAll(/{joinedTimestamp}/g, member.joinedTimestamp!.toString())
+    .replaceAll(/{joinedAt}/g, member.joinedAt ? member.joinedAt.toDateString() : "")
+    .replaceAll(/{joinedTimestamp}/g, member.joinedTimestamp ? member.joinedTimestamp.toString() : "")
     .replaceAll(
       /{joined}/g,
-      `<t:${Math.floor(member.joinedTimestamp! / 1000)}:R>`
+      `<t:${Math.floor(member.joinedTimestamp ? member
+        .joinedTimestamp / 1000
+        : 0)}:R>`
     )
     .replaceAll(/{time}/g, new Date().toDateString());
 }
