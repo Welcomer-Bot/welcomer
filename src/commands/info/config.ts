@@ -18,7 +18,7 @@ export default class implements CommandType {
     const embed = new EmbedBuilder()
       .setTitle(`Configuration`)
       .setDescription(
-        "To edit the configuration, go to [beta.welcomer.app](https://beta.welcomer.app?utm_source=discord&utm_medium=bot&utm_campaign=config)"
+        "To edit the configuration, go to [beta.welcomer.app](https://beta.welcomer.app/dashboard?utm_source=discord&utm_medium=bot&utm_campaign=config)"
       )
       .setColor(`#FF0000`)
       .setFooter({
