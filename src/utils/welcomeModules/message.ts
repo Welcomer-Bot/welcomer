@@ -69,7 +69,7 @@ export function formatEmbeds(
             embed.footer && embed.footer.text
               ? {
                   text: formatText(embed.footer.text, member),
-                  iconURL: embed.footer.iconUrl ?? undefined,
+                  iconURL: emptyAsUndefined(embed.footer.iconUrl),
                 }
               : null
           )
@@ -78,7 +78,8 @@ export function formatEmbeds(
               ? {
                   name: formatText(embed.author.name, member),
                   iconURL: embed.author.iconUrl ?? undefined,
-                  url: embed.author.url ?? undefined,
+                  url:
+                    emptyAsUndefined(embed.author.url)
                 }
               : null
           )
@@ -190,4 +191,8 @@ export async function formatMessage(
     client.db.addMemberWelcomed(member.guild.id);
   }
   return message;
+}
+
+function emptyAsUndefined<T>(value: T | "" | null | undefined): T | undefined {
+  return value === "" ? undefined : value ?? undefined;
 }
