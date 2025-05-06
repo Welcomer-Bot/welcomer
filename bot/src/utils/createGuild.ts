@@ -17,7 +17,7 @@ export const createOrUpdateGuild = async (guild: Guild) => {
           icon: guild.iconURL(),
           ownerId: guild.ownerId,
           memberCount: guild.memberCount,
-          channels: guild.channels.fetch()
+          channels: (await guild.channels.fetch()
             .then((channels) => {
               return channels.map((channel) => ({
                 id: channel.id,
@@ -28,7 +28,7 @@ export const createOrUpdateGuild = async (guild: Guild) => {
             .catch((err) => {
               console.log("Failed to fetch channels", err);
               return [];
-            }),
+            }))
         }
       }),
     })
