@@ -1,8 +1,8 @@
+import { Guild } from "discord.js";
+
 const serverUrl = process.env.SERVER_URL;
 
-export const createOrUpdateGuild = async (guild: {
-  channels: { cache: any };
-}) => {
+export const createOrUpdateGuild = async (guild: Guild) => {
   try {
     return await fetch(serverUrl + "/api/bot/updateGuilds", {
       method: "POST",
@@ -11,8 +11,25 @@ export const createOrUpdateGuild = async (guild: {
         Authorization: `Bearer ${process.env.TOKEN}`,
       }),
       body: JSON.stringify({
-        guild: guild,
-        channels: guild.channels.cache,
+        guild: {
+          id: guild.id,
+          name: guild.name,
+          icon: guild.iconURL(),
+          ownerId: guild.ownerId,
+          memberCount: guild.memberCount,
+          channels: guild.channels.fetch()
+            .then((channels) => {
+              return channels.map((channel) => ({
+                id: channel.id,
+                name: channel.name,
+                type: channel.type,
+              }));
+            })
+            .catch((err) => {
+              console.log("Failed to fetch channels", err);
+              return [];
+            }),
+        }
       }),
     })
       .then((res) => {
