@@ -14,7 +14,7 @@ export const createOrUpdateGuild = async (guild: Guild) => {
         guild: {
           id: guild.id,
           name: guild.name,
-          icon: guild.iconURL(),
+          icon: guild.iconURL({extension:"png", forceStatic:true, size: 512}),
           ownerId: guild.ownerId,
           memberCount: guild.memberCount,
           channels: (await guild.channels.fetch()
