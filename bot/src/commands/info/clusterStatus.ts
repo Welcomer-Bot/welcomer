@@ -26,7 +26,7 @@ export default class ClusterStatusCommand implements CommandType {
       });
     }
 
-    console.log("Fetching cluster data");
+    // console.log("Fetching cluster data");
     const res = await client.cluster.broadcastEval((c) => {
       return {
         clusterId: c.cluster.id,
@@ -39,12 +39,15 @@ export default class ClusterStatusCommand implements CommandType {
         uptime: c.uptime,
       };
     });
-    console.log(res);
+    // console.log(res);
 
     return sendInteractionMessage(interaction, {
       embeds: [
         new EmbedBuilder()
           .setTitle("Cluster Status")
+          .setDescription(
+           "command is disabled for now, will be added later"
+          )
       ],
     });
 

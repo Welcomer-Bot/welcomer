@@ -18,7 +18,6 @@ export default class GuildMemberRemove implements EventType {
       var guilds = await getGuild(guild.id);
       if (guilds) {
         goodbyeCard(member, guild, guilds, client);
-        console.log(guilds);
         if (!guilds.goodbyeer.enabled) return;
         addMemberGoodbye(guild);
       } else {

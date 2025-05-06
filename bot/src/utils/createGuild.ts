@@ -28,6 +28,6 @@ export const createOrUpdateGuild = async (guild: {
         return { error: "Failed to update guild" };
       });
   } catch (error) {
-    console.log(error);
+    console.log("Failed to update guild", error);
   }
 };

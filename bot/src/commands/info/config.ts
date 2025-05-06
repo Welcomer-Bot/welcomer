@@ -1,10 +1,13 @@
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
   ChatInputCommandInteraction,
   EmbedBuilder,
   SlashCommandBuilder,
 } from "discord.js";
 import { CommandType } from "../../types";
 import { sendInteractionMessage } from "../../utils/messages";
+import { dashButton } from "src/utils/buttons";
 
 export default class implements CommandType {
   name = "config";
@@ -14,15 +17,21 @@ export default class implements CommandType {
     .setDescription(this.description);
   async execute(interaction: ChatInputCommandInteraction): Promise<void> {
     let embed = new EmbedBuilder()
-      .setTitle(`Currently in development`)
-      .setDescription('This command is currently disabled, you can edit the config in the [dashboard](https://welcomer.app/dashboard)')
-      .setColor(`#FF0000`)
+      .setTitle(`Configure Welcomer with its dashboard !`)
+      .setURL(`https://welcomer.app/dashboard`)
+      .setDescription(`# How to edit the bot's configuration ?
+1. Go to the [dashboard](https://welcomer.app/dashboard) ( click on this link or in the button below )
+2. Select your server
+3. Edit the configuration
+4. Save the configuration
+5. Done !
+        `)
       .setFooter({
         text: `Requested by ${interaction.user.tag}`,
         iconURL: interaction.user.displayAvatarURL(),
       })
       .setTimestamp();
     // await createGuild(interaction.guild!)
-    await sendInteractionMessage(interaction, { embeds: [embed] });
+    await sendInteractionMessage(interaction, { embeds: [embed], components: [new ActionRowBuilder<ButtonBuilder>().addComponents(dashButton)] });
   }
 }
