@@ -163,7 +163,7 @@ export async function formatMessage(
   const messageValidated = MessageSchema.safeParse(message);
 
   if (!messageValidated.success) {
-    console.log(messageValidated.error.errors);
+    // console.log(messageValidated.error.errors);
     throw new Error(
       `Message validation failed: ${messageValidated.error.errors.join(", ")}`
     );

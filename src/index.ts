@@ -78,6 +78,10 @@ manager.on("clusterCreate", (cluster) => {
   cluster.on("resumed", () => {
     logger.status(cluster, "resumed");
   });
+  process.on("exit", async (code) => {
+    console.log(`About to exit with code: ${code}`)
+    logger.error(new Error(`Process exited with code ${code} on cluster ${cluster.id}`));
+  });
 });
 
 manager.on("clusterReady", (cluster) => {
@@ -132,3 +136,8 @@ process.on("unhandledRejection", (error) => {
 process.on("uncaughtException", (error) => {
   console.error(error);
 });
+
+process.on("exit", async (code) => {
+  console.log(`About to exit with code: ${code}`);
+  logger.error(new Error(`Process exited with code ${code}`));
+})

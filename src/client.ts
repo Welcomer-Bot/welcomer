@@ -18,6 +18,11 @@ process.on("unhandledRejection", (error) => {
   console.error(error);
 });
 
+process.on("exit", async (code) => {
+  console.log(`About to exit with code: ${code}`);
+  client.logger.error(new Error(`Process exited with code ${code}`));
+});
+
 process.on("uncaughtException", (error) => {
   console.error(error);
 });

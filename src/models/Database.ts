@@ -235,7 +235,7 @@ export default class Database extends PrismaClient {
         period
       );
       for (const currentStat of currentStats) {
-        console.log(currentStat);
+        // console.log(currentStat);
         await this.guildStats.create({
           data: {
             guildId: currentStat.guildId,

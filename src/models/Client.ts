@@ -240,19 +240,19 @@ export default class WelcomerClient extends Client {
     }
   }
 
-  public async getClusterShardData(): Promise<void> {
-    try {
-      const shardData = await this.cluster.broadcastEval((client) => {
-        return {
-          clusterId: client.cluster.id, // Current cluster ID
-          shardId: client.shard?.ids[0] ?? null, // Current shard ID
-          guildCount: client.guilds.cache.size, // Number of guilds in this shard
-        };
-      });
+  // public async getClusterShardData(): Promise<void> {
+  //   try {
+  //     const shardData = await this.cluster.broadcastEval((client) => {
+  //       return {
+  //         clusterId: client.cluster.id, // Current cluster ID
+  //         shardId: client.shard?.ids[0] ?? null, // Current shard ID
+  //         guildCount: client.guilds.cache.size, // Number of guilds in this shard
+  //       };
+  //     });
 
-      console.log("Shard Data Across Clusters:", shardData);
-    } catch (error) {
-      console.error("Failed to fetch shard data across clusters:", error);
-    }
-  }
+  //     // console.log("Shard Data Across Clusters:", shardData);
+  //   } catch (error) {
+  //     console.error("Failed to fetch shard data across clusters:", error);
+  //   }
+  // }
 }
