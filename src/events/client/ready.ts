@@ -1,9 +1,5 @@
 import { REST } from "@discordjs/rest";
-import {
-  ActivityType,
-  RESTPostAPIApplicationCommandsJSONBody,
-  Routes,
-} from "discord.js";
+import { RESTPostAPIApplicationCommandsJSONBody, Routes } from "discord.js";
 import WelcomerClient, { API_URL, SERVER_TOKEN } from "../../models/Client";
 import { EventType } from "../../types";
 import { waitForManager } from "../../utils/functions";
@@ -30,7 +26,7 @@ export default class ReadyEvent implements EventType {
       ];
 
       const message = messages[Math.floor(Math.random() * messages.length)]!;
-      client.user?.setActivity(message, { type: ActivityType.Watching });
+      client.user?.setActivity(message);
     }
 
     async function fetchClusterShardData() {
@@ -66,7 +62,7 @@ export default class ReadyEvent implements EventType {
         }),
       };
     }
-    
+
     async function postShardStats() {
       const shardData = await fetchClusterShardData();
       await fetch(API_URL + "/api/status/shard", {

@@ -49,6 +49,12 @@ export default class Logger {
   }
 
   public status(cluster: Cluster, status: string): void {
+    console.log(
+      "process",
+      process.env.NODE_ENV,
+      "process.env.NODE_ENV !== production",
+      process.env.NODE_ENV !== "production"
+    );
     if (process.env.NODE_ENV !== "production") return;
     const embed = new StatusEmbed(
       cluster.id,

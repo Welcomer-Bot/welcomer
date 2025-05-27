@@ -35,6 +35,8 @@ const logger = new Logger(
   process.env.ADD_REMOVE_WEBHOOK
 );
 
+console.log("Node env is", process.env.NODE_ENV);
+
 new CronHandler(new Database(logger));
 
 const shardsPerClusters = parseInt(process.env.SHARDS_PER_CLUSTER || "10");
