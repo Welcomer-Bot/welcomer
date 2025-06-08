@@ -1,6 +1,7 @@
 import type { Guild, WebSocketShard } from "discord.js";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import WelcomerClient from "./Client";
+import { getChannelsPermissions, getGuildPermissions } from "../utils/permissions";
 
 interface ShardStats {
   id: number;
@@ -42,21 +43,31 @@ export default class Server {
     return results as unknown as ShardStats[];
   }
 
-  private initializeRoutes(): void {
-    this.app.get("/status", async (req: Request, res: Response) => {
-      if (req.headers.authorization !== process.env.SERVER_TOKEN)
-        return res.status(401).json({ error: "Unauthorized" });
-      try {
-        const stats = await this.getRequestStats();
-        res.json(stats);
-      } catch {
-        res.status(500).json({ error: "Failed to fetch stats" });
-      }
-    });
+  private async isAuthorized(req: Request, res: Response, next: NextFunction ): Promise<boolean> {
+    const token = req.headers.authorization;
+    if (token !== process.env.SERVER_TOKEN) {
+      res.status(401).json({ error: "Unauthorized" });
+      return false;
+    }
+    next();
+    return true;
+  }
 
-    this.app.get("/channels", async (req: Request, res: Response) => {
-      if (req.headers.authorization !== process.env.SERVER_TOKEN)
-        return res.status(401).json({ error: "Unauthorized" });
+  private initializeRoutes(): void {
+    this.app.get(
+      "/status",
+      this.isAuthorized,
+      async (req: Request, res: Response) => {
+        try {
+          const stats = await this.getRequestStats();
+          res.json(stats);
+        } catch {
+          res.status(500).json({ error: "Failed to fetch stats" });
+        }
+      }
+    );
+
+    this.app.get("/channels", this.isAuthorized, async (req: Request, res: Response) => {
       const guildId = req.query.guildId as string;
       if (!guildId)
         return res.status(400).json({ error: "Guild ID is required" });
@@ -77,7 +88,29 @@ export default class Server {
         status: this.client.ws.shards.get(shard)?.status,
       });
     });
+
+    this.app.get("/guild/:id/channels/permissions/",this.isAuthorized, async (req: Request, res: Response) => { 
+      const guildId = req.params.id;
+      if (!guildId)
+        return res.status(400).json({ error: "Guild ID is required" });
+      const channelsPermissions = await getChannelsPermissions(this.client, guildId);
+      if (!channelsPermissions)
+        return res.status(404).json({ error: "Guild not found or no channels" });
+      return res.json(channelsPermissions);
+    })
+
+
+    this.app.get("/guild/:id/permissions", this.isAuthorized, async (req: Request, res: Response) => {
+      const guildId = req.params.id;
+      if (!guildId)
+        return res.status(400).json({ error: "Guild ID is required" });
+      const permissions = await getGuildPermissions(this.client, guildId);
+      if (!permissions)
+        return res.status(404).json({ error: "Guild not found" });
+      return res.json(permissions);
+    });
   }
+
 
   public startServer(): void {
     this.app.listen(this.port, () => {
