@@ -20,10 +20,8 @@ export async function getGuildPermissions(client: WelcomerClient, guildId: strin
   const guild = await client.guilds.fetch(guildId);
   if (!guild) return null;
 
-  const permissions = guild.members.me?.permissions
+  const permissions = guild.members.me?.permissions.toJSON()
   return {
-    id: guild.id,
-    name: guild.name,
     permissions,
   };
 }
