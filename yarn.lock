@@ -676,10 +676,10 @@
   dependencies:
     "@prisma/debug" "6.5.0"
 
-"@prisma/instrumentation@6.8.2":
-  version "6.8.2"
-  resolved "https://registry.yarnpkg.com/@prisma/instrumentation/-/instrumentation-6.8.2.tgz#77a87a37f67ab35eaaf8ff629f889e9e11a465ac"
-  integrity sha512-5NCTbZjw7a+WIZ/ey6G8SY+YKcyM2zBF0hOT1muvqC9TbVtTCr5Qv3RL/2iNDOzLUHEvo4I1uEfioyfuNOGK8Q==
+"@prisma/instrumentation@6.10.1":
+  version "6.10.1"
+  resolved "https://registry.yarnpkg.com/@prisma/instrumentation/-/instrumentation-6.10.1.tgz#805f0dcdc29638009f0da709828396894815c893"
+  integrity sha512-JC8qzgEDuFKjuBsqrZvXHINUb12psnE6Qy3q5p2MBhalC1KW1MBBUwuonx6iS5TCfCdtNslHft8uc2r+EdLWWg==
   dependencies:
     "@opentelemetry/instrumentation" "^0.52.0 || ^0.53.0 || ^0.54.0 || ^0.55.0 || ^0.56.0 || ^0.57.0"
 
@@ -934,15 +934,15 @@
     "@sentry/cli-win32-i686" "2.46.0"
     "@sentry/cli-win32-x64" "2.46.0"
 
-"@sentry/core@9.24.0":
-  version "9.24.0"
-  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-9.24.0.tgz#a8a8681df9818f7dbf23b27a319a1ef4e1c48076"
-  integrity sha512-uRWrB4Y49ZOWcDLCXqdjd2Fs6Onill0GQI+JgXMw7wa+i03+QRiQvUAUyde8O62jR4dvP3GDo9PDWnDNhi3z5A==
+"@sentry/core@9.33.0":
+  version "9.33.0"
+  resolved "https://registry.yarnpkg.com/@sentry/core/-/core-9.33.0.tgz#34870c1c5248639e2b1453be57ad7cdb039e9d3a"
+  integrity sha512-0mtJAU+x10+q5aV/txyeuPjJ0TmObcD701R0tY0s71yJJOltqqMrmgNpqyuMI/VOASuzTZesiMYdbG6xb3zeSw==
 
-"@sentry/node@9.24.0", "@sentry/node@^9.10.1":
-  version "9.24.0"
-  resolved "https://registry.yarnpkg.com/@sentry/node/-/node-9.24.0.tgz#ade357634b535f2da86a81f704d0f8261e299160"
-  integrity sha512-rIe8rLCdPi/9VWkoRlXRCbjpNlKhHeS8EqlT40ZwlWxdJl5WOcktq3mIWcV2oTqupWogDImjQgeCeydXWt5aog==
+"@sentry/node@9.33.0", "@sentry/node@^9.10.1":
+  version "9.33.0"
+  resolved "https://registry.yarnpkg.com/@sentry/node/-/node-9.33.0.tgz#6f8eab71e2842d2926872d56b471970dbe100ff9"
+  integrity sha512-LkofyN1Ig+z8jXtm7eGpXga7sVMY/R42I+aJhwYtOgVkfQorDj3653ZF+IlemBZgb15vo2z3oJpeAjtqbm2rDg==
   dependencies:
     "@opentelemetry/api" "^1.9.0"
     "@opentelemetry/context-async-hooks" "^1.30.1"
@@ -973,27 +973,27 @@
     "@opentelemetry/resources" "^1.30.1"
     "@opentelemetry/sdk-trace-base" "^1.30.1"
     "@opentelemetry/semantic-conventions" "^1.34.0"
-    "@prisma/instrumentation" "6.8.2"
-    "@sentry/core" "9.24.0"
-    "@sentry/opentelemetry" "9.24.0"
-    import-in-the-middle "^1.13.1"
+    "@prisma/instrumentation" "6.10.1"
+    "@sentry/core" "9.33.0"
+    "@sentry/opentelemetry" "9.33.0"
+    import-in-the-middle "^1.14.2"
     minimatch "^9.0.0"
 
-"@sentry/opentelemetry@9.24.0":
-  version "9.24.0"
-  resolved "https://registry.yarnpkg.com/@sentry/opentelemetry/-/opentelemetry-9.24.0.tgz#57f2d99a95e4e54066894e84d52f4491f1bcdc43"
-  integrity sha512-bdXXwBLuIS127CjMveizBbgBKQEGlL3Ye8LxHCKqvifNK9BXgXGPnh6bHum/EgskWqx4ni/aET1h4f1kluql5A==
+"@sentry/opentelemetry@9.33.0":
+  version "9.33.0"
+  resolved "https://registry.yarnpkg.com/@sentry/opentelemetry/-/opentelemetry-9.33.0.tgz#737e340c73136338795c30b7270b303065bdae98"
+  integrity sha512-AYOYEvZd0XBIh+0kROq3ka7nE06pax0wezB6kXsyHlrP48N1x3+jO3rTLmbXfmU97CkVnHHfqi4MY4dBwWxW5g==
   dependencies:
-    "@sentry/core" "9.24.0"
+    "@sentry/core" "9.33.0"
 
-"@sentry/profiling-node@^9.24.0":
-  version "9.24.0"
-  resolved "https://registry.yarnpkg.com/@sentry/profiling-node/-/profiling-node-9.24.0.tgz#a3f853410fe999b6954c8736dbbeb46e09129b3d"
-  integrity sha512-r4fx/0HtWltqR9xEdKtU2bfvqy8L5MgYiqIo9sHmQ91y4NJzCZEsavy+l2iD2jD+zvFgKx59OMX7VBqmAXjc7A==
+"@sentry/profiling-node@^9.33.0":
+  version "9.33.0"
+  resolved "https://registry.yarnpkg.com/@sentry/profiling-node/-/profiling-node-9.33.0.tgz#57599654905f3b4370577b532baa2f701467dac9"
+  integrity sha512-PMz0izruhbfPq28I04xYqnrSkbZi5ZzTEyzoI+w2WvZaplQPBC5RwF+l01FK550JHpsutWqQFw9EHOZFwo5knQ==
   dependencies:
     "@sentry-internal/node-cpu-profiler" "^2.2.0"
-    "@sentry/core" "9.24.0"
-    "@sentry/node" "9.24.0"
+    "@sentry/core" "9.33.0"
+    "@sentry/node" "9.33.0"
 
 "@sideway/address@^4.1.5":
   version "4.1.5"
@@ -2197,10 +2197,10 @@ import-fresh@^3.2.1:
     parent-module "^1.0.0"
     resolve-from "^4.0.0"
 
-import-in-the-middle@^1.13.1:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/import-in-the-middle/-/import-in-the-middle-1.14.0.tgz#c9b6cd3400718ff0acbbf5c870adf708bbf5ef39"
-  integrity sha512-g5zLT0HaztRJWysayWYiUq/7E5H825QIiecMD2pI5QO7Wzr847l6GDvPvmZaDIdrDtS2w7qRczywxiK6SL5vRw==
+import-in-the-middle@^1.14.2:
+  version "1.14.2"
+  resolved "https://registry.yarnpkg.com/import-in-the-middle/-/import-in-the-middle-1.14.2.tgz#283661625a88ff7c0462bd2984f77715c3bc967c"
+  integrity sha512-5tCuY9BV8ujfOpwtAGgsTx9CGUapcFMEEyByLv1B+v2+6DhAcw+Zr0nhQT7uwaZ7DiourxFEscghOR8e1aPLQw==
   dependencies:
     acorn "^8.14.0"
     acorn-import-attributes "^1.9.5"
