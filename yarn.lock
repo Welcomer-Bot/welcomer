@@ -1614,10 +1614,10 @@ discord-api-types@^0.37.114, discord-api-types@^0.37.119:
   resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.37.119.tgz#29e32f635351da32dd4c92defcafdeb65156ad33"
   integrity sha512-WasbGFXEB+VQWXlo6IpW3oUv73Yuau1Ig4AZF/m13tXcTKnMpc/mHjpztIlz4+BM9FG9BHQkEXiPto3bKduQUg==
 
-discord-api-types@^0.38.9:
-  version "0.38.9"
-  resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.38.9.tgz#c5622b406f50d8216fa5a1cba5ba54b43d7d9331"
-  integrity sha512-LaVbou3fYrRbploSUNAWnyXBmUmVfH4FrQ8W2AVA7f/hUSPcUtkc1bDjELt2wrbIDBbSI4uMo/d/HxeIz7JvoQ==
+discord-api-types@^0.38.24:
+  version "0.38.24"
+  resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.38.24.tgz#b11018707725eef0c9666f7509cca8647e02397a"
+  integrity sha512-P7/DkcFIiIoaBogStnhhcGRX7KR+gIFp0SpmwsZUIM0bgDkYMEUx+8l+t3quYc/KSgg92wvE9w/4mabO57EMug==
 
 discord-hybrid-sharding@^2.2.4:
   version "2.2.6"
