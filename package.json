@@ -36,7 +36,7 @@
     "@welcomer-bot/card-canvas": "^0.2.4",
     "canvas": "^3.1.0",
     "canvas-txt": "4.1.1",
-    "discord-api-types": "^0.38.9",
+    "discord-api-types": "^0.38.30",
     "discord-hybrid-sharding": "^2.2.4",
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",
