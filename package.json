@@ -10,7 +10,7 @@
     "watch": "tsc --watch",
     "dev": "npm run watch | nodemon dist/index.js",
     "lint": "eslint src --fix",
-    "updates": "yarn upgrade --latest"
+    "upydates": "yarn upgrade --latest"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
