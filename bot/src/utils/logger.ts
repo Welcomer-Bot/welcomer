@@ -1,21 +1,34 @@
 import { APIEmbed, CommandInteraction, Embed } from "discord.js";
 
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, WebhookClient } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  EmbedBuilder,
+  WebhookClient,
+} from "discord.js";
 
 /**
  * @param {Client} client
  */
 
-const log_hook = new WebhookClient({ url: process.env.LOGS_WEBHOOK! });
-const addRemoveHook = new WebhookClient({
-  url: process.env.ADD_REMOVE_WEBHOOK!,
-});
-const statusHook = new WebhookClient({ url: process.env.STATUS_WEBHOOK! });
+let log_hook: WebhookClient;
+let addRemoveHook: WebhookClient;
+let statusHook: WebhookClient;
+
+function initHooks() {
+  if (!log_hook) {
+    log_hook = new WebhookClient({ url: process.env.LOGS_WEBHOOK! });
+    addRemoveHook = new WebhookClient({ url: process.env.ADD_REMOVE_WEBHOOK! });
+    statusHook = new WebhookClient({ url: process.env.STATUS_WEBHOOK! });
+  }
+}
 
 export const error = (
   message: Error,
   interaction?: CommandInteraction
 ): void => {
+  initHooks();
   try {
     const embed = new EmbedBuilder()
       .setTitle(
@@ -83,6 +96,7 @@ export const error = (
 };
 
 export const log = (message: string, interaction: CommandInteraction) => {
+  initHooks();
   try {
     const embed = new EmbedBuilder()
       .setTitle(`Log: ${message}`)
@@ -92,7 +106,9 @@ export const log = (message: string, interaction: CommandInteraction) => {
       embed.addFields(
         {
           name: "From",
-          value: `${interaction.guild?.name || "Unknown Guild"} (${interaction.guild?.id})`,
+          value: `${interaction.guild?.name || "Unknown Guild"} (${
+            interaction.guild?.id
+          })`,
         },
         {
           name: "Triggered by",
@@ -109,6 +125,7 @@ export const log = (message: string, interaction: CommandInteraction) => {
   }
 };
 export const llog = (message: any) => {
+  initHooks();
   try {
     let getSecondsSinceEpoch = (x = new Date()) => (x.getTime() / 1000) | 0;
 
@@ -121,6 +138,7 @@ export const llog = (message: any) => {
   }
 };
 export const addedGuildMessage = (embed: Embed) => {
+  initHooks();
   try {
     addRemoveHook.send({ embeds: [embed] });
   } catch (e) {
@@ -128,6 +146,7 @@ export const addedGuildMessage = (embed: Embed) => {
   }
 };
 export const removedGuildMessage = (embed: Embed | APIEmbed) => {
+  initHooks();
   try {
     addRemoveHook.send({ embeds: [embed] });
   } catch (e) {
@@ -143,6 +162,7 @@ export const logStatus = ({
   shardId: number | string;
   status: string;
 }) => {
+  initHooks();
   if (process.env.NODE_ENV === "development") return;
   if (status === "starting") {
     statusHook.send({
@@ -150,7 +170,7 @@ export const logStatus = ({
         {
           title: `Welcomer is Starting -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        } shards ${shardId} are starting`,
+          } shards ${shardId} are starting`,
           timestamp: new Date().toISOString(),
         },
       ],
@@ -162,7 +182,7 @@ export const logStatus = ({
         {
           title: `Welcomer is Online -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        } shards ${shardId} are online`,
+          } shards ${shardId} are online`,
           color: 65280,
           timestamp: new Date().toISOString(),
         },
@@ -175,7 +195,7 @@ export const logStatus = ({
         {
           title: `Welcomer is partially offline -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        } shards ${shardId} are offline`,
+          } shards ${shardId} are offline`,
           color: 16711680,
           timestamp: new Date().toISOString(),
         },
@@ -188,7 +208,7 @@ export const logStatus = ({
         {
           title: `Welcomer is partially offline -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        } shards ${shardId} are reconnecting`,
+          } shards ${shardId} are reconnecting`,
           color: 16737024,
           timestamp: new Date().toISOString(),
         },
@@ -201,7 +221,7 @@ export const logStatus = ({
         {
           title: `Welcomer is Online -- ${
             clusterId ? `cluster ${clusterId},` : ""
-        } shards ${shardId} ares resumed`,
+          } shards ${shardId} ares resumed`,
           color: 65280,
           timestamp: new Date().toISOString(),
         },
@@ -211,5 +231,6 @@ export const logStatus = ({
   console.log(
     `Status: ${status} on ${
       clusterId ? `cluster ${clusterId},` : ""
-    } shards ${shardId}`);
+    } shards ${shardId}`
+  );
 };

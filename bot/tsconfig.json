@@ -1,23 +1,21 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "ESNext",
+        "module": "CommonJS",
         "lib": ["ESNext"],
-        "moduleResolution": "Node",
+        "moduleResolution": "node10",
         "outDir": "./dist",
         "rootDir": "./src",
-        "baseUrl": ".",
         "allowJs": true,
-        "noEmit": true,
+        "noEmit": false,
         "skipLibCheck": true,
         "importHelpers": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
-        "allowImportingTsExtensions": true,
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames": true,
         "types": [ "node", "ws" ] // @types/node + @types/ws for showing the types...
     },
     "include": [ "src/**/*.ts" ],
-    "exclude": [ "node_modules", "dist", ]
+    "exclude": [ "node_modules" ]
   }

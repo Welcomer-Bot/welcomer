@@ -6,8 +6,8 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { CommandType } from "../../types";
+import { dashButton } from "../../utils/buttons";
 import { sendInteractionMessage } from "../../utils/messages";
-import { dashButton } from "src/utils/buttons";
 
 export default class implements CommandType {
   name = "config";
@@ -19,19 +19,26 @@ export default class implements CommandType {
     let embed = new EmbedBuilder()
       .setTitle(`Configure Welcomer with its dashboard !`)
       .setURL(`https://welcomer.app/dashboard`)
-      .setDescription(`# How to edit the bot's configuration ?
+      .setDescription(
+        `# How to edit the bot's configuration ?
 1. Go to the [dashboard](https://welcomer.app/dashboard) ( click on this link or in the button below )
 2. Select your server
 3. Edit the configuration
 4. Save the configuration
 5. Done !
-        `)
+        `
+      )
       .setFooter({
         text: `Requested by ${interaction.user.tag}`,
         iconURL: interaction.user.displayAvatarURL(),
       })
       .setTimestamp();
     // await createGuild(interaction.guild!)
-    await sendInteractionMessage(interaction, { embeds: [embed], components: [new ActionRowBuilder<ButtonBuilder>().addComponents(dashButton)] });
+    await sendInteractionMessage(interaction, {
+      embeds: [embed],
+      components: [
+        new ActionRowBuilder<ButtonBuilder>().addComponents(dashButton),
+      ],
+    });
   }
 }

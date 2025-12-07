@@ -1,9 +1,9 @@
 {
   "name": "bot",
   "version": "1.0.0",
+  "type": "commonjs",
   "main": "dist/index.js",
   "license": "MIT",
-  "exports": "./dist/index.mjs",
   "scripts": {
     "dev": "export NODE_ENV=development && nodemon",
     "start": "npx tsx ./src/index.ts",

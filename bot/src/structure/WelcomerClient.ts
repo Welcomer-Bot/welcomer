@@ -51,6 +51,20 @@ export default class WelcomerClient extends Client {
         ...Options.DefaultMakeCacheSettings,
         MessageManager: 0,
         ReactionManager: 0,
+        PresenceManager: 0,
+        DMMessageManager: 0,
+        GuildMessageManager: 0,
+        ThreadMemberManager: 0,
+        AutoModerationRuleManager: 0,
+        BaseGuildEmojiManager: 0,
+        EntitlementManager: 0,
+        GuildBanManager: {
+          maxSize: 1,
+        },
+        GuildForumThreadManager: 0,
+        GuildInviteManager: 0,
+        GuildTextThreadManager: 0,
+        VoiceStateManager: 0,
         GuildMemberManager: {
           maxSize: 1,
           keepOverLimit: (member) => member.id === member.client.user.id,
@@ -64,7 +78,11 @@ export default class WelcomerClient extends Client {
         },
         users: {
           interval: 3_600, // Every hour.
-          filter: () => (user) => user.bot && user.id !== user.client.user.id, // Remove all bots.
+          filter: () => (user) => user.id !== user.client.user.id, // Remove all bots.
+        },
+        guildMembers: {
+          interval: 1_600, // Every 30 min.
+          filter: () => (member) => member.id !== member.client.user.id, // Remove all bots.
         },
       },
     });
@@ -100,7 +118,7 @@ export default class WelcomerClient extends Client {
 
     let commands_array: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     let command_admin: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
-    let files = await loadFiles(`src/commands`);
+    let files = await loadFiles(`dist/commands`);
 
     try {
       for (let file of files) {
@@ -121,7 +139,7 @@ export default class WelcomerClient extends Client {
   public async loadEvents(): Promise<void> {
     this.events.clear();
     let events = new Array();
-    let files = await loadFiles("src/events");
+    let files = await loadFiles("dist/events");
     for (let file of files) {
       try {
         let eventFile = require(file).default;
@@ -148,7 +166,7 @@ export default class WelcomerClient extends Client {
   public async loadModals(): Promise<void> {
     this.modals.clear();
 
-    let files = await loadFiles(`src/modals`);
+    let files = await loadFiles(`dist/modals`);
     try {
       files.forEach((file) => {
         const modalFile = require(file).default;
@@ -169,7 +187,7 @@ export default class WelcomerClient extends Client {
   public async loadSelectMenus(): Promise<void> {
     this.selectMenus.clear();
 
-    let files = await loadFiles(`src/selectMenus`);
+    let files = await loadFiles(`dist/selectMenus`);
     for (let file of files) {
       try {
         let selectMenuFile = require(file).default;
@@ -190,7 +208,7 @@ export default class WelcomerClient extends Client {
   public async loadButtons(): Promise<void> {
     this.buttons.clear();
 
-    let files = await loadFiles(`src/buttons`);
+    let files = await loadFiles(`dist/buttons`);
     for (let file of files) {
       try {
         let buttonFile = require(file).default;
