@@ -5,8 +5,9 @@
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
+    "build": "tsc --build",
     "dev": "export NODE_ENV=development && nodemon",
-    "start": "npx tsx ./src/index.ts",
+    "start": "node ./dist/index.js",
     "prod": "export NODE_ENV=production && yarn start"
   },
   "devDependencies": {
@@ -15,7 +16,7 @@
     "pkgroll": "^2.6.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "canvas": "^3.0.0",

@@ -10,7 +10,7 @@ import {
 import dotenv from "dotenv";
 import path from "path";
 import { logStatus } from "./utils/logger";
-dotenv.config({ path: path.join(__dirname, "../../.env") });
+dotenv.config();
 console.log(
   "TOKEN loaded:",
   !!process.env.TOKEN,

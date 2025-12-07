@@ -57,7 +57,6 @@ export default class WelcomerClient extends Client {
         ThreadMemberManager: 0,
         AutoModerationRuleManager: 0,
         BaseGuildEmojiManager: 0,
-        EntitlementManager: 0,
         GuildBanManager: {
           maxSize: 1,
         },
