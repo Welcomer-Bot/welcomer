@@ -8,7 +8,7 @@ export const createOrUpdateGuild = async (guild: Guild) => {
       method: "POST",
       headers: new Headers({
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.TOKEN}`,
+        Authorization: `Bearer ${process.env.SERVER_TOKEN}`,
       }),
       body: JSON.stringify({
         guild: {
