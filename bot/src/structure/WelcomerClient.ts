@@ -130,12 +130,21 @@ export default class WelcomerClient extends Client {
         }
         this.commands.set(command.data.name.toLowerCase(), command);
       }
+      
+      // Clear temporary arrays to free memory
+      commands_array = [];
+      command_admin = [];
+      files = [];
     } catch (e) {
       console.error("An error occured on loadCommands!", e);
     }
   }
 
   public async loadEvents(): Promise<void> {
+    // Remove all existing event listeners before reloading
+    this.removeAllListeners();
+    this.cluster.removeAllListeners();
+
     this.events.clear();
     let events = new Array();
     let files = await loadFiles("dist/events");
@@ -160,6 +169,10 @@ export default class WelcomerClient extends Client {
     }
     console.log(`Loaded ${events.length} events.`);
     console.table(events);
+    
+    // Clear temporary arrays to free memory
+    events = [];
+    files = [];
   }
 
   public async loadModals(): Promise<void> {
@@ -178,6 +191,9 @@ export default class WelcomerClient extends Client {
           this.modals.set(modal.customId, modal);
         }
       });
+      
+      // Clear temporary array to free memory
+      files = [];
     } catch (e) {
       console.error("An error occured on loadModals!" + e);
     }
@@ -202,6 +218,9 @@ export default class WelcomerClient extends Client {
         console.error("An error occured on loadSelectMenus!" + e);
       }
     }
+    
+    // Clear temporary array to free memory
+    files = [];
   }
 
   public async loadButtons(): Promise<void> {
@@ -217,5 +236,8 @@ export default class WelcomerClient extends Client {
         console.error("An error occured on loadButtons!" + e);
       }
     }
+    
+    // Clear temporary array to free memory
+    files = [];
   }
 }

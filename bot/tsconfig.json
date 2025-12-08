@@ -1,9 +1,9 @@
 {
     "compilerOptions": {
         "target": "ESNext",
-        "module": "CommonJS",
+        "module": "nodenext",
         "lib": ["ESNext"],
-        "moduleResolution": "node10",
+        "moduleResolution": "nodenext",
         "outDir": "./dist",
         "rootDir": "./src",
         "allowJs": true,
