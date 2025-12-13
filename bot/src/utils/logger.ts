@@ -177,9 +177,25 @@ export const logStatus = ({
   shardId: number | string;
   status: string;
 }) => {
+  console.log(
+    `Status: ${status} on ${
+      clusterId ? `cluster ${clusterId},` : ""
+    } shards ${shardId}`
+  );
+  
   initHooks();
-  if (process.env.NODE_ENV === "development") return;
+  if (process.env.NODE_ENV === "development") {
+    console.log("Development mode, skipping webhook");
+    return;
+  }
+  
+  if (!statusHook) {
+    console.error("statusHook not initialized!");
+    return;
+  }
+  
   if (status === "starting") {
+    console.log("Sending 'starting' webhook...");
     statusHook.send({
       embeds: [
         {
@@ -189,9 +205,10 @@ export const logStatus = ({
           timestamp: new Date().toISOString(),
         },
       ],
-    });
+    }).catch(err => console.error("Failed to send starting webhook:", err));
   }
   if (status === "online") {
+    console.log("Sending 'online' webhook...");
     statusHook.send({
       embeds: [
         {
@@ -202,9 +219,10 @@ export const logStatus = ({
           timestamp: new Date().toISOString(),
         },
       ],
-    });
+    }).catch(err => console.error("Failed to send online webhook:", err));
   }
   if (status === "death") {
+    console.log("Sending 'death' webhook...");
     statusHook.send({
       embeds: [
         {
@@ -215,9 +233,10 @@ export const logStatus = ({
           timestamp: new Date().toISOString(),
         },
       ],
-    });
+    }).catch(err => console.error("Failed to send death webhook:", err));
   }
   if (status === "reconnecting") {
+    console.log("Sending 'reconnecting' webhook...");
     statusHook.send({
       embeds: [
         {
@@ -228,9 +247,10 @@ export const logStatus = ({
           timestamp: new Date().toISOString(),
         },
       ],
-    });
+    }).catch(err => console.error("Failed to send reconnecting webhook:", err));
   }
   if (status === "resumed") {
+    console.log("Sending 'resumed' webhook...");
     statusHook.send({
       embeds: [
         {
@@ -241,11 +261,6 @@ export const logStatus = ({
           timestamp: new Date().toISOString(),
         },
       ],
-    });
+    }).catch(err => console.error("Failed to send resumed webhook:", err));
   }
-  console.log(
-    `Status: ${status} on ${
-      clusterId ? `cluster ${clusterId},` : ""
-    } shards ${shardId}`
-  );
 };
