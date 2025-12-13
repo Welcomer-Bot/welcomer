@@ -3,7 +3,7 @@ import {
   EmbedBuilder,
   InteractionResponse,
   Message,
-  SlashCommandBuilder
+  SlashCommandBuilder,
 } from "discord.js";
 import WelcomerClient from "../../structure/WelcomerClient";
 import { CommandType } from "../../types";
@@ -20,36 +20,40 @@ export default class ClusterStatusCommand implements CommandType {
     interaction: ChatInputCommandInteraction,
     client: WelcomerClient
   ): Promise<void | Message<boolean> | InteractionResponse<boolean>> {
-    if (!client.isReady()) {
-      return sendInteractionMessage(interaction, {
-        content: "The client is not ready yet",
+    try {
+      if (!client.isReady()) {
+        return sendInteractionMessage(interaction, {
+          content: "The client is not ready yet",
+        });
+      }
+
+      // console.log("Fetching cluster data");
+      const res = await client.cluster.broadcastEval((c) => {
+        return {
+          clusterId: c.cluster.id,
+          shardIds: [...c.cluster.ids.keys()],
+          totalGuilds: c.guilds.cache.size,
+          totalMembers: c.guilds.cache
+            .map((g) => g.memberCount)
+            .reduce((a, b) => a + b, 0),
+          ping: c.ws.ping,
+          uptime: c.uptime,
+        };
       });
+      // console.log(res);
+
+      return sendInteractionMessage(interaction, {
+        embeds: [
+          new EmbedBuilder()
+            .setTitle("Cluster Status")
+            .setDescription("command is disabled for now, will be added later"),
+        ],
+      });
+    } catch (err) {
+      console.error("Error in clusterStatus command:", err);
+      return sendInteractionMessage(interaction, {
+        content: "Failed to fetch cluster status. Please try again later.",
+      }).catch(console.error);
     }
-
-    // console.log("Fetching cluster data");
-    const res = await client.cluster.broadcastEval((c) => {
-      return {
-        clusterId: c.cluster.id,
-        shardIds: [...c.cluster.ids.keys()],
-        totalGuilds: c.guilds.cache.size,
-        totalMembers: c.guilds.cache
-          .map((g) => g.memberCount)
-          .reduce((a, b) => a + b, 0),
-        ping: c.ws.ping,
-        uptime: c.uptime,
-      };
-    });
-    // console.log(res);
-
-    return sendInteractionMessage(interaction, {
-      embeds: [
-        new EmbedBuilder()
-          .setTitle("Cluster Status")
-          .setDescription(
-           "command is disabled for now, will be added later"
-          )
-      ],
-    });
-
   }
 }

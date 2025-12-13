@@ -3,14 +3,32 @@ import WelcomerClient from "../structure/WelcomerClient";
 import { ButtonType } from "../types";
 
 export default class AutoConfigButton implements ButtonType {
-    customId: string = "autoConfigButton";
-    async execute(interaction: ButtonInteraction, client: WelcomerClient, ...options: any): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
-        const autoconfigCommand = client.commands.get("autoconfig");
+  customId: string = "autoConfigButton";
+  async execute(
+    interaction: ButtonInteraction,
+    client: WelcomerClient,
+    ...options: any
+  ): Promise<void | InteractionResponse<boolean> | Message<boolean>> {
+    try {
+      const autoconfigCommand = client.commands.get("autoconfig");
 
-        if (!autoconfigCommand) {
-            // If the command does not exist, send an error message
-            return interaction.followUp({ content: "Autoconfig command not found.", ephemeral: true });
-        }
-        await autoconfigCommand.execute(interaction, client);
+      if (!autoconfigCommand) {
+        // If the command does not exist, send an error message
+        return interaction.followUp({
+          content: "Autoconfig command not found.",
+          ephemeral: true,
+        });
+      }
+
+      await autoconfigCommand.execute(interaction, client);
+    } catch (err) {
+      console.error("Error in autoConfigButton:", err);
+      await interaction
+        .followUp({
+          content: "An error occurred while executing autoconfig.",
+          ephemeral: true,
+        })
+        .catch(console.error);
     }
+  }
 }

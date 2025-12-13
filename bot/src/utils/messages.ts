@@ -26,9 +26,11 @@ export const sendInteractionMessage = async (
   interaction: Exclude<Interaction, AutocompleteInteraction>,
   message: InteractionReplyOptions = baseMessage,
   follow: Boolean = false
-): Promise<Message<boolean> | InteractionResponse> => {
-  if (!interaction || !message)
-    throw new Error("Missing parameters for sendInteractionMessage");
+): Promise<Message<boolean> | InteractionResponse | null> => {
+  if (!interaction || !message) {
+    console.error("Missing parameters for sendInteractionMessage");
+    return null;
+  }
   try {
     if (follow) {
       return await interaction.followUp({ ...message, fetchReply: true });
@@ -40,9 +42,8 @@ export const sendInteractionMessage = async (
       return await interaction.reply(message);
     }
   } catch (error) {
-    throw new Error(
-      "An error occured in sendInteractionMessage function ! " + error
-    );
+    console.error("Error in sendInteractionMessage:", error);
+    return null;
   }
 };
 
@@ -105,10 +106,16 @@ export const sendTempMessage = async (
       message,
       follow
     );
-    setTimeout(async () => {
-      sentMessage.delete();
-    }, time);
+    if (sentMessage) {
+      setTimeout(async () => {
+        try {
+          await sentMessage.delete();
+        } catch (deleteErr) {
+          console.error("Failed to delete temp message:", deleteErr);
+        }
+      }, time);
+    }
   } catch (error) {
-    throw `An error occured in sendTempMessage function: ${error}`;
+    console.error("Error in sendTempMessage:", error);
   }
 };

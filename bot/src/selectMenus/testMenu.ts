@@ -141,12 +141,15 @@ export default class TestMenu implements SelectMenuType {
           break;
       }
     } catch (error) {
-      console.log(error);
+      console.error("Error in testMenu execution:", error);
     }
-    sendInteractionMessage(
+
+    await sendInteractionMessage(
       interaction,
       { embeds: [InfoEmbed], ephemeral: true },
       true
-    );
+    ).catch((err) => {
+      console.error("Failed to send test menu response:", err);
+    });
   }
 }

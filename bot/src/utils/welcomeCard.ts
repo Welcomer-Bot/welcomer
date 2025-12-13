@@ -25,7 +25,6 @@ const getDefaultBackground = async (): Promise<Image> => {
       console.log("Default background image cached successfully");
     } catch (err) {
       console.error("Failed to load default background for caching:", err);
-      throw err;
     }
   }
   return cachedDefaultBackground;
@@ -70,7 +69,6 @@ const safeSend = async (
           `Failed to send fallback message for guild ${guildId}:`,
           fallbackErr.message
         );
-        throw fallbackErr;
       }
     }
   }
