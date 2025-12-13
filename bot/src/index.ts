@@ -2,6 +2,7 @@ import {
   ClusterManager,
   ClusterManagerOptions,
   fetchRecommendedShards,
+  HeartbeatManager,
   keepAliveOptions,
   ReClusterManager,
   ReClusterOptions,
@@ -55,9 +56,8 @@ const heartbeatConfig: keepAliveOptions = {
 
     manager = new ClusterManager(clientPath, managerConfig);
     console.log("ClusterManager created");
-
-    // Temporarily disable HeartbeatManager to debug
-    // manager.extend(new HeartbeatManager(heartbeatConfig));
+    
+    manager.extend(new HeartbeatManager(heartbeatConfig));
     manager.extend(new ReClusterManager());
     console.log("Extensions added");
 
