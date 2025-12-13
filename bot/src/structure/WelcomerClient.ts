@@ -35,6 +35,7 @@ export default class WelcomerClient extends Client {
   }
 
   constructor() {
+    console.log("WelcomerClient constructor started");
     super({
       presence: {
         status: "online",
@@ -85,29 +86,43 @@ export default class WelcomerClient extends Client {
         },
       },
     });
+    console.log("Discord.js Client initialized");
+
     this.cluster.on("ready", () => {
+      console.log("Cluster client ready event");
       this.managerReady = true;
     });
+
+    console.log("Starting init()...");
     this.init();
+
     this.images.set(
       "banner",
       new AttachmentBuilder("banner.png").setFile("assets/banner.png")
     );
+    console.log("WelcomerClient constructor completed");
   }
 
   public async init(): Promise<void> {
+    console.log("Loading commands...");
     this.loadCommands();
+    console.log("Loading events...");
     this.loadEvents();
+    console.log("Loading modals...");
     this.loadModals();
+    console.log("Loading select menus...");
     this.loadSelectMenus();
+    console.log("Loading buttons...");
     this.loadButtons();
 
+    console.log("Logging in to Discord...");
     this.login(process.env.TOKEN)
       .then(() => {
-        console.log("Client is starting");
+        console.log("Login successful, client is starting");
       })
       .catch((err) => {
         console.error("An error occured while starting the bot", err);
+        throw err;
       });
   }
 
@@ -130,7 +145,7 @@ export default class WelcomerClient extends Client {
         }
         this.commands.set(command.data.name.toLowerCase(), command);
       }
-      
+
       // Clear temporary arrays to free memory
       commands_array = [];
       command_admin = [];
@@ -169,7 +184,7 @@ export default class WelcomerClient extends Client {
     }
     console.log(`Loaded ${events.length} events.`);
     console.table(events);
-    
+
     // Clear temporary arrays to free memory
     events = [];
     files = [];
@@ -191,7 +206,7 @@ export default class WelcomerClient extends Client {
           this.modals.set(modal.customId, modal);
         }
       });
-      
+
       // Clear temporary array to free memory
       files = [];
     } catch (e) {
@@ -218,7 +233,7 @@ export default class WelcomerClient extends Client {
         console.error("An error occured on loadSelectMenus!" + e);
       }
     }
-    
+
     // Clear temporary array to free memory
     files = [];
   }
@@ -236,7 +251,7 @@ export default class WelcomerClient extends Client {
         console.error("An error occured on loadButtons!" + e);
       }
     }
-    
+
     // Clear temporary array to free memory
     files = [];
   }

@@ -15,6 +15,15 @@ export default class ReadyEvent implements EventType {
     console.log(
       `${client.user?.username} is ready (Cluster: ${client.cluster.id})!`
     );
+
+    // Signal to cluster manager that this cluster is ready
+    try {
+      await client.cluster.send({ ready: true });
+      console.log(`Cluster ${client.cluster.id} signaled ready to manager`);
+    } catch (err) {
+      console.error(`Failed to signal ready to cluster manager:`, err);
+    }
+
     await setStatus();
     setInterval(async () => {
       await setStatus();
