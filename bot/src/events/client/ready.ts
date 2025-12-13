@@ -9,7 +9,7 @@ import { EventType } from "../../types";
 import { waitForManager } from "../../utils/functions";
 
 export default class ReadyEvent implements EventType {
-  name = "ready";
+  name = "clientReady";
   once = true;
   async execute(client: WelcomerClient) {
     console.log(
@@ -32,7 +32,7 @@ export default class ReadyEvent implements EventType {
     }
 
     if (client.cluster.id === 0) {
-      await waitForManager(client);
+      console.log("Cluster 0 ready, loading commands...");
       client.commands.forEach((command) => {
         if (!command.data.contexts) command.data.setContexts([0]);
       });

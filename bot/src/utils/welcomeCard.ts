@@ -492,8 +492,7 @@ export const createCard = async (
   message: string,
   props: any
 ) => {
-  // Reduce canvas size for lower memory usage (from 1024x450 to 800x350)
-  const canvas = createCanvas(800, 350);
+  const canvas = createCanvas(1024, 450);
   const ctx = canvas.getContext("2d");
 
   // Load background image with fallback
@@ -525,10 +524,10 @@ export const createCard = async (
   // Configure text styling
   ctx.globalAlpha = 1;
   ctx.fillStyle = props?.color || "#000000";
-  ctx.font = "bold 48px Arial"; // Reduced from 60px
+  ctx.font = "bold 60px Arial";
   ctx.textAlign = "center";
 
-  canvasTxt.fontSize = props?.fontSize ? Math.min(props.fontSize, 48) : 48; // Cap at 48
+  canvasTxt.fontSize = props?.fontSize || 60;
   canvasTxt.fontFamily = "Arial";
   canvasTxt.fontWeight = "bold";
 
@@ -538,31 +537,30 @@ export const createCard = async (
       canvasTxt.drawText(
         ctx,
         message,
-        50, // Adjusted for new canvas size
-        canvas.height - 180,
-        canvas.width - 100,
-        canvas.height - 50
+        canvas.width - 924,
+        canvas.height - 250,
+        canvas.width - 200,
+        canvas.height - 200
       );
     } catch (textErr) {
       console.error("Failed to draw message text:", textErr);
     }
   }
 
-  // Load and draw avatar with smaller size
+  // Load and draw avatar
   let avatarImage: any = null;
   try {
-    // Reduce avatar size from 256 to 128 for memory efficiency
     avatarImage = await loadImage(
       member.displayAvatarURL({
         extension: "png",
         forceStatic: true,
-        size: 128, // Reduced from 256
+        size: 256,
       })
     );
 
-    const avatarSize = 150; // Reduced from 200
+    const avatarSize = 200;
     const x = (canvas.width - avatarSize) / 2;
-    const y = 20;
+    const y = 25;
 
     // Save context before clipping
     ctx.save();
@@ -576,7 +574,7 @@ export const createCard = async (
       0,
       Math.PI * 2
     );
-    ctx.lineWidth = 4; // Reduced from 5
+    ctx.lineWidth = 5;
     ctx.strokeStyle = "black";
     ctx.stroke();
     ctx.clip();
