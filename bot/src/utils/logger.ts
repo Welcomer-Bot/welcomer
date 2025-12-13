@@ -33,9 +33,9 @@ export const error = (
     const embed = new EmbedBuilder()
       .setTitle(
         `Error
-        \n ${message.message || message}`
+        \n ${message?.message || message || "Unknown error"}`
       )
-      .setDescription(`**${message.stack || "No description provided"}**`)
+      .setDescription(`**${message?.stack || "No description provided"}**`)
       .setColor("#ff0000")
       .setTimestamp();
     if (interaction) {
@@ -46,11 +46,11 @@ export const error = (
         },
         {
           name: "Triggered by",
-          value: interaction.user.tag,
+          value: interaction.user?.tag || "Unknown User",
         },
         {
           name: "Command",
-          value: interaction.commandName,
+          value: interaction.commandName || "Unknown",
         }
       );
     }
@@ -71,9 +71,16 @@ export const error = (
       .setColor("#ff0000")
       .setTimestamp();
 
-    log_hook.send({
-      embeds: [embed],
-    });
+    if (log_hook) {
+      log_hook
+        .send({
+          embeds: [embed],
+        })
+        .catch((err) => {
+          console.error("Failed to send error to webhook:", err.message);
+        });
+    }
+
     try {
       if (interaction) {
         interaction
@@ -81,17 +88,18 @@ export const error = (
             embeds: [userEmbed],
             components: [errorButton],
           })
-          .catch(console.error);
+          .catch((err) => {
+            console.error("Failed to edit reply with error:", err.message);
+          });
         return;
       }
     } catch (err) {
-      console.log(err);
+      console.log("Error handling interaction reply:", err);
     }
     console.error(message);
     return;
   } catch (err) {
-    console.log("Could not log message");
-    console.log(err);
+    console.log("Could not log error message:", err);
   }
 };
 
@@ -107,21 +115,28 @@ export const log = (message: string, interaction: CommandInteraction) => {
         {
           name: "From",
           value: `${interaction.guild?.name || "Unknown Guild"} (${
-            interaction.guild?.id
+            interaction.guild?.id || "Unknown"
           })`,
         },
         {
           name: "Triggered by",
-          value: `${interaction.user.tag} (${interaction.user.id})`,
+          value: `${interaction.user?.tag || "Unknown"} (${
+            interaction.user?.id || "Unknown"
+          })`,
         }
       );
     }
-    log_hook.send({
-      embeds: [embed],
-    });
+    if (log_hook) {
+      log_hook
+        .send({
+          embeds: [embed],
+        })
+        .catch((err) => {
+          console.error("Failed to send log to webhook:", err.message);
+        });
+    }
   } catch (err) {
-    console.log("Could not log message");
-    console.log(err);
+    console.log("Could not log message:", err);
   }
 };
 export const llog = (message: any) => {

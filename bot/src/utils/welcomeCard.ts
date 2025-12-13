@@ -1,9 +1,59 @@
 import { Guild, GuildMember, TextChannel } from "discord.js";
 
 import { createCanvas, loadImage } from "canvas";
-const canvasTxt = require("canvas-txt").default;
-import { AttachmentBuilder, EmbedBuilder, PermissionFlagsBits } from "discord.js";
+import {
+  AttachmentBuilder,
+  EmbedBuilder,
+  MessageCreateOptions,
+  PermissionFlagsBits,
+} from "discord.js";
 import { error } from "./logger";
+const canvasTxt = require("canvas-txt").default;
+
+/**
+ * Safely sends a message to a channel, handling file upload restrictions
+ * Falls back to sending without files if Discord error 400001 occurs
+ */
+const safeSend = async (
+  channel: TextChannel,
+  options: MessageCreateOptions,
+  guildId: string
+) => {
+  try {
+    return await channel.send(options);
+  } catch (err: any) {
+    // Handle file upload restriction error
+    if (err.code === 400001) {
+      console.warn(
+        `File uploads restricted for guild ${guildId}, sending without files`
+      );
+
+      // Remove files and image references from embeds
+      const fallbackOptions = { ...options };
+      delete fallbackOptions.files;
+
+      if (fallbackOptions.embeds && fallbackOptions.embeds.length > 0) {
+        fallbackOptions.embeds = fallbackOptions.embeds.map((embed) => {
+          // Use EmbedBuilder.from() to safely handle both EmbedBuilder and APIEmbed
+          const newEmbed = EmbedBuilder.from(embed);
+          newEmbed.setImage(null);
+          return newEmbed;
+        });
+      }
+
+      // Send fallback message without files
+      try {
+        return await channel.send(fallbackOptions);
+      } catch (fallbackErr: any) {
+        console.error(
+          `Failed to send fallback message for guild ${guildId}:`,
+          fallbackErr.message
+        );
+        throw fallbackErr;
+      }
+    }
+  }
+};
 
 export const welcomeCard = async (
   member: GuildMember,
@@ -13,132 +63,198 @@ export const welcomeCard = async (
   testchannel: TextChannel | null = null
 ) => {
   try {
-    if (guilds.welcomer) {
-      var channel = guild.channels.cache.find(
-        (channel) => channel.id === guilds.welcomer.channel
-      ) as TextChannel;
+    if (!guilds?.welcomer) return;
 
-      if (testchannel) {
-        channel = testchannel;
+    const channelId = guilds.welcomer.channel;
+    if (!channelId) {
+      console.warn(`Welcomer enabled but no channel set for guild ${guild.id}`);
+      return;
+    }
+
+    let channel = guild.channels.cache.get(channelId) as TextChannel;
+
+    if (testchannel) {
+      channel = testchannel;
+    }
+
+    if (!channel) {
+      console.warn(
+        `Welcomer channel ${channelId} not found in guild ${guild.id}`
+      );
+      return;
+    }
+
+    if (!guilds.welcomer.enabled) return;
+
+    if (!member?.user) {
+      console.error("Invalid member or user object in welcomeCard");
+      return;
+    }
+
+    const mem = member.user;
+    const fieldMessage = (guilds.welcomer.message || "")
+      .replace("{user}", mem.tag || mem.username)
+      .replace("{userid}", mem.id)
+      .replace("{username}", mem.globalName || mem.username)
+      .replace("{guild}", guild.name || "Unknown")
+      .replace("{guildid}", guild.id)
+      .replace("{membercount}", String(guild.memberCount || 0))
+      .substring(0, 1999);
+
+    let message = (guilds.welcomer.textMessage || "")
+      .replace("{user}", `<@${member.id}>`)
+      .replace("{userid}", mem.id)
+      .replace("{username}", mem.username)
+      .replace("{guild}", guild.name || "Unknown")
+      .replace("{guildid}", guild.id)
+      .replace("{membercount}", String(guild.memberCount || 0))
+      .substring(0, 1999);
+
+    try {
+      // Check permissions safely
+      const botMember = await guild.members.fetchMe().catch(() => null);
+      if (!botMember) {
+        console.error(`Cannot fetch bot member in guild ${guild.id}`);
+        return;
       }
-      if (!guilds.welcomer.enabled) return;
-      if (channel) {
-        var mem = member.user;
-        var fieldMessage = guilds.welcomer.message
-          .replace("{user}", mem.tag)
-          .replace("{userid}", mem.id)
-          .replace("{username}", mem.globalName ? mem.globalName : mem.username)
-          .replace("{guild}", guild.name)
-          .replace("{guildid}", guild.id)
-          .replace("{membercount}", guild.memberCount);
 
-        var message = guilds.welcomer.textMessage
-          .replace("{user}", `<@${member.id}>`)
-          .replace("{userid}", mem.id)
-          .replace("{username}", mem.username)
-          .replace("{guild}", guild.name)
-          .replace("{guildid}", guild.id)
-          .replace("{membercount}", guild.memberCount);
-        message = message.substring(0, 1999);
-        fieldMessage = fieldMessage.substring(0, 1999);
-        try {
-          if (
-            guild &&
-            channel
-              .permissionsFor(client.user)
-              .has([
-                PermissionFlagsBits.SendMessages,
-                PermissionFlagsBits.AttachFiles,
-                PermissionFlagsBits.ViewChannel,
-              ])
-          ) {
-            if (guilds.welcomer.imageEnabled) {
-              const welcomeCard = await module.exports.createCard(
-                member,
-                fieldMessage,
-                guilds.welcomer
+      const permissions = channel.permissionsFor(botMember);
+      if (!permissions) {
+        console.error(`Cannot get permissions for channel ${channel.id}`);
+        return;
+      }
+
+      if (
+        !permissions.has([
+          PermissionFlagsBits.SendMessages,
+          PermissionFlagsBits.ViewChannel,
+        ])
+      ) {
+        console.warn(
+          `Missing permissions in channel ${channel.id} for guild ${guild.id}`
+        );
+        return;
+      }
+      if (guilds.welcomer.imageEnabled) {
+        const welcomeCard = await module.exports.createCard(
+          member,
+          fieldMessage,
+          guilds.welcomer
+        );
+        const attachment = new AttachmentBuilder(welcomeCard, {
+          name: "welcome.png",
+        });
+        if (
+          guilds.welcomer.imageEnabled &&
+          guilds.welcomer.textMessage &&
+          guilds.welcomer.embed.enabled
+        ) {
+          message.substring(0, 256);
+          var embed = new EmbedBuilder()
+            .setColor(guilds.welcomer.embed.color)
+            .setDescription(message)
+            .setImage("attachment://welcome.png")
+            .setTimestamp();
+
+          await safeSend(
+            channel,
+            {
+              embeds: [embed],
+              files: [attachment],
+            },
+            guild.id
+          );
+        } else if (
+          guilds.welcomer.imageEnabled &&
+          guilds.welcomer.textMessage &&
+          !guilds.welcomer.embed.enabled
+        ) {
+          await safeSend(
+            channel,
+            {
+              content: message.toString(),
+              files: [attachment],
+            },
+            guild.id
+          );
+        } else if (
+          guilds.welcomer.imageEnabled &&
+          guilds.welcomer.embed.enabled &&
+          !guilds.welcomer.textMessage
+        ) {
+          var embed = new EmbedBuilder()
+            .setColor(guilds.welcomer.embed.color)
+            .setImage("attachment://welcome.png")
+            .setTimestamp();
+          await safeSend(
+            channel,
+            {
+              embeds: [embed],
+              files: [attachment],
+            },
+            guild.id
+          );
+        } else if (
+          !guilds.welcomer.imageEnabled &&
+          guilds.welcomer.embed.enabled &&
+          guilds.welcomer.textMessage
+        ) {
+          var embed = new EmbedBuilder()
+            .setColor(guilds.welcomer.embed.color)
+            .setDescription(message)
+            .setTimestamp();
+          await channel
+            .send({
+              embeds: [embed],
+            })
+            .catch((err) => {
+              console.error(
+                `Failed to send welcomer message (embed only):`,
+                err.message
               );
-              const attachment = new AttachmentBuilder(welcomeCard, {
-                name: "welcome.png",
-              });
-              if (
-                guilds.welcomer.imageEnabled &&
-                guilds.welcomer.textMessage &&
-                guilds.welcomer.embed.enabled
-              ) {
-                message.substring(0, 256);
-                var embed = new EmbedBuilder()
-                  .setColor(guilds.welcomer.embed.color)
-                  .setDescription(message)
-                  .setImage("attachment://welcome.png")
-                  .setTimestamp();
-
-                channel.send({
-                  embeds: [embed],
-                  files: [attachment],
-                });
-              } else if (
-                guilds.welcomer.imageEnabled &&
-                guilds.welcomer.textMessage &&
-                !guilds.welcomer.embed.enabled
-              ) {
-                channel.send({
-                  content: message.toString(),
-                  files: [attachment],
-                });
-              } else if (
-                guilds.welcomer.imageEnabled &&
-                guilds.welcomer.embed.enabled &&
-                !guilds.welcomer.textMessage
-              ) {
-                var embed = new EmbedBuilder()
-                  .setColor(guilds.welcomer.embed.color)
-                  .setImage("attachment://welcome.png")
-                  .setTimestamp();
-                channel.send({
-                  embeds: [embed],
-                  files: [attachment],
-                });
-              } else if (
-                !guilds.welcomer.imageEnabled &&
-                guilds.welcomer.embed.enabled &&
-                guilds.welcomer.textMessage
-              ) {
-                var embed = new EmbedBuilder()
-                  .setColor(guilds.welcomer.embed.color)
-                  .setDescription(message)
-                  .setTimestamp();
-                channel.send({
-                  embeds: [embed],
-                });
-              } else if (guilds.welcomer.imageEnabled) {
-                channel.send({
-                  files: [attachment],
-                });
-              }
-            } else if (
-              guilds.welcomer.textMessage &&
-              guilds.welcomer.embed.enabled
-            ) {
-              message.substring(0, 256);
-              var embed = new EmbedBuilder()
-
-                .setColor(guilds.welcomer.embed.color)
-                .setDescription(message)
-                .setTimestamp();
-              channel.send({
-                embeds: [embed],
-              });
-            } else {
-              channel.send(message);
-            }
-          }
-        } catch (err) {
-          error(err as Error);
+            });
+        } else if (guilds.welcomer.imageEnabled) {
+          await safeSend(
+            channel,
+            {
+              files: [attachment],
+            },
+            guild.id
+          );
         }
+      } else if (guilds.welcomer.textMessage && guilds.welcomer.embed.enabled) {
+        message.substring(0, 256);
+        var embed = new EmbedBuilder()
+          .setColor(guilds.welcomer.embed.color)
+          .setDescription(message)
+          .setTimestamp();
+        await channel
+          .send({
+            embeds: [embed],
+          })
+          .catch((err) => {
+            console.error(
+              `Failed to send welcomer message (text+embed):`,
+              err.message
+            );
+          });
+      } else if (message) {
+        await channel.send(message).catch((err) => {
+          console.error(
+            `Failed to send welcomer message (text only):`,
+            err.message
+          );
+        });
       }
+    } catch (err) {
+      console.error(
+        `Error sending welcomer message in guild ${guild.id}:`,
+        err
+      );
+      error(err as Error);
     }
   } catch (err) {
+    console.error(`Critical error in welcomeCard for guild ${guild.id}:`, err);
     error(err as Error);
   }
 };
@@ -150,134 +266,204 @@ export const goodbyeCard = async (
   client: any,
   testchannel?: TextChannel
 ) => {
-
   try {
-    if (guilds.goodbyeer) {
-      var channel = guild.channels.cache.find(
-        (channel) => channel.id === guilds.goodbyeer.channel
-      ) as TextChannel;
-      if (testchannel) {
-        channel = testchannel;
+    if (!guilds?.goodbyeer) return;
+
+    const channelId = guilds.goodbyeer.channel;
+    if (!channelId) {
+      console.warn(
+        `Goodbyeer enabled but no channel set for guild ${guild.id}`
+      );
+      return;
+    }
+
+    let channel = guild.channels.cache.get(channelId) as TextChannel;
+
+    if (testchannel) {
+      channel = testchannel;
+    }
+
+    if (!channel) {
+      console.warn(
+        `Goodbyeer channel ${channelId} not found in guild ${guild.id}`
+      );
+      return;
+    }
+
+    if (!guilds.goodbyeer.enabled) return;
+
+    if (!member?.user) {
+      console.error("Invalid member or user object in goodbyeCard");
+      return;
+    }
+
+    const mem = member.user;
+    const fieldMessage = (guilds.goodbyeer.message || "")
+      .replace("{user}", mem.tag || mem.username)
+      .replace("{userid}", mem.id)
+      .replace("{username}", mem.username)
+      .replace("{guild}", guild.name || "Unknown")
+      .replace("{guildid}", guild.id)
+      .replace("{membercount}", String(guild.memberCount || 0))
+      .substring(0, 1999);
+
+    let message = (guilds.goodbyeer.textMessage || "")
+      .replace("{user}", `<@${member.id}>`)
+      .replace("{userid}", mem.id)
+      .replace("{username}", mem.username)
+      .replace("{guild}", guild.name || "Unknown")
+      .replace("{guildid}", guild.id)
+      .replace("{membercount}", String(guild.memberCount || 0))
+      .substring(0, 1999);
+
+    try {
+      // Check permissions safely
+      const botMember = await guild.members.fetchMe().catch(() => null);
+      if (!botMember) {
+        console.error(`Cannot fetch bot member in guild ${guild.id}`);
+        return;
       }
-      if (!guilds.goodbyeer.enabled) return;
-      if (channel) {
-        var mem = member.user;
-        var fieldMessage = guilds.goodbyeer.message
-          .replace("{user}", mem.tag)
-          .replace("{userid}", mem.id)
-          .replace("{username}", mem.username)
-          .replace("{guild}", guild.name)
-          .replace("{guildid}", guild.id)
-          .replace("{membercount}", guild.memberCount);
 
-        var message = guilds.goodbyeer.textMessage
-          .replace("{user}", `<@${member.id}>`)
-          .replace("{userid}", mem.id)
-          .replace("{username}", mem.username)
-          .replace("{guild}", guild.name)
-          .replace("{guildid}", guild.id)
-          .replace("{membercount}", guild.memberCount);
-        message = message.substring(0, 1999);
-        fieldMessage = fieldMessage.substring(0, 1999);
+      const permissions = channel.permissionsFor(botMember);
+      if (!permissions) {
+        console.error(`Cannot get permissions for channel ${channel.id}`);
+        return;
+      }
 
-        try {
-          if (
-            guild &&
-            channel
-              .permissionsFor(client.user)
-              .has([
-                PermissionFlagsBits.SendMessages,
-                PermissionFlagsBits.AttachFiles,
-                PermissionFlagsBits.ViewChannel,
-              ])
-          ) {
-            if (guilds.goodbyeer.imageEnabled) {
-              const goodbyeCard = await module.exports.createCard(
-                member,
-                fieldMessage,
-                guilds.goodbyeer
+      if (
+        !permissions.has([
+          PermissionFlagsBits.SendMessages,
+          PermissionFlagsBits.ViewChannel,
+        ])
+      ) {
+        console.warn(
+          `Missing permissions in channel ${channel.id} for guild ${guild.id}`
+        );
+        return;
+      }
+      if (guilds.goodbyeer.imageEnabled) {
+        const goodbyeCard = await module.exports.createCard(
+          member,
+          fieldMessage,
+          guilds.goodbyeer
+        );
+        const goodbyeAttachment = new AttachmentBuilder(goodbyeCard, {
+          name: "goodbye.png",
+        });
+        if (
+          guilds.goodbyeer.imageEnabled &&
+          guilds.goodbyeer.textMessage &&
+          guilds.goodbyeer.embed.enabled
+        ) {
+          message.substring(0, 256);
+          var embed = new EmbedBuilder()
+            .setColor(guilds.goodbyeer.embed.color)
+            .setDescription(message)
+            .setImage("attachment://goodbye.png")
+            .setTimestamp();
+
+          await safeSend(
+            channel,
+            {
+              embeds: [embed],
+              files: [goodbyeAttachment],
+            },
+            guild.id
+          );
+        } else if (
+          guilds.goodbyeer.imageEnabled &&
+          guilds.goodbyeer.textMessage &&
+          !guilds.goodbyeer.embed.enabled
+        ) {
+          await safeSend(
+            channel,
+            {
+              content: message.toString(),
+              files: [goodbyeAttachment],
+            },
+            guild.id
+          );
+        } else if (
+          guilds.goodbyeer.imageEnabled &&
+          guilds.goodbyeer.embed.enabled &&
+          !guilds.goodbyeer.textMessage
+        ) {
+          var embed = new EmbedBuilder()
+            .setColor(guilds.goodbyeer.embed.color)
+            .setImage("attachment://goodbye.png")
+            .setTimestamp();
+          await safeSend(
+            channel,
+            {
+              embeds: [embed],
+              files: [goodbyeAttachment],
+            },
+            guild.id
+          );
+        } else if (
+          !guilds.goodbyeer.imageEnabled &&
+          guilds.goodbyeer.embed.enabled &&
+          guilds.goodbyeer.textMessage
+        ) {
+          var embed = new EmbedBuilder()
+            .setColor(guilds.goodbyeer.embed.color)
+            .setDescription(message)
+            .setTimestamp();
+          await channel
+            .send({
+              embeds: [embed],
+            })
+            .catch((err) => {
+              console.error(
+                `Failed to send goodbyeer message (embed only):`,
+                err.message
               );
-              const goodbyeAttachment = new AttachmentBuilder(goodbyeCard, {
-                name: "goodbye.png",
-              });
-              if (
-                guilds.goodbyeer.imageEnabled &&
-                guilds.goodbyeer.textMessage &&
-                guilds.goodbyeer.embed.enabled
-              ) {
-                message.substring(0, 256);
-                var embed = new EmbedBuilder()
-                  .setColor(guilds.goodbyeer.embed.color)
-                  .setDescription(message)
-                  .setImage("attachment://goodbye.png")
-                  .setTimestamp();
-
-                channel.send({
-                  embeds: [embed],
-                  files: [goodbyeAttachment],
-                });
-              } else if (
-                guilds.goodbyeer.imageEnabled &&
-                guilds.goodbyeer.textMessage &&
-                !guilds.goodbyeer.embed.enabled
-              ) {
-                channel.send({
-                  content: message.toString(),
-                  files: [goodbyeAttachment],
-                });
-              } else if (
-                guilds.goodbyeer.imageEnabled &&
-                guilds.goodbyeer.embed.enabled &&
-                !guilds.goodbyeer.textMessage
-              ) {
-                var embed = new EmbedBuilder()
-                  .setColor(guilds.goodbyeer.embed.color)
-                  .setImage("attachment://goodbye.png")
-                  .setTimestamp();
-                channel.send({
-                  embeds: [embed],
-                  files: [goodbyeAttachment],
-                });
-              } else if (
-                !guilds.goodbyeer.imageEnabled &&
-                guilds.goodbyeer.embed.enabled &&
-                guilds.goodbyeer.textMessage
-              ) {
-                var embed = new EmbedBuilder()
-                  .setColor(guilds.goodbyeer.embed.color)
-                  .setDescription(message)
-                  .setTimestamp();
-                channel.send({
-                  embeds: [embed],
-                });
-              } else if (guilds.goodbyeer.imageEnabled) {
-                channel.send({
-                  files: [goodbyeAttachment],
-                });
-              }
-            } else if (
-              guilds.goodbyeer.textMessage &&
-              guilds.goodbyeer.embed.enabled
-            ) {
-              message.substring(0, 256);
-              var embed = new EmbedBuilder()
-
-                .setColor(guilds.goodbyeer.embed.color)
-                .setDescription(message)
-                .setTimestamp();
-              channel.send({
-                embeds: [embed],
-              });
-            } else {
-              channel.send(message);
-            }
-          }
-        } catch (err) {
-          error(err as Error);
+            });
+        } else if (guilds.goodbyeer.imageEnabled) {
+          await safeSend(
+            channel,
+            {
+              files: [goodbyeAttachment],
+            },
+            guild.id
+          );
         }
+      } else if (
+        guilds.goodbyeer.textMessage &&
+        guilds.goodbyeer.embed.enabled
+      ) {
+        message.substring(0, 256);
+        var embed = new EmbedBuilder()
+          .setColor(guilds.goodbyeer.embed.color)
+          .setDescription(message)
+          .setTimestamp();
+        await channel
+          .send({
+            embeds: [embed],
+          })
+          .catch((err) => {
+            console.error(
+              `Failed to send goodbyeer message (text+embed):`,
+              err.message
+            );
+          });
+      } else if (message) {
+        await channel.send(message).catch((err) => {
+          console.error(
+            `Failed to send goodbyeer message (text only):`,
+            err.message
+          );
+        });
       }
+    } catch (err) {
+      console.error(
+        `Error sending goodbyeer message in guild ${guild.id}:`,
+        err
+      );
+      error(err as Error);
     }
   } catch (err) {
+    console.error(`Critical error in goodbyeCard for guild ${guild.id}:`, err);
     error(err as Error);
   }
 };
@@ -289,82 +475,39 @@ export const createCard = async (
 ) => {
   const canvas = createCanvas(1024, 450);
   const ctx = canvas.getContext("2d");
-  async function loadAndprocessBackgroundImage(
-    ctx: {
-      drawImage: (
-        arg0: any,
-        arg1: number,
-        arg2: number,
-        arg3: any,
-        arg4: any
-      ) => void;
-    },
-    props: { background: any }
-  ) {
+
+  const DEFAULT_BG =
+    "https://images.unsplash.com/photo-1554034483-04fda0d3507b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
+  // Load background image with fallback
+  try {
+    const backgroundImage = await loadImage(props?.background || DEFAULT_BG);
+    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+  } catch (err) {
+    console.error("Failed to load background image, using default:", err);
     try {
-      const backgroundImage = await loadImage(
-        props?.background
-          ? props.background
-          : "https://images.unsplash.com/photo-1554034483-04fda0d3507b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-      );
-      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-    } catch (err) {
-      const defauldImage = await loadImage(
-        "https://images.unsplash.com/photo-1554034483-04fda0d3507b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-      );
-      ctx.drawImage(defauldImage, 0, 0, canvas.width, canvas.height);
+      const defaultImage = await loadImage(DEFAULT_BG);
+      ctx.drawImage(defaultImage, 0, 0, canvas.width, canvas.height);
+    } catch (fallbackErr) {
+      console.error("Failed to load default background:", fallbackErr);
+      // Draw a solid color background as last resort
+      ctx.fillStyle = "#2f3136";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
   }
 
-  await loadAndprocessBackgroundImage(ctx, props);
-  // ctx.drawImage(backgroundImg, 0, 0, canvas.width, canvas.height);
-
-  // let background = await Canvas.loadImage(backgroundImg)
-  // .then(image => {
-  //   ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-  // }
-  // ).catch(err => {
-  //   backgroundImg = "https://cdn.discordapp.com/attachments/830740575082774532/989455827842785310/adrian-infernus-GLf7bAwCdYg-unsplash.jpg";
-  //   background = await Canvas.loadImage(backgroundImg)
-  //   .then(image => {
-  //     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-  //   }
-  //   ).catch(err => {
-  //     console.log(err);
-  //   });
-  // });
-
-  // ctx.drawImage(background, 0, 0, canvas.width, canvas.height);
-
+  // Configure text styling
   ctx.globalAlpha = 1;
-  if (props.color) {
-    try {
-      ctx.fillStyle = props.color;
-    } catch (err) {
-      ctx.fillStyle = "#000000";
-    }
-  }
+  ctx.fillStyle = props?.color || "#000000";
   ctx.font = "bold 60px Arial";
   ctx.textAlign = "center";
-  if (props.fontSize) {
-    try {
-      canvasTxt.fontSize = props.fontSize;
-    } catch (err) {
-      canvasTxt.fontSize = 60;
-    }
-  }
+
+  canvasTxt.fontSize = props?.fontSize || 60;
   canvasTxt.fontFamily = "Arial";
   canvasTxt.fontWeight = "bold";
 
-  // breakWordAndCenter(
-  //   ctx,
-  //   message,
-  //   canvas.width -900,
-  //   canvas.height - 200,
-  //   75,
-  //   800
-  // );
-  if (props.message) {
+  // Draw message text
+  if (props?.message && message) {
     try {
       canvasTxt.drawText(
         ctx,
@@ -373,42 +516,46 @@ export const createCard = async (
         canvas.height - 250,
         canvas.width - 200,
         canvas.height - 200
-        
       );
-    } catch (error) {
-      canvasTxt.drawText(
-        ctx,
-        "Error no message",
-        canvas.width - 924,
-        canvas.height - 250,
-        canvas.width - 200,
-        canvas.height - 200
-      );
+    } catch (textErr) {
+      console.error("Failed to draw message text:", textErr);
     }
   }
-  const pfp = await loadImage(
-    //load member avatar
-    member.displayAvatarURL({
-      extension: "png",
-      forceStatic: true,
-      size: 256,
-    })
-  );
 
-  let x = canvas.width / 2 + 128 / 4 - pfp.width / 2;
-  let y = 25;
+  // Load and draw avatar
+  try {
+    const pfp = await loadImage(
+      member.displayAvatarURL({
+        extension: "png",
+        forceStatic: true,
+        size: 256,
+      })
+    );
 
-  ctx.beginPath();
-  ctx.lineWidth = 5;
-  ctx.strokeStyle = "black";
-  ctx.arc(x + 100, y + 100, 100, 0, Math.PI * 2, true);
-  ctx.stroke();
-  ctx.closePath();
-  ctx.clip();
+    const avatarSize = 200;
+    const x = (canvas.width - avatarSize) / 2;
+    const y = 25;
 
-  ctx.drawImage(pfp, x, y, 200, 200);
+    // Create circular clip path for avatar
+    ctx.beginPath();
+    ctx.arc(
+      x + avatarSize / 2,
+      y + avatarSize / 2,
+      avatarSize / 2,
+      0,
+      Math.PI * 2
+    );
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = "black";
+    ctx.stroke();
+    ctx.closePath();
+    ctx.clip();
 
-  // ctx.drawImage(avatar, 80, 120, 200, 200);
+    ctx.drawImage(pfp, x, y, avatarSize, avatarSize);
+  } catch (avatarErr) {
+    console.error("Failed to load/draw avatar:", avatarErr);
+    // Continue without avatar - card will still be valid
+  }
 
   return canvas.toBuffer();
 };
