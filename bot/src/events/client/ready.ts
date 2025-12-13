@@ -16,13 +16,9 @@ export default class ReadyEvent implements EventType {
       `${client.user?.username} is ready (Cluster: ${client.cluster.id})!`
     );
 
-    // Signal to cluster manager that this cluster is ready
-    try {
-      await client.cluster.send({ ready: true });
-      console.log(`Cluster ${client.cluster.id} signaled ready to manager`);
-    } catch (err) {
-      console.error(`Failed to signal ready to cluster manager:`, err);
-    }
+    // Trigger ready event for cluster manager - REQUIRED by discord-hybrid-sharding
+    client.cluster.triggerReady();
+    console.log(`Cluster ${client.cluster.id} triggered ready to manager`);
 
     await setStatus();
     setInterval(async () => {

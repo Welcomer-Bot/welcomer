@@ -89,7 +89,7 @@ export default class WelcomerClient extends Client {
     console.log("Discord.js Client initialized");
 
     this.cluster.on("ready", () => {
-      console.log("Cluster client ready event");
+      console.log("Cluster manager is ready");
       this.managerReady = true;
     });
 

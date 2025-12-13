@@ -182,85 +182,97 @@ export const logStatus = ({
       clusterId ? `cluster ${clusterId},` : ""
     } shards ${shardId}`
   );
-  
+
   initHooks();
   if (process.env.NODE_ENV === "development") {
     console.log("Development mode, skipping webhook");
     return;
   }
-  
+
   if (!statusHook) {
     console.error("statusHook not initialized!");
     return;
   }
-  
+
   if (status === "starting") {
     console.log("Sending 'starting' webhook...");
-    statusHook.send({
-      embeds: [
-        {
-          title: `Welcomer is Starting -- ${
-            clusterId ? `cluster ${clusterId},` : ""
-          } shards ${shardId} are starting`,
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    }).catch(err => console.error("Failed to send starting webhook:", err));
+    statusHook
+      .send({
+        embeds: [
+          {
+            title: `Welcomer is Starting -- ${
+              clusterId ? `cluster ${clusterId},` : ""
+            } shards ${shardId} are starting`,
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      })
+      .catch((err) => console.error("Failed to send starting webhook:", err));
   }
   if (status === "online") {
     console.log("Sending 'online' webhook...");
-    statusHook.send({
-      embeds: [
-        {
-          title: `Welcomer is Online -- ${
-            clusterId ? `cluster ${clusterId},` : ""
-          } shards ${shardId} are online`,
-          color: 65280,
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    }).catch(err => console.error("Failed to send online webhook:", err));
+    statusHook
+      .send({
+        embeds: [
+          {
+            title: `Welcomer is Online -- ${
+              clusterId ? `cluster ${clusterId},` : ""
+            } shards ${shardId} are online`,
+            color: 65280,
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      })
+      .catch((err) => console.error("Failed to send online webhook:", err));
   }
   if (status === "death") {
     console.log("Sending 'death' webhook...");
-    statusHook.send({
-      embeds: [
-        {
-          title: `Welcomer is partially offline -- ${
-            clusterId ? `cluster ${clusterId},` : ""
-          } shards ${shardId} are offline`,
-          color: 16711680,
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    }).catch(err => console.error("Failed to send death webhook:", err));
+    statusHook
+      .send({
+        embeds: [
+          {
+            title: `Welcomer is partially offline -- ${
+              clusterId ? `cluster ${clusterId},` : ""
+            } shards ${shardId} are offline`,
+            color: 16711680,
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      })
+      .catch((err) => console.error("Failed to send death webhook:", err));
   }
   if (status === "reconnecting") {
     console.log("Sending 'reconnecting' webhook...");
-    statusHook.send({
-      embeds: [
-        {
-          title: `Welcomer is partially offline -- ${
-            clusterId ? `cluster ${clusterId},` : ""
-          } shards ${shardId} are reconnecting`,
-          color: 16737024,
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    }).catch(err => console.error("Failed to send reconnecting webhook:", err));
+    statusHook
+      .send({
+        embeds: [
+          {
+            title: `Welcomer is partially offline -- ${
+              clusterId ? `cluster ${clusterId},` : ""
+            } shards ${shardId} are reconnecting`,
+            color: 16737024,
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      })
+      .catch((err) =>
+        console.error("Failed to send reconnecting webhook:", err)
+      );
   }
   if (status === "resumed") {
     console.log("Sending 'resumed' webhook...");
-    statusHook.send({
-      embeds: [
-        {
-          title: `Welcomer is Online -- ${
-            clusterId ? `cluster ${clusterId},` : ""
-          } shards ${shardId} ares resumed`,
-          color: 65280,
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    }).catch(err => console.error("Failed to send resumed webhook:", err));
+    statusHook
+      .send({
+        embeds: [
+          {
+            title: `Welcomer is Online -- ${
+              clusterId ? `cluster ${clusterId},` : ""
+            } shards ${shardId} ares resumed`,
+            color: 65280,
+            timestamp: new Date().toISOString(),
+          },
+        ],
+      })
+      .catch((err) => console.error("Failed to send resumed webhook:", err));
   }
 };
