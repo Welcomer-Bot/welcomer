@@ -1,6 +1,6 @@
 import { Guild, GuildMember, TextChannel } from "discord.js";
 
-import { createCanvas, loadImage } from "canvas";
+import { createCanvas, Image, loadImage } from "canvas";
 import {
   AttachmentBuilder,
   EmbedBuilder,
@@ -9,6 +9,27 @@ import {
 } from "discord.js";
 import { error } from "./logger";
 const canvasTxt = require("canvas-txt").default;
+
+// Cache for default background image to reduce memory and network usage
+let cachedDefaultBackground: Image | null = null;
+const DEFAULT_BG_URL =
+  "https://images.unsplash.com/photo-1554034483-04fda0d3507b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
+/**
+ * Loads and caches the default background image
+ */
+const getDefaultBackground = async (): Promise<Image> => {
+  if (!cachedDefaultBackground) {
+    try {
+      cachedDefaultBackground = await loadImage(DEFAULT_BG_URL);
+      console.log("Default background image cached successfully");
+    } catch (err) {
+      console.error("Failed to load default background for caching:", err);
+      throw err;
+    }
+  }
+  return cachedDefaultBackground;
+};
 
 /**
  * Safely sends a message to a channel, handling file upload restrictions
@@ -473,24 +494,31 @@ export const createCard = async (
   message: string,
   props: any
 ) => {
-  const canvas = createCanvas(1024, 450);
+  // Reduce canvas size for lower memory usage (from 1024x450 to 800x350)
+  const canvas = createCanvas(800, 350);
   const ctx = canvas.getContext("2d");
 
-  const DEFAULT_BG =
-    "https://images.unsplash.com/photo-1554034483-04fda0d3507b?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-
   // Load background image with fallback
+  let backgroundImage: any = null;
   try {
-    const backgroundImage = await loadImage(props?.background || DEFAULT_BG);
-    ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+    if (props?.background && props.background.startsWith("http")) {
+      backgroundImage = await loadImage(props.background);
+      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      backgroundImage = null; // Free memory immediately
+    } else {
+      // Load cached default background
+      const defaultBg = await getDefaultBackground();
+      ctx.drawImage(defaultBg, 0, 0, canvas.width, canvas.height);
+    }
   } catch (err) {
     console.error("Failed to load background image, using default:", err);
     try {
-      const defaultImage = await loadImage(DEFAULT_BG);
-      ctx.drawImage(defaultImage, 0, 0, canvas.width, canvas.height);
+      // Try cached default background as fallback
+      const defaultBg = await getDefaultBackground();
+      ctx.drawImage(defaultBg, 0, 0, canvas.width, canvas.height);
     } catch (fallbackErr) {
       console.error("Failed to load default background:", fallbackErr);
-      // Draw a solid color background as last resort
+      // Use solid color as last resort
       ctx.fillStyle = "#2f3136";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
@@ -499,10 +527,10 @@ export const createCard = async (
   // Configure text styling
   ctx.globalAlpha = 1;
   ctx.fillStyle = props?.color || "#000000";
-  ctx.font = "bold 60px Arial";
+  ctx.font = "bold 48px Arial"; // Reduced from 60px
   ctx.textAlign = "center";
 
-  canvasTxt.fontSize = props?.fontSize || 60;
+  canvasTxt.fontSize = props?.fontSize ? Math.min(props.fontSize, 48) : 48; // Cap at 48
   canvasTxt.fontFamily = "Arial";
   canvasTxt.fontWeight = "bold";
 
@@ -512,29 +540,34 @@ export const createCard = async (
       canvasTxt.drawText(
         ctx,
         message,
-        canvas.width - 924,
-        canvas.height - 250,
-        canvas.width - 200,
-        canvas.height - 200
+        50, // Adjusted for new canvas size
+        canvas.height - 180,
+        canvas.width - 100,
+        canvas.height - 50
       );
     } catch (textErr) {
       console.error("Failed to draw message text:", textErr);
     }
   }
 
-  // Load and draw avatar
+  // Load and draw avatar with smaller size
+  let avatarImage: any = null;
   try {
-    const pfp = await loadImage(
+    // Reduce avatar size from 256 to 128 for memory efficiency
+    avatarImage = await loadImage(
       member.displayAvatarURL({
         extension: "png",
         forceStatic: true,
-        size: 256,
+        size: 128, // Reduced from 256
       })
     );
 
-    const avatarSize = 200;
+    const avatarSize = 150; // Reduced from 200
     const x = (canvas.width - avatarSize) / 2;
-    const y = 25;
+    const y = 20;
+
+    // Save context before clipping
+    ctx.save();
 
     // Create circular clip path for avatar
     ctx.beginPath();
@@ -545,17 +578,28 @@ export const createCard = async (
       0,
       Math.PI * 2
     );
-    ctx.lineWidth = 5;
+    ctx.lineWidth = 4; // Reduced from 5
     ctx.strokeStyle = "black";
     ctx.stroke();
-    ctx.closePath();
     ctx.clip();
+    ctx.closePath();
 
-    ctx.drawImage(pfp, x, y, avatarSize, avatarSize);
+    ctx.drawImage(avatarImage, x, y, avatarSize, avatarSize);
+
+    // Restore context
+    ctx.restore();
+
+    // Free memory
+    avatarImage = null;
   } catch (avatarErr) {
     console.error("Failed to load/draw avatar:", avatarErr);
     // Continue without avatar - card will still be valid
   }
 
-  return canvas.toBuffer();
+  // Generate buffer and return
+  const buffer = canvas.toBuffer("image/png", {
+    compressionLevel: 6, // Compress PNG (0-9, higher = smaller file but slower)
+  });
+
+  return buffer;
 };
