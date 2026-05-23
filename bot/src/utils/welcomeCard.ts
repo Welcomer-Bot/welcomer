@@ -2,10 +2,10 @@ import { Guild, GuildMember, TextChannel } from "discord.js";
 
 import { createCanvas, Image, loadImage } from "canvas";
 import {
-  AttachmentBuilder,
-  EmbedBuilder,
-  MessageCreateOptions,
-  PermissionFlagsBits,
+    AttachmentBuilder,
+    EmbedBuilder,
+    MessageCreateOptions,
+    PermissionFlagsBits,
 } from "discord.js";
 import { error } from "./logger";
 const canvasTxt = require("canvas-txt").default;
@@ -90,10 +90,16 @@ export const welcomeCard = async (
       return;
     }
 
-    let channel = guild.channels.cache.get(channelId) as TextChannel;
+    let channel: TextChannel | null =
+      testchannel || (guild.channels.cache.get(channelId) as TextChannel);
 
-    if (testchannel) {
-      channel = testchannel;
+    if (!channel) {
+      const fetched = await guild.channels
+        .fetch(channelId, { cache: false })
+        .catch(() => null);
+      if (fetched && fetched.isTextBased() && !fetched.isDMBased()) {
+        channel = fetched as TextChannel;
+      }
     }
 
     if (!channel) {
@@ -296,10 +302,16 @@ export const goodbyeCard = async (
       return;
     }
 
-    let channel = guild.channels.cache.get(channelId) as TextChannel;
+    let channel: TextChannel | null =
+      testchannel || (guild.channels.cache.get(channelId) as TextChannel);
 
-    if (testchannel) {
-      channel = testchannel;
+    if (!channel) {
+      const fetched = await guild.channels
+        .fetch(channelId, { cache: false })
+        .catch(() => null);
+      if (fetched && fetched.isTextBased() && !fetched.isDMBased()) {
+        channel = fetched as TextChannel;
+      }
     }
 
     if (!channel) {

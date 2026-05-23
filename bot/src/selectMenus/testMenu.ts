@@ -1,11 +1,11 @@
 import {
-  EmbedBuilder,
-  GuildMember,
-  InteractionResponse,
-  Message,
-  PermissionsBitField,
-  StringSelectMenuInteraction,
-  TextChannel,
+    EmbedBuilder,
+    GuildMember,
+    InteractionResponse,
+    Message,
+    PermissionsBitField,
+    StringSelectMenuInteraction,
+    TextChannel,
 } from "discord.js";
 import WelcomerClient from "../structure/WelcomerClient";
 import { checkPermsForChannel } from "../utils/functions";
@@ -41,7 +41,11 @@ export default class TestMenu implements SelectMenuType {
       var currentChannelPermissionErrors: string[] = [];
       var realChannelPermissionErrors: string[] = [];
 
-      let realChannel = interaction.guild!.channels.cache.get(realChannelId);
+      let realChannel =
+        interaction.guild!.channels.cache.get(realChannelId) ||
+        (await interaction.guild!.channels
+          .fetch(realChannelId, { cache: false })
+          .catch(() => null));
       let currentChannel = interaction.channel;
 
       InfoEmbed.setColor("#33cc33")

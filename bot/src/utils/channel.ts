@@ -7,6 +7,11 @@ export const fetchTextChannel = async (
 ): Promise<TextBasedChannel | null> => {
   try {
     let channel = client.channels.cache.get(channelId);
+    if (!channel) {
+      channel = await client.channels
+        .fetch(channelId, { cache: false })
+        .catch(() => null);
+    }
     if (!channel || !channel.isTextBased()) {
       console.error(`Channel ${channelId} not found or not a text channel`);
       return null;

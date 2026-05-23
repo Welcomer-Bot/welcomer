@@ -1,20 +1,20 @@
 import { ClusterClient, getInfo } from "discord-hybrid-sharding";
 import {
-  APIApplicationCommand,
-  AttachmentBuilder,
-  Client,
-  Collection,
-  GatewayIntentBits,
-  Options,
-  Partials,
-  RESTPostAPIChatInputApplicationCommandsJSONBody,
+    APIApplicationCommand,
+    AttachmentBuilder,
+    Client,
+    Collection,
+    GatewayIntentBits,
+    Options,
+    Partials,
+    RESTPostAPIChatInputApplicationCommandsJSONBody,
 } from "discord.js";
 import {
-  ButtonType,
-  CommandType,
-  EventType,
-  modalType,
-  SelectMenuType,
+    ButtonType,
+    CommandType,
+    EventType,
+    modalType,
+    SelectMenuType,
 } from "../types";
 import { loadFiles } from "./loader";
 
@@ -29,6 +29,7 @@ export default class WelcomerClient extends Client {
   public admins = process.env.ADMINS?.split(",") || [];
   public images = new Map<string, AttachmentBuilder>();
   public managerReady: boolean = false;
+  private memoryWatchdogTimer?: NodeJS.Timeout;
 
   emit(event: string, ...args: any[]): boolean {
     return super.emit(event, ...args);
@@ -57,13 +58,21 @@ export default class WelcomerClient extends Client {
         GuildMessageManager: 0,
         ThreadMemberManager: 0,
         AutoModerationRuleManager: 0,
+        ApplicationCommandManager: 0,
         BaseGuildEmojiManager: 0,
+        GuildEmojiManager: 0,
         GuildBanManager: {
           maxSize: 1,
         },
         GuildForumThreadManager: 0,
         GuildInviteManager: 0,
+        GuildScheduledEventManager: 0,
+        GuildStickerManager: 0,
         GuildTextThreadManager: 0,
+        ReactionUserManager: 0,
+        StageInstanceManager: 0,
+        ThreadManager: 0,
+        UserManager: 0,
         VoiceStateManager: 0,
         GuildMemberManager: {
           maxSize: 1,
@@ -95,12 +104,44 @@ export default class WelcomerClient extends Client {
 
     console.log("Starting init()...");
     this.init();
+    this.startMemoryWatchdog();
 
     this.images.set(
       "banner",
       new AttachmentBuilder("banner.png").setFile("assets/banner.png")
     );
     console.log("WelcomerClient constructor completed");
+  }
+
+  private startMemoryWatchdog(): void {
+    const maxRssMb = Number(process.env.MAX_RSS_MB || 0);
+    const maxHeapMb = Number(process.env.MAX_HEAP_MB || 0);
+    const intervalMs = Math.max(
+      10_000,
+      Number(process.env.MEMORY_WATCH_INTERVAL_MS || 60_000)
+    );
+
+    if (!maxRssMb && !maxHeapMb) {
+      return;
+    }
+
+    this.memoryWatchdogTimer = setInterval(() => {
+      const { rss, heapUsed } = process.memoryUsage();
+      const rssMb = Math.round(rss / 1024 / 1024);
+      const heapMb = Math.round(heapUsed / 1024 / 1024);
+      const rssExceeded = maxRssMb > 0 && rssMb > maxRssMb;
+      const heapExceeded = maxHeapMb > 0 && heapMb > maxHeapMb;
+
+      if (rssExceeded || heapExceeded) {
+        console.error(
+          `Memory watchdog triggered (rss=${rssMb}MB, heap=${heapMb}MB). ` +
+            `Thresholds: rss=${maxRssMb || "off"}MB, heap=${maxHeapMb || "off"}MB. Exiting for restart.`
+        );
+        process.exit(1);
+      }
+    }, intervalMs);
+
+    this.memoryWatchdogTimer.unref?.();
   }
 
   public async init(): Promise<void> {

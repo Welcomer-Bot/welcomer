@@ -1,4 +1,4 @@
-import { Guild } from "discord.js";
+import { Guild, Routes } from "discord.js";
 
 const serverUrl = process.env.SERVER_URL;
 
@@ -17,13 +17,23 @@ export const createOrUpdateGuild = async (guild: Guild) => {
           icon: guild.icon,
           ownerId: guild.ownerId,
           memberCount: guild.memberCount,
-          channels: (await guild.channels.fetch()
+          channels: (await guild.client.rest
+            .get(Routes.guildChannels(guild.id))
             .then((channels) => {
-              return channels.map((channel) => ({
-                id: channel.id,
-                name: channel.name,
-                type: channel.type,
-              }));
+              if (!Array.isArray(channels)) {
+                return [];
+              }
+              return channels
+                .filter(
+                  (channel): channel is { id: string; type: number; name?: string } =>
+                    typeof channel?.id === "string" &&
+                    typeof channel?.type === "number"
+                )
+                .map((channel) => ({
+                  id: channel.id,
+                  name: channel.name || "Unknown",
+                  type: channel.type,
+                }));
             })
             .catch((err) => {
               console.log("Failed to fetch channels", err);
